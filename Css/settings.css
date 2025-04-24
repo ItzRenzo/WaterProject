@@ -1,0 +1,545 @@
+/* Root Variables */
+:root {
+    --primary: #0288D1;
+    --primary-light: #B3E5FC;
+    --primary-dark: #01579B;
+    --success: #2ECC71;
+    --warning: #F39C12;
+    --danger: #E74C3C;
+    --gray: #E0E6ED;
+    --gray-light: #F5F7FA;
+    --text-dark: #2C3E50;
+    --text-light: #7F8C8D;
+    --white: #FFFFFF;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--gray-light);
+    display: flex;
+    color: var(--text-dark);
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background: var(--white);
+    position: fixed;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+}
+
+.logo {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-light);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+}
+
+.logo h1 {
+    font-size: 24px;
+    color: var(--text-dark);
+}
+
+.logo span {
+    color: var(--primary);
+}
+
+/* Menu Styles */
+.menu {
+    margin-top: 20px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.menu ul {
+    list-style: none;
+}
+
+.menu li {
+    margin: 8px 10px;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: var(--text-light);
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.menu a i {
+    width: 20px;
+    margin-right: 10px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.menu a:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.menu li.active a {
+    background: var(--primary);
+    color: var(--white);
+}
+
+/* User Info */
+.user-info {
+    padding: 20px;
+    border-top: 1px solid var(--gray);
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+}
+
+.user-details h4 {
+    color: var(--text-dark);
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.user-details p {
+    color: var(--text-light);
+    font-size: 12px;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 450px;
+    padding: 20px;
+    width: calc(100% - 450px);
+}
+
+/* Settings Header */
+.settings-header {
+    margin-bottom: 24px;
+}
+
+.settings-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* Settings Container */
+.settings-container {
+    max-width: 800px;
+}
+
+.settings-card {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+/* Profile Section */
+.profile-section {
+    padding: 30px;
+    background: linear-gradient(to right, var(--primary), var(--primary-dark));
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    color: var(--white);
+}
+
+.profile-picture {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+}
+
+.profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.picture-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    cursor: pointer;
+}
+
+.profile-picture:hover .picture-overlay {
+    opacity: 1;
+}
+
+.profile-info h3 {
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+
+.profile-info p {
+    opacity: 0.8;
+}
+
+/* Settings Form */
+.settings-form {
+    padding: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-light);
+    font-size: 14px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--gray);
+    border-radius: 8px;
+    font-size: 15px;
+    color: var(--text-dark);
+    background-color: var(--gray-light);
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+/* Settings Actions */
+.settings-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.change-password-btn, .logout-btn, .save-btn {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s;
+    cursor: pointer;
+    border: none;
+}
+
+.change-password-btn {
+    background-color: var(--primary-light);
+    color: var(--primary);
+}
+
+.logout-btn {
+    background-color: var(--danger);
+    color: white;
+}
+
+.save-btn {
+    background-color: var(--primary);
+    color: white;
+}
+
+.change-password-btn:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+.save-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+.logout-btn:hover {
+    background-color: #c0392b;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--white);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--gray);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    color: var(--text-dark);
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-light);
+    cursor: pointer;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-body p {
+    margin-bottom: 20px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.cancel-btn, .confirm-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+}
+
+.cancel-btn {
+    background-color: var(--gray);
+    color: var(--text-dark);
+}
+
+.confirm-btn {
+    background-color: var(--danger);
+    color: white;
+}
+
+/* Tab system */
+.tab-container {
+    margin-bottom: 24px;
+}
+
+.tab-buttons {
+    display: flex;
+    background: var(--white);
+    padding: 6px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--text-light);
+    transition: all 0.3s;
+    border-radius: 6px;
+    flex: 1;
+    text-align: center;
+}
+
+.tab-btn.active {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.tab-content {
+    display: none;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 24px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Password Input */
+.password-input-container {
+    position: relative;
+    width: 100%;
+}
+
+.password-input-container input {
+    width: 100%;
+    padding: 12px 40px 12px 15px;
+    border: 1px solid var(--gray);
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+}
+
+/* Password Requirements */
+.password-requirements {
+    margin-top: 16px;
+    padding: 12px;
+    background: var(--white);
+    border-radius: 8px;
+}
+
+.requirement {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--text-light);
+}
+
+.requirement i {
+    font-size: 14px;
+    color: var(--danger);
+}
+
+.requirement.valid i {
+    color: var(--success);
+}
+
+/* Notification */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: var(--success);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.notification i {
+    font-size: 18px;
+}
+
+/* Button Container */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    gap: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .profile-section {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 0;
+        overflow: hidden;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+}

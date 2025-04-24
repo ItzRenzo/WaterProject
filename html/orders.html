@@ -1,0 +1,153 @@
+.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders - RJane Water Refilling Station</title>
+    <link rel="stylesheet" href="../Css/orders.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <span class="logo-icon"><i class="fas fa-water"></i></span>
+            <h1>R<span>Jane</span></h1>
+        </div>
+        <nav class="menu">
+            <ul>
+                <li>
+                    <a href="index.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="Customers.html"><i class="fas fa-users"></i> Customers</a>
+                </li>
+                <li class="active">
+                    <a href="Orders.html"><i class="fas fa-shopping-cart"></i> Orders</a>
+                </li>
+                <li>
+                    <a href="inventory.html"><i class="fas fa-boxes"></i> Inventory</a>
+                </li>
+                <li>
+                    <a href="deliveries.html"><i class="fas fa-truck"></i> Deliveries</a>
+                </li>
+                <li>
+                    <a href="employees.html"><i class="fas fa-id-card"></i> Employees</a>
+                </li>
+                <li>
+                    <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
+                </li>
+                <li>
+                    <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+                </li>
+            </ul>
+        </nav>
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-details">
+                <h4>Admin User</h4>
+                <p>Water Manager</p>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="orders-header">
+            <h2>Order Management</h2>
+            <button class="new-order-btn">
+                <i class="fas fa-plus"></i> New Order
+            </button>
+        </div>
+
+        <div class="orders-grid">
+            <!-- Order Status Cards -->
+            <div class="status-card">
+                <div class="status-icon pending">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="status-info">
+                    <h3>Pending Orders</h3>
+                    <p>25</p>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-icon processing">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <div class="status-info">
+                    <h3>Processing</h3>
+                    <p>12</p>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-icon completed">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="status-info">
+                    <h3>Completed</h3>
+                    <p>156</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Table Section -->
+        <div class="orders-table-container">
+            <div class="table-header">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search orders...">
+                </div>
+                <div class="table-filters">
+                    <select class="status-filter">
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                    <select class="date-filter">
+                        <option value="all">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+            </div>
+
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Products</th>
+                        <th>Total Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Sample Order Row -->
+                    <tr>
+                        <td>#ORD001</td>
+                        <td>John Doe</td>
+                        <td>Mineral Water (x3)</td>
+                        <td>₱450.00</td>
+                        <td><span class="status-badge pending">Pending</span></td>
+                        <td class="actions">
+                            <button class="view-btn"><i class="fas fa-eye"></i></button>
+                            <button class="edit-btn"><i class="fas fa-edit"></i></button>
+                            <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

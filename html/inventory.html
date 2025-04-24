@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory - RJane Water Refilling Station</title>
+    <link rel="stylesheet" href="../Css/inventory.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <span class="logo-icon"><i class="fas fa-water"></i></span>
+            <h1>R<span>Jane</span></h1>
+        </div>
+        <nav class="menu">
+            <ul>
+                
+                <li>
+                    <a href="index.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="Customers.html"><i class="fas fa-users"></i> Customers</a>
+                </li>
+                <li>
+                    <a href="Orders.html"><i class="fas fa-shopping-cart"></i> Orders</a>
+                </li>
+                <li class="active">
+                    <a href="inventory.html"><i class="fas fa-boxes"></i> Inventory</a>
+                </li>
+                <li>
+                    <a href="deliveries.html"><i class="fas fa-truck"></i> Deliveries</a>
+                </li>
+                <li>
+                    <a href="employees.html"><i class="fas fa-id-card"></i> Employees</a>
+                </li>
+                <li>
+                    <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
+                </li>
+                <li>
+                    <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+                </li>
+            </ul>
+        </nav>
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-details">
+                <h4>Admin User</h4>
+                <p>Water Manager</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Inventory Header -->
+        <div class="inventory-header">
+            <h2>Inventory Management</h2>
+            <div class="header-actions">
+                <button class="add-product-btn">
+                    <i class="fas fa-plus"></i> Add Product
+                </button>              
+            </div>
+        </div>
+
+        <!-- Inventory Stats - Fixed Structure -->
+        <div class="inventory-stats">
+            <div class="stat-card">
+                <div class="stat-icon products">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Total Products</h3>
+                    <p>4</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon low-stock">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Low Stock Items</h3>
+                    <p>2</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Section -->
+        <div class="inventory-section">
+            <div class="section-header">
+                <h3>Products</h3>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search products...">
+                </div>
+            </div>
+            
+            <div class="products-grid">
+                <!-- Product Card -->
+                <div class="product-card">
+                    <div class="product-header">
+                        <div class="product-name">Mineral Water</div>
+                        <span class="stock-badge in-stock">In Stock</span>
+                    </div>
+                    <div class="product-details">
+                        <div class="detail-item">
+                            <span>Price:</span>
+                            <span>₱35.00</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Available:</span>
+                            <span>500 L</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Status:</span>
+                            <span class="status active">Active</span>
+                        </div>
+                    </div>
+                    <div class="product-actions">
+                        <button class="edit-btn"><i class="fas fa-edit"></i></button>
+                        <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+                <!-- More product cards here -->
+            </div>
+        </div>      
+    </div>
+
+    <!-- Add Product Modal -->
+    <div class="modal" id="addProductModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Product</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="productForm">
+                    <div class="form-group">
+                        <label for="productName">Product Name</label>
+                        <input type="text" id="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Price</label>
+                        <input type="number" id="productPrice" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productDescription">Description</label>
+                        <textarea id="productDescription"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="productStatus">Status</label>
+                        <select id="productStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="save-btn">Save Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Modal functionality for inventory management
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get DOM elements
+        const modal = document.getElementById('addProductModal');
+        const addProductBtn = document.querySelector('.add-product-btn');
+        const closeBtn = modal.querySelector('.close-btn');
+        const cancelBtn = modal.querySelector('.cancel-btn');
+        const saveBtn = modal.querySelector('.save-btn');
+        const productForm = document.getElementById('productForm');
+        const productsGrid = document.querySelector('.products-grid');
+        const totalProductsCount = document.querySelector('.stat-card:first-child .stat-info p');
+        
+        // Counter for new products (for generating unique IDs)
+        let productCounter = 5; // Starting after the initial 4 products
+        
+        // Open modal
+        addProductBtn.addEventListener('click', function() {
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+            document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+        });
+        
+        // Close modal function
+        function closeModal() {
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                productForm.reset(); // Reset form fields
+            }, 300);
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+        
+        // Close modal when clicking close button
+        closeBtn.addEventListener('click', closeModal);
+        
+        // Close modal when clicking cancel button
+        cancelBtn.addEventListener('click', closeModal);
+        
+        // Close modal when clicking outside the modal content
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Handle form submission
+        productForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Get form values
+            const name = document.getElementById('productName').value;
+            const price = document.getElementById('productPrice').value;
+            const description = document.getElementById('productDescription').value;
+            const status = document.getElementById('productStatus').value;
+            
+            // Create a new product card
+            const newProduct = createProductCard(name, price, description, status);
+            
+            // Add the new product to the grid
+            productsGrid.insertBefore(newProduct, productsGrid.firstChild);
+            
+            // Update product count
+            const currentCount = parseInt(totalProductsCount.textContent);
+            totalProductsCount.textContent = currentCount + 1;
+            
+            // Show success message
+            showNotification('Product added successfully!', 'success');
+            
+            // Close the modal
+            closeModal();
+        });
+        
+        // Function to create a new product card
+        function createProductCard(name, price, description, status) {
+            const productCard = document.createElement('div');
+            productCard.className = 'product-card';
+            productCard.id = 'product-' + productCounter++;
+            
+            // Generate random available amount for demonstration
+            const available = Math.floor(Math.random() * 900) + 100; // 100-999 L
+            const isActive = status === 'active';
+            
+            // Add stock badge class based on available amount
+            let stockBadgeClass = 'in-stock';
+            let stockBadgeText = 'In Stock';
+            
+            if (available < 50) {
+                stockBadgeClass = 'low-stock';
+                stockBadgeText = 'Low Stock';
+            }
+            
+            productCard.innerHTML = `
+                <div class="product-header">
+                    <div class="product-name">${name}</div>
+                    <span class="stock-badge ${stockBadgeClass}">${stockBadgeText}</span>
+                </div>
+                <div class="product-details">
+                    <div class="detail-item">
+                        <span>Price:</span>
+                        <span>₱${parseFloat(price).toFixed(2)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Available:</span>
+                        <span>${available} L</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Status:</span>
+                        <span class="status ${isActive ? 'active' : 'inactive'}">${isActive ? 'Active' : 'Inactive'}</span>
+                    </div>
+                    ${description ? `
+                    <div class="detail-item">
+                        <span>Description:</span>
+                        <span class="description">${description}</span>
+                    </div>` : ''}
+                </div>
+                <div class="product-actions">
+                    <button class="edit-btn"><i class="fas fa-edit"></i></button>
+                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+            
+            // Add event listeners to the new product card buttons
+            setTimeout(() => {
+                const deleteBtn = productCard.querySelector('.delete-btn');
+                const editBtn = productCard.querySelector('.edit-btn');
+                
+                deleteBtn.addEventListener('click', function() {
+                    confirmDelete(productCard);
+                });
+                
+                editBtn.addEventListener('click', function() {
+                    editProduct(productCard);
+                });
+            }, 0);
+            
+            return productCard;
+        }
+        
+        // Function to show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-icon">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 
+                                   type === 'error' ? 'fa-exclamation-circle' : 
+                                   'fa-info-circle'}"></i>
+                </div>
+                <div class="notification-message">${message}</div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            // Hide and remove notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Function to confirm deletion of a product
+        function confirmDelete(productCard) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                // Remove product card with animation
+                productCard.classList.add('removing');
+                setTimeout(() => {
+                    productsGrid.removeChild(productCard);
+                    
+                    // Update product count
+                    const currentCount = parseInt(totalProductsCount.textContent);
+                    totalProductsCount.textContent = currentCount - 1;
+                    
+                    // Show success message
+                    showNotification('Product deleted successfully!', 'success');
+                }, 300);
+            }
+        }
+        
+        // Function to edit a product
+        function editProduct(productCard) {
+            // Get product details
+            const name = productCard.querySelector('.product-name').textContent;
+            const price = productCard.querySelector('.detail-item:nth-child(1) span:last-child').textContent.replace('₱', '');
+            const status = productCard.querySelector('.status').classList.contains('active') ? 'active' : 'inactive';
+            const description = productCard.querySelector('.description')?.textContent || '';
+            
+            // Set form values
+            document.getElementById('productName').value = name;
+            document.getElementById('productPrice').value = parseFloat(price);
+            document.getElementById('productDescription').value = description;
+            document.getElementById('productStatus').value = status;
+            
+            // Update form submit to edit product instead of adding new one
+            const originalSubmitHandler = productForm.onsubmit;
+            productForm.onsubmit = function(event) {
+                event.preventDefault();
+                
+                // Update product details
+                productCard.querySelector('.product-name').textContent = document.getElementById('productName').value;
+                productCard.querySelector('.detail-item:nth-child(1) span:last-child').textContent = '₱' + parseFloat(document.getElementById('productPrice').value).toFixed(2);
+                
+                const newStatus = document.getElementById('productStatus').value;
+                const statusElement = productCard.querySelector('.status');
+                statusElement.textContent = newStatus === 'active' ? 'Active' : 'Inactive';
+                statusElement.className = `status ${newStatus}`;
+                
+                const newDescription = document.getElementById('productDescription').value;
+                let descriptionItem = productCard.querySelector('.detail-item:nth-child(4)');
+                
+                if (newDescription) {
+                    if (descriptionItem) {
+                        descriptionItem.querySelector('.description').textContent = newDescription;
+                    } else {
+                        const newDescriptionItem = document.createElement('div');
+                        newDescriptionItem.className = 'detail-item';
+                        newDescriptionItem.innerHTML = `
+                            <span>Description:</span>
+                            <span class="description">${newDescription}</span>
+                        `;
+                        productCard.querySelector('.product-details').appendChild(newDescriptionItem);
+                    }
+                } else if (descriptionItem) {
+                    productCard.querySelector('.product-details').removeChild(descriptionItem);
+                }
+                
+                // Show success message
+                showNotification('Product updated successfully!', 'success');
+                
+                // Close the modal
+                closeModal();
+                
+                // Restore original submit handler
+                productForm.onsubmit = originalSubmitHandler;
+            };
+            
+            // Open modal
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Add event listeners to all delete buttons
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const productCard = this.closest('.product-card');
+                confirmDelete(productCard);
+            });
+        });
+        
+        // Add event listeners to all edit buttons
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const productCard = this.closest('.product-card');
+                editProduct(productCard);
+            });
+        });
+    });
+    </script>
+</body>
+</html>

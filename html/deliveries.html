@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deliveries - RJane Water Refilling Station</title>
+    <link rel="stylesheet" href="../Css/deliveries.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="logo">
+            <span class="logo-icon"><i class="fas fa-water"></i></span>
+            <h1>R<span>Jane</span></h1>
+        </div>
+        <nav class="menu">
+            <ul>
+                <li>
+                    <a href="index.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="Customers.html"><i class="fas fa-users"></i> Customers</a>
+                </li>
+                <li>
+                    <a href="Orders.html"><i class="fas fa-shopping-cart"></i> Orders</a>
+                </li>
+                <li>
+                    <a href="inventory.html"><i class="fas fa-boxes"></i> Inventory</a>
+                </li>
+                <li class="active">
+                    <a href="deliveries.html"><i class="fas fa-truck"></i> Deliveries</a>
+                </li>
+                <li>
+                    <a href="employees.html"><i class="fas fa-id-card"></i> Employees</a>
+                </li>
+                <li>
+                    <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
+                </li>
+                <li>
+                    <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+                </li>
+            </ul>
+        </nav>
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-details">
+                <h4>Admin User</h4>
+                <p>Water Manager</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Header Section -->
+        <div class="deliveries-header">
+            <h2>Delivery Management</h2>
+            <button class="assign-delivery-btn">
+                <i class="fas fa-plus"></i> Assign Delivery
+            </button>
+        </div>
+
+        <!-- Delivery Statistics -->
+        <div class="delivery-stats">
+            <div class="stat-card">
+                <div class="stat-icon pending">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Pending</h3>
+                    <p>12</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon in-transit">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>In Transit</h3>
+                    <p>8</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon delivered">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Delivered Today</h3>
+                    <p>15</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon canceled">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Cancelled</h3>
+                    <p>2</p>
+                </div>
+            </div>
+        </div>
+
+     
+
+        <!-- Deliveries Table -->
+        <div class="deliveries-table-container">
+            <div class="table-header">
+                <div class="search-filter">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search deliveries...">
+                    </div>
+                    <div class="filters">
+                        <select class="status-filter">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="assigned">Assigned</option>
+                            <option value="in-transit">In Transit</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="canceled">Cancelled</option>
+                        </select>
+                        <select class="date-filter">
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="all">All Time</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="deliveries-table">
+                    <thead>
+                        <tr>
+                            <th>Delivery ID</th>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Address</th>
+                            <th>Driver</th>
+                            <th>Status</th>
+                            <th>Scheduled For</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Sample delivery rows -->
+                        <tr>
+                            <td>#DEL001</td>
+                            <td>#ORD237</td>
+                            <td>John Doe</td>
+                            <td>123 Main St, Manila</td>
+                            <td>Juan Dela Cruz</td>
+                            <td><span class="status-badge in-transit">In Transit</span></td>
+                            <td>Today, 2:30 PM</td>
+                            <td class="action-buttons">
+                                <button class="view-btn" title="View Details"><i class="fas fa-eye"></i></button>
+                                <button class="update-btn" title="Update Status"><i class="fas fa-sync-alt"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#DEL002</td>
+                            <td>#ORD238</td>
+                            <td>Maria Santos</td>
+                            <td>456 Oak Ave, Quezon City</td>
+                            <td>Pedro Santos</td>
+                            <td><span class="status-badge pending">Pending</span></td>
+                            <td>Today, 4:00 PM</td>
+                            <td class="action-buttons">
+                                <button class="view-btn" title="View Details"><i class="fas fa-eye"></i></button>
+                                <button class="update-btn" title="Update Status"><i class="fas fa-sync-alt"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#DEL003</td>
+                            <td>#ORD235</td>
+                            <td>Robert Lee</td>
+                            <td>789 Pine St, Makati</td>
+                            <td>Juan Dela Cruz</td>
+                            <td><span class="status-badge delivered">Delivered</span></td>
+                            <td>Today, 10:15 AM</td>
+                            <td class="action-buttons">
+                                <button class="view-btn" title="View Details"><i class="fas fa-eye"></i></button>
+                            </td>
+                        </tr>
+                        <!-- Add more delivery rows as needed -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assign Delivery Modal -->
+    <div class="modal" id="assignDeliveryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Assign Delivery</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="assignDeliveryForm">
+                    <div class="form-group">
+                        <label for="orderSelect">Select Order</label>
+                        <select id="orderSelect" required>
+                            <option value="">Choose an order</option>
+                            <option value="1">#ORD241 - John Doe (3 items)</option>
+                            <option value="2">#ORD242 - Maria Santos (1 item)</option>
+                            <option value="3">#ORD243 - Robert Lee (5 items)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="driverSelect">Assign Driver</label>
+                        <select id="driverSelect" required>
+                            <option value="">Select driver</option>
+                            <option value="1">Juan Dela Cruz</option>
+                            <option value="2">Pedro Santos</option>
+                            <option value="3">Maria Garcia</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="deliveryDate">Delivery Date</label>
+                            <input type="date" id="deliveryDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="deliveryTime">Delivery Time</label>
+                            <input type="time" id="deliveryTime" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="deliveryNote">Delivery Notes (Optional)</label>
+                        <textarea id="deliveryNote" placeholder="Special instructions for the driver"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="submit-btn">Assign Delivery</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delivery Detail Modal -->
+    <div class="modal" id="deliveryDetailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Delivery Details</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-section">
+                    <h4>Delivery Information</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="label">Delivery ID:</span>
+                            <span class="value">#DEL001</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Status:</span>
+                            <span class="value status in-transit">In Transit</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Scheduled Time:</span>
+                            <span class="value">May 15, 2023 2:30 PM</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Estimated Arrival:</span>
+                            <span class="value">In 20 minutes</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h4>Order Information</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="label">Order ID:</span>
+                            <span class="value">#ORD237</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Order Date:</span>
+                            <span class="value">May 15, 2023</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Items:</span>
+                            <span class="value">3</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Total:</span>
+                            <span class="value">₱435.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="order-items">
+                        <div class="order-item">
+                            <div>Mineral Water (Round Container)</div>
+                            <div>x2</div>
+                        </div>
+                        <div class="order-item">
+                            <div>Alkaline Water (Slim Container)</div>
+                            <div>x1</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h4>Customer Information</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="label">Name:</span>
+                            <span class="value">John Doe</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Contact:</span>
+                            <span class="value">+63 912 345 6789</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Address:</span>
+                            <span class="value">123 Main St, Manila</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h4>Delivery Staff</h4>
+                    <div class="delivery-staff">
+                        <div class="staff-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="staff-details">
+                            <h5>Juan Dela Cruz</h5>
+                            <p>Driver ID: DRV001</p>
+                            <p>Contact: +63 917 123 4567</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-actions">
+                    <button class="status-btn pending">Mark as Pending</button>
+                    <button class="status-btn in-transit">Mark as In Transit</button>
+                    <button class="status-btn delivered">Mark as Delivered</button>
+                    <button class="status-btn canceled">Mark as Cancelled</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript for modal functionality -->
+    <script>
+        // DOM Elements
+        const assignDeliveryBtn = document.querySelector('.assign-delivery-btn');
+        const assignDeliveryModal = document.getElementById('assignDeliveryModal');
+        const deliveryDetailModal = document.getElementById('deliveryDetailModal');
+        const closeButtons = document.querySelectorAll('.close-btn');
+        const cancelButtons = document.querySelectorAll('.cancel-btn');
+        const viewButtons = document.querySelectorAll('.view-btn');
+        const updateButtons = document.querySelectorAll('.update-btn');
+        
+        // Open Assign Delivery Modal
+        assignDeliveryBtn.addEventListener('click', function() {
+            assignDeliveryModal.classList.add('show');
+        });
+        
+        // Open Delivery Detail Modal
+        viewButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                deliveryDetailModal.classList.add('show');
+            });
+        });
+        
+        // Update Status Buttons
+        updateButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                deliveryDetailModal.classList.add('show');
+            });
+        });
+        
+        // Close Modals
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                assignDeliveryModal.classList.remove('show');
+                deliveryDetailModal.classList.remove('show');
+            });
+        });
+        
+        cancelButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                assignDeliveryModal.classList.remove('show');
+                deliveryDetailModal.classList.remove('show');
+            });
+        });
+        
+        // Close on outside click
+        window.addEventListener('click', function(e) {
+            if (e.target === assignDeliveryModal) {
+                assignDeliveryModal.classList.remove('show');
+            }
+            if (e.target === deliveryDetailModal) {
+                deliveryDetailModal.classList.remove('show');
+            }
+        });
+        
+        // Form submission
+        const assignDeliveryForm = document.getElementById('assignDeliveryForm');
+        assignDeliveryForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const orderSelect = document.getElementById('orderSelect');
+            const driverSelect = document.getElementById('driverSelect');
+            const deliveryDate = document.getElementById('deliveryDate');
+            const deliveryTime = document.getElementById('deliveryTime');
+            
+            // Create new delivery and add to table
+            const orderText = orderSelect.options[orderSelect.selectedIndex].text;
+            const orderId = orderText.split(' - ')[0];
+            const customerName = orderText.split(' - ')[1].split(' (')[0];
+            const driverName = driverSelect.options[driverSelect.selectedIndex].text;
+            
+            // Create new delivery ID
+            const deliveryId = '#DEL' + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            
+            // Format delivery time
+            const deliveryDateTime = new Date(`${deliveryDate.value}T${deliveryTime.value}`);
+            const formattedTime = deliveryDateTime.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+            
+            // Add new row to table
+            const tableBody = document.querySelector('.deliveries-table tbody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${deliveryId}</td>
+                <td>${orderId}</td>
+                <td>${customerName}</td>
+                <td>Customer address here</td>
+                <td>${driverName}</td>
+                <td><span class="status-badge pending">Pending</span></td>
+                <td>${formattedTime}</td>
+                <td class="action-buttons">
+                    <button class="view-btn" title="View Details"><i class="fas fa-eye"></i></button>
+                    <button class="update-btn" title="Update Status"><i class="fas fa-sync-alt"></i></button>
+                </td>
+            `;
+            
+            tableBody.prepend(newRow);
+            
+            // Update pending count
+            const pendingCount = document.querySelector('.stat-card:first-child .stat-info p');
+            pendingCount.textContent = parseInt(pendingCount.textContent) + 1;
+            
+            // Close modal and reset form
+            assignDeliveryModal.classList.remove('show');
+            assignDeliveryForm.reset();
+            
+            // Add event listeners to new buttons
+            const newViewBtn = newRow.querySelector('.view-btn');
+            const newUpdateBtn = newRow.querySelector('.update-btn');
+            
+            newViewBtn.addEventListener('click', function() {
+                deliveryDetailModal.classList.add('show');
+            });
+            
+            newUpdateBtn.addEventListener('click', function() {
+                deliveryDetailModal.classList.add('show');
+            });
+            
+            // Show success message
+            showNotification('Delivery assigned successfully!');
+        });
+        
+        // Notification function
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div class="notification-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="notification-message">${message}</div>
+                <button class="notification-close"><i class="fas fa-times"></i></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                notification.classList.add('fade-out');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 5000);
+            
+            // Close button
+            notification.querySelector('.notification-close').addEventListener('click', () => {
+                notification.classList.add('fade-out');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            });
+        }
+    </script>
+</body>
+</html>
