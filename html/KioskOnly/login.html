@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - RJane Water</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../../Css/login.css"> 
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Back to home link -->
+        <a href="MainTitle.html" class="back-home">
+            <i class="fas fa-home"></i> Back to Home
+        </a>
+        
+        <!-- Bubbles -->
+        <div class="bubble"><span class="dot"></span></div>
+        <div class="bubble"><span class="dot"></span></div>
+        <div class="bubble"><span class="dot"></span></div>
+        <div class="bubble"><span class="dot"></span></div>
+        <div class="bubble"><span class="dot"></span></div>
+        <div class="bubble"><span class="dot"></span></div>
+        <div class="bubble"><span class="dot"></span></div>
+        
+        <!-- Login Container -->
+        <div class="login-container">
+            <div class="login-header">
+                <div class="water-icon">
+                    <i class="fas fa-water"></i>
+                </div>
+                <h2>Welcome Back</h2>
+                <p>Sign in to your RJane Water account</p>
+            </div>
+            
+            <form id="login-form" action="#" method="post">
+                <div class="form-group">
+                    <label for="username">Username or Email</label>
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                
+                <div class="remember-forgot">
+                    <div class="remember">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Remember me</label>
+                    </div>
+                    <div class="forgot">
+                        <a href="#">Forgot password?</a>
+                    </div>
+                </div>
+                
+                <button type="submit" class="login-btn">Login</button>
+                
+                <div class="register-link">
+                    Don't have an account? <a href="register.html">Sign up</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // For demo purposes - replace with actual authentication
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple validation
+            if(username && password) {
+                // Redirect based on credentials - this is for demo
+                if(username === 'admin' && password === 'admin123') {
+                    window.location.href = 'admin.html';
+                } else if(username === 'driver' && password === 'pass123') {
+                    window.location.href = 'KioskOnly/Drivers/Driver-dashboard.html';
+                } else if(username === 'cashier' && password === 'pass123') {
+                    window.location.href = 'cashier-dashboard.html';
+                } else {
+                    alert('Invalid username or password');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

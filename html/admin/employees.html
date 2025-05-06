@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employees - RJane Water Refilling Station</title>
-    <link rel="stylesheet" href="../Css/employees.css">
+    <link rel="stylesheet" href="../../Css/employees.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <!-- Sidebar Navigation -->
     <div class="sidebar">
@@ -525,7 +528,7 @@
                             <span class="status-badge active">Active</span>
                         </div>
                     </div>
-                    
+
                     <div class="profile-section">
                         <h4>Personal Information</h4>
                         <div class="detail-grid">
@@ -547,7 +550,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="profile-section">
                         <h4>Employment Details</h4>
                         <div class="detail-grid">
@@ -569,7 +572,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="profile-section">
                         <h4>Driver Information</h4>
                         <div class="detail-grid">
@@ -587,7 +590,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="profile-section">
                         <h4>Emergency Contact</h4>
                         <div class="detail-grid">
@@ -630,36 +633,36 @@
         const tabContents = document.querySelectorAll('.tab-content');
         const positionSelect = document.getElementById('position');
         const driverDetails = document.getElementById('driverDetails');
-        
+
         // Open Add Employee Modal
-        addEmployeeBtn.addEventListener('click', function() {
+        addEmployeeBtn.addEventListener('click', function () {
             addEmployeeModal.classList.add('show');
         });
-        
+
         // Open View Employee Modal
         viewButtons.forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 viewEmployeeModal.classList.add('show');
             });
         });
-        
+
         // Close Modals
         closeButtons.forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 addEmployeeModal.classList.remove('show');
                 viewEmployeeModal.classList.remove('show');
             });
         });
-        
+
         cancelButtons.forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 addEmployeeModal.classList.remove('show');
                 viewEmployeeModal.classList.remove('show');
             });
         });
-        
+
         // Close on outside click
-        window.addEventListener('click', function(e) {
+        window.addEventListener('click', function (e) {
             if (e.target === addEmployeeModal) {
                 addEmployeeModal.classList.remove('show');
             }
@@ -667,59 +670,59 @@
                 viewEmployeeModal.classList.remove('show');
             }
         });
-        
+
         // Tab functionality
         tabButtons.forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 // Remove active class from all buttons
                 tabButtons.forEach(btn => btn.classList.remove('active'));
-                
+
                 // Add active class to clicked button
                 this.classList.add('active');
-                
+
                 // Get the tab to show
                 const tabId = this.getAttribute('data-tab');
-                
+
                 // Hide all tab contents
                 tabContents.forEach(content => content.classList.remove('active'));
-                
+
                 // Show the selected tab content
                 document.getElementById(tabId).classList.add('active');
             });
         });
-        
+
         // Show/hide driver details based on position selection
-        positionSelect.addEventListener('change', function() {
+        positionSelect.addEventListener('change', function () {
             if (this.value === 'driver' || this.value === 'senior_driver') {
                 driverDetails.style.display = 'block';
             } else {
                 driverDetails.style.display = 'none';
             }
         });
-        
+
         // Delete employee confirmation
         deleteButtons.forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 if (confirm('Are you sure you want to remove this employee?')) {
                     // Get the employee card and remove it
                     const employeeCard = this.closest('.employee-card');
                     employeeCard.remove();
-                    
+
                     // Update employee count
                     const totalEmployeesCount = document.querySelector('.stat-card:first-child .stat-info p');
                     totalEmployeesCount.textContent = parseInt(totalEmployeesCount.textContent) - 1;
-                    
+
                     // Show notification
                     showNotification('Employee removed successfully');
                 }
             });
         });
-        
+
         // Form submission
         const employeeForm = document.getElementById('employeeForm');
-        employeeForm.addEventListener('submit', function(e) {
+        employeeForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             // Get form values
             const firstName = document.getElementById('firstName').value;
             const lastName = document.getElementById('lastName').value;
@@ -728,7 +731,7 @@
             const contactNumber = document.getElementById('contactNumber').value;
             const email = document.getElementById('email').value;
             const status = document.getElementById('employeeStatus').value;
-            
+
             // Create new employee card
             const newEmployee = document.createElement('div');
             newEmployee.className = 'employee-card';
@@ -757,50 +760,50 @@
                     <button class="delete-btn" title="Remove Employee"><i class="fas fa-trash"></i></button>
                 </div>
             `;
-            
+
             // Add the new employee card to the grid
             document.querySelector('.employee-grid').prepend(newEmployee);
-            
+
             // Update the employee count
             const totalEmployeesCount = document.querySelector('.stat-card:first-child .stat-info p');
             totalEmployeesCount.textContent = parseInt(totalEmployeesCount.textContent) + 1;
-            
+
             // Add event listeners to new buttons
             const newViewBtn = newEmployee.querySelector('.view-btn');
             const newEditBtn = newEmployee.querySelector('.edit-btn');
             const newDeleteBtn = newEmployee.querySelector('.delete-btn');
-            
-            newViewBtn.addEventListener('click', function() {
+
+            newViewBtn.addEventListener('click', function () {
                 viewEmployeeModal.classList.add('show');
             });
-            
-            newEditBtn.addEventListener('click', function() {
+
+            newEditBtn.addEventListener('click', function () {
                 // Edit functionality would go here
             });
-            
-            newDeleteBtn.addEventListener('click', function() {
+
+            newDeleteBtn.addEventListener('click', function () {
                 if (confirm('Are you sure you want to remove this employee?')) {
                     newEmployee.remove();
-                    
+
                     // Update employee count
                     totalEmployeesCount.textContent = parseInt(totalEmployeesCount.textContent) - 1;
-                    
+
                     // Show notification
                     showNotification('Employee removed successfully');
                 }
             });
-            
+
             // Close modal and reset form
             addEmployeeModal.classList.remove('show');
             employeeForm.reset();
-            
+
             // Show success notification
             showNotification('Employee added successfully');
         });
-        
+
         // Set date picker to today's date
         document.getElementById('attendanceDate').valueAsDate = new Date();
-        
+
         // Function to show notification
         function showNotification(message) {
             const notification = document.createElement('div');
@@ -812,9 +815,9 @@
                 <div class="notification-message">${message}</div>
                 <button class="notification-close"><i class="fas fa-times"></i></button>
             `;
-            
+
             document.body.appendChild(notification);
-            
+
             // Auto remove after 5 seconds
             setTimeout(() => {
                 notification.classList.add('fade-out');
@@ -822,7 +825,7 @@
                     document.body.removeChild(notification);
                 }, 300);
             }, 5000);
-            
+
             // Close button
             notification.querySelector('.notification-close').addEventListener('click', () => {
                 notification.classList.add('fade-out');
@@ -833,4 +836,5 @@
         }
     </script>
 </body>
+
 </html>

@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deliveries - RJane Water Refilling Station</title>
-    <link rel="stylesheet" href="../Css/deliveries.css">
+    <link rel="stylesheet" href="../../Css/deliveries.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <!-- Sidebar Navigation -->
     <div class="sidebar">
@@ -106,7 +109,7 @@
             </div>
         </div>
 
-     
+
 
         <!-- Deliveries Table -->
         <div class="deliveries-table-container">
@@ -161,7 +164,8 @@
                             <td>Today, 2:30 PM</td>
                             <td class="action-buttons">
                                 <button class="view-btn" title="View Details"><i class="fas fa-eye"></i></button>
-                                <button class="update-btn" title="Update Status"><i class="fas fa-sync-alt"></i></button>
+                                <button class="update-btn" title="Update Status"><i
+                                        class="fas fa-sync-alt"></i></button>
                             </td>
                         </tr>
                         <tr>
@@ -174,7 +178,8 @@
                             <td>Today, 4:00 PM</td>
                             <td class="action-buttons">
                                 <button class="view-btn" title="View Details"><i class="fas fa-eye"></i></button>
-                                <button class="update-btn" title="Update Status"><i class="fas fa-sync-alt"></i></button>
+                                <button class="update-btn" title="Update Status"><i
+                                        class="fas fa-sync-alt"></i></button>
                             </td>
                         </tr>
                         <tr>
@@ -214,7 +219,7 @@
                             <option value="3">#ORD243 - Robert Lee (5 items)</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="driverSelect">Assign Driver</label>
                         <select id="driverSelect" required>
@@ -224,7 +229,7 @@
                             <option value="3">Maria Garcia</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="deliveryDate">Delivery Date</label>
@@ -235,12 +240,12 @@
                             <input type="time" id="deliveryTime" required>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="deliveryNote">Delivery Notes (Optional)</label>
                         <textarea id="deliveryNote" placeholder="Special instructions for the driver"></textarea>
                     </div>
-                    
+
                     <div class="form-actions">
                         <button type="button" class="cancel-btn">Cancel</button>
                         <button type="submit" class="submit-btn">Assign Delivery</button>
@@ -279,7 +284,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="detail-section">
                     <h4>Order Information</h4>
                     <div class="detail-grid">
@@ -300,7 +305,7 @@
                             <span class="value">₱435.00</span>
                         </div>
                     </div>
-                    
+
                     <div class="order-items">
                         <div class="order-item">
                             <div>Mineral Water (Round Container)</div>
@@ -312,7 +317,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="detail-section">
                     <h4>Customer Information</h4>
                     <div class="detail-grid">
@@ -330,7 +335,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="detail-section">
                     <h4>Delivery Staff</h4>
                     <div class="delivery-staff">
@@ -344,7 +349,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="detail-actions">
                     <button class="status-btn pending">Mark as Pending</button>
                     <button class="status-btn in-transit">Mark as In Transit</button>
@@ -354,7 +359,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- JavaScript for modal functionality -->
     <script>
         // DOM Elements
@@ -365,43 +370,43 @@
         const cancelButtons = document.querySelectorAll('.cancel-btn');
         const viewButtons = document.querySelectorAll('.view-btn');
         const updateButtons = document.querySelectorAll('.update-btn');
-        
+
         // Open Assign Delivery Modal
-        assignDeliveryBtn.addEventListener('click', function() {
+        assignDeliveryBtn.addEventListener('click', function () {
             assignDeliveryModal.classList.add('show');
         });
-        
+
         // Open Delivery Detail Modal
         viewButtons.forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 deliveryDetailModal.classList.add('show');
             });
         });
-        
+
         // Update Status Buttons
         updateButtons.forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 deliveryDetailModal.classList.add('show');
             });
         });
-        
+
         // Close Modals
         closeButtons.forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 assignDeliveryModal.classList.remove('show');
                 deliveryDetailModal.classList.remove('show');
             });
         });
-        
+
         cancelButtons.forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 assignDeliveryModal.classList.remove('show');
                 deliveryDetailModal.classList.remove('show');
             });
         });
-        
+
         // Close on outside click
-        window.addEventListener('click', function(e) {
+        window.addEventListener('click', function (e) {
             if (e.target === assignDeliveryModal) {
                 assignDeliveryModal.classList.remove('show');
             }
@@ -409,27 +414,27 @@
                 deliveryDetailModal.classList.remove('show');
             }
         });
-        
+
         // Form submission
         const assignDeliveryForm = document.getElementById('assignDeliveryForm');
-        assignDeliveryForm.addEventListener('submit', function(e) {
+        assignDeliveryForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             // Get form data
             const orderSelect = document.getElementById('orderSelect');
             const driverSelect = document.getElementById('driverSelect');
             const deliveryDate = document.getElementById('deliveryDate');
             const deliveryTime = document.getElementById('deliveryTime');
-            
+
             // Create new delivery and add to table
             const orderText = orderSelect.options[orderSelect.selectedIndex].text;
             const orderId = orderText.split(' - ')[0];
             const customerName = orderText.split(' - ')[1].split(' (')[0];
             const driverName = driverSelect.options[driverSelect.selectedIndex].text;
-            
+
             // Create new delivery ID
             const deliveryId = '#DEL' + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-            
+
             // Format delivery time
             const deliveryDateTime = new Date(`${deliveryDate.value}T${deliveryTime.value}`);
             const formattedTime = deliveryDateTime.toLocaleString('en-US', {
@@ -439,7 +444,7 @@
                 minute: '2-digit',
                 hour12: true
             });
-            
+
             // Add new row to table
             const tableBody = document.querySelector('.deliveries-table tbody');
             const newRow = document.createElement('tr');
@@ -456,33 +461,33 @@
                     <button class="update-btn" title="Update Status"><i class="fas fa-sync-alt"></i></button>
                 </td>
             `;
-            
+
             tableBody.prepend(newRow);
-            
+
             // Update pending count
             const pendingCount = document.querySelector('.stat-card:first-child .stat-info p');
             pendingCount.textContent = parseInt(pendingCount.textContent) + 1;
-            
+
             // Close modal and reset form
             assignDeliveryModal.classList.remove('show');
             assignDeliveryForm.reset();
-            
+
             // Add event listeners to new buttons
             const newViewBtn = newRow.querySelector('.view-btn');
             const newUpdateBtn = newRow.querySelector('.update-btn');
-            
-            newViewBtn.addEventListener('click', function() {
+
+            newViewBtn.addEventListener('click', function () {
                 deliveryDetailModal.classList.add('show');
             });
-            
-            newUpdateBtn.addEventListener('click', function() {
+
+            newUpdateBtn.addEventListener('click', function () {
                 deliveryDetailModal.classList.add('show');
             });
-            
+
             // Show success message
             showNotification('Delivery assigned successfully!');
         });
-        
+
         // Notification function
         function showNotification(message) {
             const notification = document.createElement('div');
@@ -494,9 +499,9 @@
                 <div class="notification-message">${message}</div>
                 <button class="notification-close"><i class="fas fa-times"></i></button>
             `;
-            
+
             document.body.appendChild(notification);
-            
+
             // Auto remove after 5 seconds
             setTimeout(() => {
                 notification.classList.add('fade-out');
@@ -504,7 +509,7 @@
                     document.body.removeChild(notification);
                 }, 300);
             }, 5000);
-            
+
             // Close button
             notification.querySelector('.notification-close').addEventListener('click', () => {
                 notification.classList.add('fade-out');
@@ -515,4 +520,5 @@
         }
     </script>
 </body>
+
 </html>
