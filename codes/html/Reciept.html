@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Receipt - RJane Water Kiosk</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../../Css/code_order.css">
+</head>
+<body>
+    <div class="receipt-container">
+        <div class="receipt-header">
+            <h3>RJANE WATER STATION</h3>
+            <p id="order-number">Order #: RJ123456</p>
+            <p id="order-date">Date: May 7, 2025</p>
+        </div>
+        
+        <div class="receipt-customer-details">
+            <p><strong>Customer:</strong> <span id="customer-name">John Doe</span></p>
+            <p><strong>Username:</strong> <span id="username">user123</span></p>
+            <p><strong>Phone:</strong> <span id="customer-phone">09123456789</span></p>
+            <p><strong>Payment Method:</strong> <span id="payment-method">Cash</span></p>
+            <p><strong>Delivery:</strong> <span id="delivery-method">Pick-up</span></p>
+            <p id="address-row"><strong>Address:</strong> <span id="customer-address">N/A</span></p>
+        </div>
+        
+        <h4>Items:</h4>
+        <table class="receipt-items">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody id="receipt-items">
+                <!-- Sample items - these will be replaced by JavaScript -->
+                <tr>
+                    <td>Mineral Water</td>
+                    <td>2</td>
+                    <td>₱35.00</td>
+                    <td>₱70.00</td>
+                </tr>
+                <tr>
+                    <td>Purified Water Bottle</td>
+                    <td>1</td>
+                    <td>₱12.00</td>
+                    <td>₱12.00</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="receipt-total">
+            <p>TOTAL: <span id="receipt-total">₱82.00</span></p>
+        </div>
+        
+        <div class="receipt-footer">
+            <p>Thank you for your purchase!</p>
+        </div>
+        
+        <button id="print-receipt" onclick="window.print()">
+            <i class="fas fa-print"></i> Print Receipt
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Try to get order data from URL parameters
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const orderDataParam = params.get('orderData');
+                
+                if (orderDataParam) {
+                    const orderData = JSON.parse(decodeURIComponent(orderDataParam));
+                    
+                    // Populate receipt with order data
+                    document.getElementById('order-number').textContent = 'Order #: ' + (orderData.orderNumber || 'RJ123456');
+                    document.getElementById('order-date').textContent = 'Date: ' + (orderData.orderDate || new Date().toLocaleString());
+                    
+                    // Set customer name with proper fallback
+                    document.getElementById('customer-name').textContent = orderData.customerName || 'N/A';
+                    
+                    // Set username if available
+                    document.getElementById('username').textContent = orderData.username || 'N/A';
+                    
+                    // Set phone number
+                    document.getElementById('customer-phone').textContent = orderData.customerPhone || 'N/A';
+                    
+                    // Set payment method
+                    document.getElementById('payment-method').textContent = getPaymentMethodText(orderData.paymentMethod) || 'N/A';
+                    
+                    // Set delivery method
+                    document.getElementById('delivery-method').textContent = 
+                        orderData.deliveryMethod === 'delivery' ? 'Home Delivery' : 'Pick-up';
+                    
+                    // Show address for delivery, use N/A as default if blank
+                    if (orderData.deliveryMethod === 'delivery') {
+                        document.getElementById('address-row').style.display = 'block';
+                        document.getElementById('customer-address').textContent = 
+                            orderData.customerAddress && orderData.customerAddress.trim() ? orderData.customerAddress : 'N/A';
+                    } else {
+                        // Still display address row but show N/A for pickup
+                        document.getElementById('address-row').style.display = 'block';
+                        document.getElementById('customer-address').textContent = 'N/A';
+                    }
+                    
+                    // Populate items table
+                    const itemsContainer = document.getElementById('receipt-items');
+                    itemsContainer.innerHTML = ''; // Clear sample items
+                    
+                    let totalAmount = 0;
+                    
+                    if (orderData.items && orderData.items.length > 0) {
+                        orderData.items.forEach(item => {
+                            const itemTotal = item.price * item.quantity;
+                            totalAmount += itemTotal;
+                            
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${item.name}</td>
+                                <td>${item.quantity}</td>
+                                <td>₱${item.price.toFixed(2)}</td>
+                                <td>₱${itemTotal.toFixed(2)}</td>
+                            `;
+                            itemsContainer.appendChild(row);
+                        });
+                    } else {
+                        // If no items, show a message
+                        const row = document.createElement('tr');
+                        row.innerHTML = '<td colspan="4" style="text-align: center;">No items in order</td>';
+                        itemsContainer.appendChild(row);
+                    }
+                    
+                    // Set total
+                    document.getElementById('receipt-total').textContent = `₱${totalAmount.toFixed(2)}`;
+                } else {
+                    // No order data found, leave the sample data
+                    console.log('No order data found in URL parameters');
+                }
+            } catch (error) {
+                console.error('Error parsing order data:', error);
+            }
+        });
+        
+        // Helper function to format payment method text
+        function getPaymentMethodText(method) {
+            if (!method) return 'N/A';
+            
+            switch (method.toLowerCase()) {
+                case 'cash':
+                    return 'Cash';
+                case 'gcash':
+                    return 'GCash';
+                default:
+                    return method; // Return as-is if not recognized
+            }
+        }
+    </script>
+</body>
+</html>

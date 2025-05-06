@@ -33,7 +33,8 @@
                 <p>Sign in to your RJane Water account</p>
             </div>
             
-            <form id="login-form" action="#" method="post">
+            <!-- Updated form action to point to the login.php file -->
+            <form id="login-form" action="../Controllers/login.php" method="post">
                 <div class="form-group">
                     <label for="username">Username or Email</label>
                     <i class="fas fa-user"></i>
@@ -65,27 +66,5 @@
         </div>
     </div>
 
-    <script>
-        document.getElementById('login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            // For demo purposes - replace with actual authentication
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            // Simple validation
-            if(username && password) {
-                // Redirect based on credentials - this is for demo
-                if(username === 'admin' && password === 'admin123') {
-                    window.location.href = 'admin.html';
-                } else if(username === 'driver' && password === 'pass123') {
-                    window.location.href = 'KioskOnly/Drivers/Driver-dashboard.html';
-                } else if(username === 'cashier' && password === 'pass123') {
-                    window.location.href = 'cashier-dashboard.html';
-                } else {
-                    alert('Invalid username or password');
-                }
-            }
-        });
-    </script>
 </body>
 </html>
