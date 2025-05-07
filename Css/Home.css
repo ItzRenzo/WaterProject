@@ -1,0 +1,255 @@
+:root {
+    --primary: #0088cc;
+    --primary-dark: #006699;
+    --secondary: #1ec8ff;
+    --light: #f9feff;
+    --dark: #263238;
+    --success: #2ecc71;
+    --warning: #f39c12;
+    --danger: #e74c3c;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--light);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: linear-gradient(135deg, rgba(29, 162, 216, 0.05) 0%, rgba(46, 204, 113, 0.05) 100%);
+}
+
+.kiosk-container {
+    width: 100%;
+    max-width: 900px;
+    height: 100%;
+    max-height: 700px;
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.kiosk-header {
+    background: var(--primary);
+    padding: 24px;
+    position: relative;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.kiosk-header h1 {
+    color: white;
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.kiosk-header p {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 16px;
+}
+
+.kiosk-logo {
+    position: absolute;
+    left: 24px;
+    top: 24px;
+    height: 60px;
+    width: 60px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.kiosk-logo i {
+    color: var(--primary);
+    font-size: 36px;
+}
+
+.kiosk-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(216, 241, 250, 0.46) 0%, rgba(216, 241, 250, 0) 40%),
+        radial-gradient(circle at 90% 80%, rgba(231, 245, 255, 0.56) 0%, rgba(231, 245, 255, 0) 40%);
+}
+
+.water-animation {
+    position: absolute;
+    top: -60px;
+    left: -60px;
+    right: -60px;
+    height: 120px;
+    background: linear-gradient(transparent, rgba(29, 162, 216, 0.2), transparent);
+    animation: water-flow 8s linear infinite;
+    transform: rotate(-45deg);
+    z-index: -1;
+}
+
+@keyframes water-flow {
+    0% {
+        transform: translateY(-100px) rotate(-45deg);
+    }
+    100% {
+        transform: translateY(1000px) rotate(-45deg);
+    }
+}
+
+.kiosk-options {
+    display: grid;
+    gap: 24px;
+    width: 50%;
+    max-width: 800px;
+}
+
+.kiosk-btn {
+    position: relative;
+    border: none;
+    background: white;
+    border-radius: 16px;
+    padding: 36px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.kiosk-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.kiosk-btn:hover::before {
+    opacity: 1;
+}
+
+.kiosk-btn i {
+    font-size: 48px;
+    color: var(--primary);
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 2;
+    transition: color 0.3s ease;
+}
+
+.kiosk-btn span {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--dark);
+    position: relative;
+    z-index: 2;
+    transition: color 0.3s ease;
+}
+
+a.kiosk-btn {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+}
+
+a.kiosk-btn:hover i, 
+a.kiosk-btn:hover span {
+    color: white;
+}
+
+a.kiosk-btn:active {
+    transform: scale(0.97);
+}
+
+.kiosk-footer {
+    padding: 16px;
+    background: var(--dark);
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.kiosk-footer p {
+    margin: 0 10px;
+}
+
+.time-display {
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+}
+
+/* Special styling for each button */
+#order-water {
+    background-color: rgba(25, 152, 255, 0.05);
+}
+
+#check-status {
+    background-color: rgba(46, 204, 113, 0.05);
+}
+
+#contact-us {
+    background-color: rgba(243, 156, 18, 0.05);
+}
+
+#admin-login {
+    background-color: rgba(155, 89, 182, 0.05);
+}
+
+#order-water i { color: var(--primary); }
+#check-status i { color: var(--success); }
+#contact-us i { color: var(--warning); }
+#admin-login i { color: #9b59b6; }
+
+/* For touch screens */
+@media (pointer: coarse) {
+    .kiosk-btn {
+        min-height: 220px;
+    }
+    
+    .kiosk-options {
+        gap: 30px;
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .kiosk-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .kiosk-btn {
+        height: 140px;
+    }
+}

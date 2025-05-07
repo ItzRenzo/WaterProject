@@ -1,0 +1,339 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+}
+
+.wrapper {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(180deg, #04fafd, 5%, #119dff, 50%, #030423);
+    position: relative;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Registration form */
+.register-container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    width: 90%;
+    max-width: 550px;
+    padding: 40px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 10;
+    margin: 40px 0;
+}
+
+.register-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.register-header .water-icon {
+    font-size: 50px;
+    color: white;
+    margin-bottom: 20px;
+    animation: float-icon 3s ease-in-out infinite;
+}
+
+.register-header h2 {
+    color: white;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.register-header p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 16px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.form-group.full-width {
+    grid-column: span 2;
+}
+
+.form-group label {
+    display: block;
+    color: white;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    color: white;
+   
+    transition: all 0.3s;
+}
+
+.form-group input:focus, .form-group select:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.5);
+    outline: none;
+}
+
+.form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.form-group select {
+    appearance: none;
+    padding-right: 30px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+}
+
+.form-group option {
+    background-color: #119dff;
+    color: white;
+}
+
+.form-group i {
+    position: absolute;
+    left: 15px;
+    top: 42px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 18px;
+}
+
+.terms {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    grid-column: span 2;
+}
+
+.terms input {
+    margin-right: 10px;
+    margin-top: 5px;
+    accent-color: #04fafd;
+}
+
+.terms label {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.terms label a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.terms label a:hover {
+    text-decoration: underline;
+}
+
+.register-btn {
+    width: 100%;
+    padding: 15px;
+    background: rgba(4, 250, 253, 0.8);
+    border: none;
+    border-radius: 10px;
+    color: #03045e;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    grid-column: span 2;
+}
+
+.register-btn:hover {
+    background: rgba(4, 250, 253, 1);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 25px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 15px;
+    grid-column: span 2;
+}
+
+.login-link a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+.back-home {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    z-index: 10;
+}
+
+.back-home i {
+    margin-right: 8px;
+}
+
+.back-home:hover {
+    text-decoration: underline;
+}
+
+@keyframes float-icon {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+/* Bubbles */
+.bubble {
+    height: 60px;
+    width: 60px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50px;
+    position: absolute;
+    animation: float 8s linear infinite;
+}
+
+.bubble .dot {
+    height: 10px;
+    width: 10px;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.5);
+    position: absolute;
+    top: 20%;
+    right: 20%;
+}
+
+.wrapper .bubble:nth-child(1) {
+    top: 20%;
+    left: 20%;
+    animation: float 8s linear infinite;
+}
+
+.wrapper .bubble:nth-child(2) {
+    top: 60%;
+    left: 80%;
+    animation: float 10s linear infinite;
+}
+
+.wrapper .bubble:nth-child(3) {
+    top: 40%;
+    left: 40%;
+    animation: float 3s linear infinite;
+}
+
+.wrapper .bubble:nth-child(4) {
+    top: 66%;
+    left: 30%;
+    animation: float 7s linear infinite;
+}
+
+.wrapper .bubble:nth-child(5) {
+    top: 90%;
+    left: 10%;
+    animation: float 9s linear infinite;
+}
+
+.wrapper .bubble:nth-child(6) {
+    top: 30%;
+    left: 60%;
+    animation: float 5s linear infinite;
+}
+
+.wrapper .bubble:nth-child(7) {
+    top: 70%;
+    left: 20%;
+    animation: float 8s linear infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: scale(0) translateY(0) rotate(70deg);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.3) translateY(-100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Password strength indicator */
+.password-strength {
+    height: 5px;
+    border-radius: 5px;
+    margin-top: 10px;
+    transition: all 0.3s;
+    background: #f1f1f1;
+}
+
+.strength-weak {
+    width: 30%;
+    background: #ff4d4d;
+}
+
+.strength-medium {
+    width: 70%;
+    background: #ffa700;
+}
+
+.strength-strong {
+    width: 100%;
+    background: #2ecc71;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-group.full-width {
+        grid-column: 1;
+    }
+    
+    .terms, .register-btn, .login-link {
+        grid-column: 1;
+    }
+}
