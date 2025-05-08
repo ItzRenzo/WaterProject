@@ -17,7 +17,7 @@
         <nav class="menu">
             <ul>
                 <li class="active">
-                    <a href="index.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                    <a href="Admin_dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
                 </li>
                 <li>
                     <a href="Customers.html"><i class="fas fa-users"></i> Customers</a>
@@ -35,11 +35,13 @@
                     <a href="employees.html"><i class="fas fa-id-card"></i> Employees</a>
                 </li>
                 <li>
-                    <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
+                    <a href="expenses.html"><i class="fas fa-receipt"></i> Expenses</a>
                 </li>
                 <li>
-                    <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
-                </li>
+                    <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
+                </li> 
+                <li> <a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+               
             </ul>
         </nav>
         <div class="user-info">
@@ -54,21 +56,7 @@
     </div>
 
     <div class="main-content">
-        <header class="top-bar">
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search...">
-            </div>
-            <div class="header-actions">
-                <a href="#" class="notification-icon">
-                    <i class="fas fa-bell"></i>
-                    <span class="badge">3</span>
-                </a>
-                <a href="#" class="settings-icon">
-                    <i class="fas fa-cog"></i>
-                </a>
-            </div>
-        </header>
+        
 
         <div class="dashboard-header">
             <h2>Dashboard Overview</h2>
@@ -91,11 +79,11 @@
             
             <div class="stat-card">
                 <div class="stat-icon client-icon">
-                    <i class="fas fa-user-group"></i>
+                    <i class="fas fa-droplet"></i>
                 </div>
                 <div class="stat-details">
                     <h3>5</h3>
-                    <p>Active Clients</p>
+                    <p>Water Bottles Sold</p>
                 </div>
                 <div class="stat-progress">
                     <div class="progress-bar" style="width: 60%;"></div>
@@ -159,119 +147,9 @@
                 </div>
             </div>
 
-            <!-- New Order card -->
-            <div class="card">
-                <div class="card-header">
-                    <h3><i class="fas fa-cart-plus"></i> New Order</h3>
-                </div>
-                <div class="card-body">
-                    <form class="order-form">
-                        <div class="form-group">
-                            <label for="client-name">Client Name</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-user"></i>
-                                <input type="text" id="client-name" placeholder="Enter client name">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="water-type">Water Type</label>
-                            <div class="select-wrapper">
-                                <select id="water-type">
-                                    <option value="mineral">Mineral Water</option>
-                                    <option value="purified">Purified Water</option>
-                                    <option value="alkaline">Alkaline Water</option>
-                                    <option value="kanjen">Kanjen Water</option>
-                                </select>
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="quantity">Quantity (Gallons)</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-bottle-water"></i>
-                                <input type="number" id="quantity" min="1" value="1">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="delivery-date">Delivery Date</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-calendar"></i>
-                                <input type="date" id="delivery-date">
-                            </div>
-                        </div>
-                        <button type="button" class="primary-btn" onclick="placeOrder()">
-                            <i class="fas fa-check"></i> Place Order
-                        </button>
-                    </form>
-                </div>
-            </div>
+            
 
-            <!-- Recent clients card -->
-            <div class="card">
-                <div class="card-header">
-                    <h3><i class="fas fa-users"></i> Recent Clients</h3>
-                    <div class="card-actions">
-                        <button class="view-all-btn">View All</button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="client-list">
-                        <div class="client-item">
-                            <div class="client-avatar">
-                                <span>E</span>
-                            </div>
-                            <div class="client-info">
-                                <div class="client-name">Ed</div>
-                                <div class="client-orders">3 orders</div>
-                            </div>
-                            <div class="client-status status-active">Active</div>
-                        </div>
-                        <div class="client-item">
-                            <div class="client-avatar">
-                                <span>Z</span>
-                            </div>
-                            <div class="client-info">
-                                <div class="client-name">Zen</div>
-                                <div class="client-orders">5 orders</div>
-                            </div>
-                            <div class="client-status status-active">Active</div>
-                        </div>
-                        <div class="client-item">
-                            <div class="client-avatar">
-                                <span>W</span>
-                            </div>
-                            <div class="client-info">
-                                <div class="client-name">Walton</div>
-                                <div class="client-orders">New client</div>
-                            </div>
-                            <div class="client-status status-pending">Pending</div>
-                        </div>
-                        <div class="client-item">
-                            <div class="client-avatar">
-                                <span>C</span>
-                            </div>
-                            <div class="client-info">
-                                <div class="client-name">Clak</div>
-                                <div class="client-orders">2 orders</div>
-                            </div>
-                            <div class="client-status status-active">Active</div>
-                        </div>
-                        <div class="client-item">
-                            <div class="client-avatar">
-                                <span>J</span>
-                            </div>
-                            <div class="client-info">
-                                <div class="client-name">Jorge</div>
-                                <div class="client-orders">New client</div>
-                            </div>
-                            <div class="client-status status-pending">Pending</div>
-                        </div>
-                    </div>
-                    <button class="add-client-btn">
-                        <i class="fas fa-plus"></i> Add New Client
-                    </button>
-                </div>
-            </div>
+          
             
             <!-- Sales summary card -->
             <div class="card">
@@ -381,5 +259,8 @@
             }
         }
     </script>
-</body>
-</html>
+
+    
+   
+       
+
