@@ -52,7 +52,7 @@ input, select {
 
 /* Sidebar styles */
 .sidebar {
-    width: 260px;
+    width: 290px;
     height: 100vh;
     background: var(--white);
     position: fixed;
@@ -188,7 +188,7 @@ input, select {
 
 /* Main content styles */
 .main-content {
-    margin-left: 260px;
+    margin-left: 290px;
     flex: 1;
     padding: 20px;
 }

@@ -631,3 +631,143 @@ body {
     gap: 12px;
     margin-top: 24px;
 }
+
+
+
+/* User Dropdown Styling */
+.user-info {
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.user-info.clickable:hover {
+    background-color: rgba(2, 136, 209, 0.05);
+}
+
+.user-info.active {
+    background-color: rgba(2, 136, 209, 0.1);
+}
+
+.user-dropdown {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.user-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(5px);
+}
+
+.dropdown-item {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.dropdown-item i {
+    width: 20px;
+    margin-right: 10px;
+    color: var(--text-light);
+}
+
+.dropdown-item span {
+    color: var(--text-dark);
+    font-size: 14px;
+}
+
+.dropdown-item:hover {
+    background-color: var(--gray-light);
+}
+
+.dropdown-item.logout {
+    color: var(--danger);
+}
+
+.dropdown-item.logout i, 
+.dropdown-item.logout span {
+    color: var(--danger);
+}
+
+.dropdown-item.logout:hover {
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+.dropdown-divider {
+    height: 1px;
+    background-color: var(--gray);
+    margin: 5px 0;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s;
+}
+
+.loading-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--primary-light);
+    border-top: 4px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+}
+
+.loading-overlay p {
+    color: var(--text-dark);
+    font-size: 16px;
+    font-weight: 500;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* User info cursor indicator */
+.user-info:after {
+
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 12px;
+    color: var(--text-light);
+    margin-left: auto;
+    margin-right: 8px;
+    transition: transform 0.3s;
+}
+
+.user-info.active:after {
+    transform: rotate(180deg);
+}

@@ -21,7 +21,7 @@
         <nav class="menu">
             <ul>
                 <li>
-                    <a href="index.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                    <a href="Admin_dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
                 </li>
                 <li>
                     <a href="Customers.html"><i class="fas fa-users"></i> Customers</a>
@@ -39,11 +39,13 @@
                     <a href="employees.html"><i class="fas fa-id-card"></i> Employees</a>
                 </li>
                 <li>
-                    <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
+                    <a href="expenses.html"><i class="fas fa-receipt"></i> Expenses</a>
                 </li>
                 <li>
-                    <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
                 </li>
+                <li> <a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+                
             </ul>
         </nav>
         <div class="user-info">
@@ -158,93 +160,11 @@
                     </div>
                     <div class="employee-actions">
                         <button class="view-btn" title="View Details"><i class="fas fa-eye"></i></button>
-                        <button class="edit-btn" title="Edit Employee"><i class="fas fa-edit"></i></button>
                         <button class="delete-btn" title="Remove Employee"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
 
-                <!-- Employee Card -->
-                <div class="employee-card">
-                    <div class="employee-header">
-                        <div class="employee-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <span class="status-badge active">Active</span>
-                    </div>
-                    <div class="employee-details">
-                        <h4>Maria Santos</h4>
-                        <p class="employee-position">Production Supervisor</p>
-                        <div class="detail-item">
-                            <i class="fas fa-phone"></i>
-                            <span>+63 918 765 4321</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-envelope"></i>
-                            <span>maria.santos@email.com</span>
-                        </div>
-                    </div>
-                    <div class="employee-actions">
-                        <button class="view-btn" title="View Details"><i class="fas fa-eye"></i></button>
-                        <button class="edit-btn" title="Edit Employee"><i class="fas fa-edit"></i></button>
-                        <button class="delete-btn" title="Remove Employee"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>
-
-                <!-- Employee Card -->
-                <div class="employee-card">
-                    <div class="employee-header">
-                        <div class="employee-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <span class="status-badge inactive">Inactive</span>
-                    </div>
-                    <div class="employee-details">
-                        <h4>Robert Lee</h4>
-                        <p class="employee-position">Driver</p>
-                        <div class="detail-item">
-                            <i class="fas fa-phone"></i>
-                            <span>+63 919 876 5432</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-envelope"></i>
-                            <span>robert.lee@email.com</span>
-                        </div>
-                    </div>
-                    <div class="employee-actions">
-                        <button class="view-btn" title="View Details"><i class="fas fa-eye"></i></button>
-                        <button class="edit-btn" title="Edit Employee"><i class="fas fa-edit"></i></button>
-                        <button class="delete-btn" title="Remove Employee"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>
-
-                <!-- Employee Card -->
-                <div class="employee-card">
-                    <div class="employee-header">
-                        <div class="employee-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <span class="status-badge active">Active</span>
-                    </div>
-                    <div class="employee-details">
-                        <h4>Anna Garcia</h4>
-                        <p class="employee-position">Administrative Assistant</p>
-                        <div class="detail-item">
-                            <i class="fas fa-phone"></i>
-                            <span>+63 915 432 1098</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-envelope"></i>
-                            <span>anna.garcia@email.com</span>
-                        </div>
-                    </div>
-                    <div class="employee-actions">
-                        <button class="view-btn" title="View Details"><i class="fas fa-eye"></i></button>
-                        <button class="edit-btn" title="Edit Employee"><i class="fas fa-edit"></i></button>
-                        <button class="delete-btn" title="Remove Employee"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>
-            </div>
-        </div>
+                
 
         <!-- Driver Tab Content -->
         <div class="employee-list tab-content" id="drivers">
@@ -381,133 +301,119 @@
     </div>
 
     <!-- Add Employee Modal -->
-    <div class="modal" id="addEmployeeModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Add New Employee</h3>
-                <button class="close-btn">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="employeeForm">
-                    <div class="form-section">
-                        <h4>Personal Information</h4>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="firstName">First Name</label>
-                                <input type="text" id="firstName" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastName">Last Name</label>
-                                <input type="text" id="lastName" required>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="contactNumber">Contact Number</label>
-                                <input type="tel" id="contactNumber" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" id="email">
-                            </div>
+<div class="modal" id="addEmployeeModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-user-plus"></i> Add New Employee</h3>
+            <button class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="employeeForm">
+                <div class="form-section">
+                    <h4><i class="fas fa-user-circle"></i> Personal Information</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" placeholder="Enter first name" required>
                         </div>
                         <div class="form-group">
-                            <label for="address">Address</label>
-                            <textarea id="address"></textarea>
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" placeholder="Enter last name" required>
                         </div>
                     </div>
-
-                    <div class="form-section">
-                        <h4>Employment Details</h4>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="position">Position</label>
-                                <select id="position" required>
-                                    <option value="">Select Position</option>
-                                    <option value="driver">Driver</option>
-                                    <option value="senior_driver">Senior Driver</option>
-                                    <option value="production">Production Staff</option>
-                                    <option value="production_supervisor">Production Supervisor</option>
-                                    <option value="admin">Administrative Staff</option>
-                                    <option value="manager">Manager</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="department">Department</label>
-                                <select id="department" required>
-                                    <option value="">Select Department</option>
-                                    <option value="delivery">Delivery</option>
-                                    <option value="production">Production</option>
-                                    <option value="admin">Administration</option>
-                                    <option value="customer_service">Customer Service</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="joinDate">Date Joined</label>
-                                <input type="date" id="joinDate" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="employeeStatus">Status</label>
-                                <select id="employeeStatus" required>
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                    <option value="probation">On Probation</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section" id="driverDetails" style="display: none;">
-                        <h4>Driver Details</h4>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="licenseNumber">License Number</label>
-                                <input type="text" id="licenseNumber">
-                            </div>
-                            <div class="form-group">
-                                <label for="licenseExpiry">License Expiry</label>
-                                <input type="date" id="licenseExpiry">
-                            </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contactNumber">Contact Number</label>
+                            <input type="tel" id="contactNumber" placeholder="+63 9XX XXX XXXX" required>
                         </div>
                         <div class="form-group">
-                            <label for="assignedVehicle">Assigned Vehicle</label>
-                            <select id="assignedVehicle">
-                                <option value="">Select Vehicle</option>
-                                <option value="truck001">Truck #001</option>
-                                <option value="truck002">Truck #002</option>
-                                <option value="motorcycle001">Motorcycle #001</option>
+                            <label for="email">Email</label>
+                            <input type="email" id="email" placeholder="email@example.com">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <textarea id="address" placeholder="Enter complete address"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4><i class="fas fa-briefcase"></i> Employment Details</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="position">Position</label>
+                            <select id="position" required>
+                                <option value="">Select Position</option>
+                                <option value="driver">Driver</option>
+                                <option value="senior_driver">Cashier</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="employeeID">Employee ID</label>
+                            <input type="text" id="employeeID" placeholder="EMP-XXX">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="joinDate">Date Joined</label>
+                            <input type="date" id="joinDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="employeeStatus">Status</label>
+                            <select id="employeeStatus" required>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="probation">On Probation</option>
                             </select>
                         </div>
                     </div>
+                </div>
 
-                    <div class="form-section">
-                        <h4>Emergency Contact</h4>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="emergencyName">Contact Name</label>
-                                <input type="text" id="emergencyName">
-                            </div>
-                            <div class="form-group">
-                                <label for="emergencyContact">Contact Number</label>
-                                <input type="tel" id="emergencyContact">
-                            </div>
+                <div class="form-section" id="driverDetails" style="display: none;">
+                    <h4><i class="fas fa-truck"></i> Driver Details</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="licenseNumber">License Number</label>
+                            <input type="text" id="licenseNumber" placeholder="e.g. N01-12-345678">
                         </div>
                         <div class="form-group">
-                            <label for="emergencyRelation">Relationship</label>
-                            <input type="text" id="emergencyRelation">
+                            <label for="licenseExpiry">License Expiry</label>
+                            <input type="date" id="licenseExpiry">
                         </div>
                     </div>
-
-                    <div class="form-actions">
-                        <button type="button" class="cancel-btn">Cancel</button>
-                        <button type="submit" class="submit-btn">Save Employee</button>
+                    <div class="form-group">
+                        <label for="assignedVehicle">Assigned Vehicle</label>
+                        <select id="assignedVehicle">
+                            <option value="">Select Vehicle</option>
+                            <option value="truck001">Truck #001</option>
+                            <option value="truck002">Truck #002</option>
+                            <option value="motorcycle001">Motorcycle #001</option>
+                        </select>
                     </div>
-                </form>
-            </div>
+                </div>
+
+                <div class="form-section">
+                    <h4><i class="fas fa-lock"></i> Account</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" placeholder="Choose a username">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" placeholder="••••••••">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn"><i class="fas fa-times"></i> Cancel</button>
+                    <button type="submit" class="submit-btn"><i class="fas fa-save"></i> Save Employee</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
     <!-- View Employee Modal -->
     <div class="modal" id="viewEmployeeModal">
@@ -573,43 +479,12 @@
                         </div>
                     </div>
 
-                    <div class="profile-section">
-                        <h4>Driver Information</h4>
-                        <div class="detail-grid">
-                            <div class="detail-item">
-                                <span class="label">License Number</span>
-                                <span class="value">N01-12-345678</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="label">License Expiry</span>
-                                <span class="value">December 31, 2024</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="label">Assigned Vehicle</span>
-                                <span class="value">Truck #001</span>
-                            </div>
-                        </div>
-                    </div>
+                    
 
-                    <div class="profile-section">
-                        <h4>Emergency Contact</h4>
-                        <div class="detail-grid">
-                            <div class="detail-item">
-                                <span class="label">Name</span>
-                                <span class="value">Maria Dela Cruz</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="label">Relationship</span>
-                                <span class="value">Spouse</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="label">Contact Number</span>
-                                <span class="value">+63 918 765 4321</span>
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
+
             <div class="modal-footer">
                 <button class="edit-profile-btn">
                     <i class="fas fa-edit"></i> Edit Profile
@@ -618,6 +493,7 @@
         </div>
     </div>
 
+    
     <!-- JavaScript for functionality -->
     <script>
         // DOM Elements
@@ -834,6 +710,173 @@
                 }, 300);
             });
         }
+
+        // Edit Profile functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const editProfileBtn = document.querySelector('.edit-profile-btn');
+            
+            if (editProfileBtn) {
+                editProfileBtn.addEventListener('click', function() {
+                    // Get current employee data from the view modal
+                    const employeeName = document.querySelector('.profile-info h2').textContent;
+                    const nameParts = employeeName.split(' ');
+                    const firstName = nameParts[0] || '';
+                    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+                    const position = document.querySelector('.profile-info p').textContent;
+                    const contactNumber = document.querySelector('.detail-grid .detail-item:nth-child(1) .value').textContent;
+                    const status = document.querySelector('.profile-info .status-badge').textContent;
+                    
+                    // Create a simple edit form modal
+                    const editModal = document.createElement('div');
+                    editModal.className = 'modal show';
+                    editModal.id = 'editProfileModal';
+                    editModal.innerHTML = `
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3><i class="fas fa-user-edit"></i> Edit Employee</h3>
+                                <button class="close-btn">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editEmployeeForm">
+                                    <div class="form-section">
+                                        <h4><i class="fas fa-user-circle"></i> Basic Information</h4>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="editFirstName">First Name</label>
+                                                <input type="text" id="editFirstName" value="${firstName}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="editLastName">Last Name</label>
+                                                <input type="text" id="editLastName" value="${lastName}" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="editPosition">Position</label>
+                                                <select id="editPosition" required>
+                                                    <option value="driver" ${position === 'Driver' ? 'selected' : ''}>Driver</option>
+                                                    <option value="senior_driver" ${position === 'Senior Driver' ? 'selected' : ''}>Senior Driver</option>
+                                                    <option value="cashier" ${position === 'Cashier' ? 'selected' : ''}>Cashier</option>
+                                                    <option value="production" ${position === 'Production Staff' ? 'selected' : ''}>Production Staff</option>
+                                                    <option value="admin" ${position === 'Administrative Staff' ? 'selected' : ''}>Administrative Staff</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="editContactNumber">Contact Number</label>
+                                                <input type="tel" id="editContactNumber" value="${contactNumber}" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="editStatus">Status</label>
+                                                <select id="editStatus" required>
+                                                    <option value="active" ${status.toLowerCase() === 'active' ? 'selected' : ''}>Active</option>
+                                                    <option value="inactive" ${status.toLowerCase() === 'inactive' ? 'selected' : ''}>Inactive</option>
+                                                    <option value="probation" ${status.toLowerCase() === 'on probation' ? 'selected' : ''}>On Probation</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="editDateJoined">Date Joined</label>
+                                                <input type="date" id="editDateJoined" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-section">
+                                        <h4><i class="fas fa-lock"></i> Account Details</h4>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="editUsername">Username</label>
+                                                <input type="text" id="editUsername">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="editPassword">Password</label>
+                                                <input type="password" id="editPassword" placeholder="Leave blank to keep current password">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button type="button" class="cancel-btn"><i class="fas fa-times"></i> Cancel</button>
+                                        <button type="submit" class="submit-btn"><i class="fas fa-save"></i> Save Changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    `;
+
+                    // Add modal to the body
+                    document.body.appendChild(editModal);
+
+                    // Set up event listeners for the new modal
+                    const closeEditBtn = editModal.querySelector('.close-btn');
+                    const cancelEditBtn = editModal.querySelector('.cancel-btn');
+                    const editEmployeeForm = editModal.querySelector('#editEmployeeForm');
+
+                    // Close modal functions
+                    const closeEditModal = () => {
+                        editModal.classList.remove('show');
+                        setTimeout(() => {
+                            document.body.removeChild(editModal);
+                        }, 300);
+                    };
+
+                    closeEditBtn.addEventListener('click', closeEditModal);
+                    cancelEditBtn.addEventListener('click', closeEditModal);
+
+                    // Close on outside click
+                    editModal.addEventListener('click', function(e) {
+                        if (e.target === editModal) {
+                            closeEditModal();
+                        }
+                    });
+
+                    // Form submission
+                    editEmployeeForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        
+                        // Get form values
+                        const newFirstName = document.getElementById('editFirstName').value;
+                        const newLastName = document.getElementById('editLastName').value;
+                        const newPosition = document.getElementById('editPosition');
+                        const newPositionText = newPosition.options[newPosition.selectedIndex].text;
+                        const newStatus = document.getElementById('editStatus').value;
+                        
+                        // Update the view modal with new values
+                        document.querySelector('.profile-info h2').textContent = `${newFirstName} ${newLastName}`;
+                        document.querySelector('.profile-info p').textContent = newPositionText;
+                        document.querySelector('.detail-grid .detail-item:nth-child(1) .value').textContent = document.getElementById('editContactNumber').value;
+                        
+                        // Update status badge
+                        const statusBadge = document.querySelector('.profile-info .status-badge');
+                        statusBadge.className = `status-badge ${newStatus}`;
+                        statusBadge.textContent = newStatus === 'active' ? 'Active' : newStatus === 'inactive' ? 'Inactive' : 'On Probation';
+                        
+                        // Show success notification
+                        showNotification('Employee profile updated successfully');
+                        
+                        // Close the edit modal
+                        closeEditModal();
+                    });
+
+                    // Try to set the date joined field if available in the view modal
+                    try {
+                        const dateJoinedText = document.querySelector('.detail-grid .detail-item:nth-child(3) .value').textContent;
+                        const dateParts = dateJoinedText.split(' ');
+                        const month = new Date(Date.parse(`${dateParts[0]} 1, 2000`)).getMonth() + 1;
+                        const day = parseInt(dateParts[1].replace(',', ''));
+                        const year = parseInt(dateParts[2]);
+                        
+                        if (!isNaN(month) && !isNaN(day) && !isNaN(year)) {
+                            document.getElementById('editDateJoined').value = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                        }
+                    } catch (error) {
+                        // If the date extraction fails, leave the field empty
+                        console.log('Could not set date joined');
+                    }
+                });
+            }
+        });
     </script>
 </body>
 

@@ -18,7 +18,7 @@
             <ul>
                 
                 <li>
-                    <a href="index.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                    <a href="Admin_dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
                 </li>
                 <li>
                     <a href="Customers.html"><i class="fas fa-users"></i> Customers</a>
@@ -36,11 +36,13 @@
                     <a href="employees.html"><i class="fas fa-id-card"></i> Employees</a>
                 </li>
                 <li>
-                    <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
+                    <a href="expenses.html"><i class="fas fa-receipt"></i> Expenses</a>
                 </li>
                 <li>
-                    <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
                 </li>
+                <li> <a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+                
             </ul>
         </nav>
         <div class="user-info">
@@ -127,6 +129,74 @@
                 <!-- More product cards here -->
             </div>
         </div>      
+
+        <!-- Containers Section -->
+        <div class="inventory-section">
+            <div class="section-header">
+                <h3>Containers</h3>
+                <div class="header-actions">
+                    <button class="add-container-btn">
+                        <i class="fas fa-plus"></i> Add Container
+                    </button>
+                </div>
+            </div>
+            
+            <div class="containers-grid">
+                <!-- Container Card -->
+                <div class="product-card container-card">
+                    <div class="product-header">
+                        <div class="product-name">Round Gallon</div>
+                        <span class="stock-badge in-stock">In Stock</span>
+                    </div>
+                    <div class="product-details">
+                        <div class="detail-item">
+                            <span>Deposit Fee:</span>
+                            <span>₱50.00</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Available:</span>
+                            <span class="stock-value editable-stock" data-id="container-1">120 pcs</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Status:</span>
+                            <span class="status active">Active</span>
+                        </div>
+                    </div>
+                    <div class="product-actions">
+                        <button class="update-stock-btn" data-id="container-1"><i class="fas fa-sync-alt"></i></button>
+                        <button class="edit-btn"><i class="fas fa-edit"></i></button>
+                        <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+
+                <!-- Container Card -->
+                <div class="product-card container-card">
+                    <div class="product-header">
+                        <div class="product-name">Slim Gallon</div>
+                        <span class="stock-badge in-stock">In Stock</span>
+                    </div>
+                    <div class="product-details">
+                        <div class="detail-item">
+                            <span>Deposit Fee:</span>
+                            <span>₱45.00</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Available:</span>
+                            <span class="stock-value editable-stock" data-id="container-2">65 pcs</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Status:</span>
+                            <span class="status active">Active</span>
+                        </div>
+                    </div>
+                    <div class="product-actions">
+                        <button class="update-stock-btn" data-id="container-2"><i class="fas fa-sync-alt"></i></button>
+                        <button class="edit-btn"><i class="fas fa-edit"></i></button>
+                        <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Add Product Modal -->
@@ -435,6 +505,516 @@
             });
         });
     });
+
+    // Add Container Modal Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get DOM elements for Add Container functionality
+        const addContainerBtn = document.querySelector('.add-container-btn');
+        const containersGrid = document.querySelector('.containers-grid');
+        const totalContainersCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
+        
+        // Create the modal if it doesn't exist
+        let containerModal = document.createElement('div');
+        containerModal.id = 'addContainerModal';
+        containerModal.className = 'modal';
+        containerModal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-cube"></i> Add New Container</h3>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="containerForm">
+                        <div class="form-group">
+                            <label for="containerName">Container Name</label>
+                            <input type="text" id="containerName" placeholder="Enter container name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="depositFee">Deposit Fee</label>
+                            <div class="price-input">
+                                <span class="currency">₱</span>
+                                <input type="number" id="depositFee" step="0.01" min="0" placeholder="0.00" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="availableStock">Available Stock</label>
+                            <div class="stock-input">
+                                <input type="number" id="availableStock" min="0" placeholder="0" required>
+                                <span class="unit">pcs</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="containerStatus">Status</label>
+                            <select id="containerStatus">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="containerDescription">Description (Optional)</label>
+                            <textarea id="containerDescription" placeholder="Add details about this container"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="cancel-btn"><i class="fas fa-times"></i> Cancel</button>
+                            <button type="submit" class="save-btn"><i class="fas fa-save"></i> Save Container</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(containerModal);
+        
+        // Counter for new containers (for generating unique IDs)
+        let containerCounter = 3; // Starting after the initial 2 containers
+        
+        // Get modal elements
+        const closeBtn = containerModal.querySelector('.close-btn');
+        const cancelBtn = containerModal.querySelector('.cancel-btn');
+        const containerForm = document.getElementById('containerForm');
+        
+        // Open container modal
+        addContainerBtn.addEventListener('click', function() {
+            containerModal.style.display = 'flex';
+            setTimeout(() => {
+                containerModal.classList.add('show');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        });
+        
+        // Close container modal function
+        function closeContainerModal() {
+            containerModal.classList.remove('show');
+            setTimeout(() => {
+                containerModal.style.display = 'none';
+                containerForm.reset(); // Reset form fields
+            }, 300);
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+        
+        // Close modal when clicking close button
+        closeBtn.addEventListener('click', closeContainerModal);
+        
+        // Close modal when clicking cancel button
+        cancelBtn.addEventListener('click', closeContainerModal);
+        
+        // Close modal when clicking outside the modal content
+        window.addEventListener('click', function(event) {
+            if (event.target === containerModal) {
+                closeContainerModal();
+            }
+        });
+        
+        // Handle container form submission
+        containerForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Get form values
+            const name = document.getElementById('containerName').value;
+            const depositFee = document.getElementById('depositFee').value;
+            const availableStock = document.getElementById('availableStock').value;
+            const status = document.getElementById('containerStatus').value;
+            const description = document.getElementById('containerDescription').value;
+            
+            // Create a new container card
+            const newContainer = createContainerCard(name, depositFee, availableStock, status, description);
+            
+            // Add the new container to the grid
+            containersGrid.insertBefore(newContainer, containersGrid.firstChild);
+            
+            // Update low stock count if needed
+            const lowStockCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
+            if (parseInt(availableStock) < 20) {
+                lowStockCount.textContent = parseInt(lowStockCount.textContent) + 1;
+            }
+            
+            // Show success message
+            showNotification('Container added successfully!', 'success');
+            
+            // Close the modal
+            closeContainerModal();
+        });
+        
+        // Updated edit container function without circulation
+        function editContainer(containerCard) {
+            // Get container details
+            const name = containerCard.querySelector('.product-name').textContent;
+            const depositFee = containerCard.querySelector('.detail-item:nth-child(1) span:last-child').textContent.replace('₱', '');
+            const availableStock = containerCard.querySelector('.detail-item:nth-child(2) span:last-child').textContent.split(' ')[0];
+            const status = containerCard.querySelector('.status').classList.contains('active') ? 'active' : 'inactive';
+            const description = containerCard.querySelector('.description')?.textContent || '';
+            
+            // Set form values
+            document.getElementById('containerName').value = name;
+            document.getElementById('depositFee').value = parseFloat(depositFee);
+            document.getElementById('availableStock').value = parseInt(availableStock);
+            document.getElementById('containerStatus').value = status;
+            document.getElementById('containerDescription').value = description;
+            
+            // Update form submit to edit container instead of adding new one
+            const originalSubmitHandler = containerForm.onsubmit;
+            containerForm.onsubmit = function(event) {
+                event.preventDefault();
+                
+                // Get updated values
+                const newName = document.getElementById('containerName').value;
+                const newDepositFee = document.getElementById('depositFee').value;
+                const newAvailableStock = document.getElementById('availableStock').value;
+                const newStatus = document.getElementById('containerStatus').value;
+                const newDescription = document.getElementById('containerDescription').value;
+                
+                // Update container details (removing circulation update)
+                containerCard.querySelector('.product-name').textContent = newName;
+                containerCard.querySelector('.detail-item:nth-child(1) span:last-child').textContent = '₱' + parseFloat(newDepositFee).toFixed(2);
+                containerCard.querySelector('.detail-item:nth-child(2) span:last-child').textContent = newAvailableStock + ' pcs';
+                
+                const statusElement = containerCard.querySelector('.status');
+                statusElement.textContent = newStatus === 'active' ? 'Active' : 'Inactive';
+                statusElement.className = `status ${newStatus}`;
+                
+                // Stock badge update code remains the same
+                
+                // Description update code remains the same
+                
+                // Show success message and close modal
+                showNotification('Container updated successfully!', 'success');
+                closeContainerModal();
+                containerForm.onsubmit = originalSubmitHandler;
+            };
+            
+            // Open modal
+            containerModal.style.display = 'flex';
+            setTimeout(() => {
+                containerModal.classList.add('show');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Updated function to create container cards without circulation
+        function createContainerCard(name, depositFee, availableStock, status, description) {
+            const containerId = 'container-' + containerCounter++;
+            const containerCard = document.createElement('div');
+            containerCard.className = 'product-card container-card';
+            
+            // Add stock badge class based on available amount
+            let stockBadgeClass = 'in-stock';
+            let stockBadgeText = 'In Stock';
+            
+            if (parseInt(availableStock) < 20) {
+                stockBadgeClass = 'low-stock';
+                stockBadgeText = 'Low Stock';
+            }
+            
+            const isActive = status === 'active';
+            
+            containerCard.innerHTML = `
+                <div class="product-header">
+                    <div class="product-name">${name}</div>
+                    <span class="stock-badge ${stockBadgeClass}">${stockBadgeText}</span>
+                </div>
+                <div class="product-details">
+                    <div class="detail-item">
+                        <span>Deposit Fee:</span>
+                        <span>₱${parseFloat(depositFee).toFixed(2)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Available:</span>
+                        <span class="stock-value editable-stock" data-id="${containerId}">${availableStock} pcs</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Status:</span>
+                        <span class="status ${isActive ? 'active' : 'inactive'}">${isActive ? 'Active' : 'Inactive'}</span>
+                    </div>
+                    ${description ? `
+                    <div class="detail-item">
+                        <span>Description:</span>
+                        <span class="description">${description}</span>
+                    </div>` : ''}
+                </div>
+                <div class="product-actions">
+                    <button class="update-stock-btn" data-id="${containerId}" title="Update Stock"><i class="fas fa-sync-alt"></i></button>
+                    <button class="edit-btn" title="Edit Container"><i class="fas fa-edit"></i></button>
+                    <button class="delete-btn" title="Delete Container"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+            
+            // Add event listeners to the buttons
+            setTimeout(() => {
+                // Event listener code remains the same
+            }, 0);
+            
+            return containerCard;
+        }
+        
+        // Function to confirm deletion of a container
+        function confirmDeleteContainer(containerCard) {
+            if (confirm('Are you sure you want to delete this container?')) {
+                // Remove container card with animation
+                containerCard.classList.add('removing');
+                setTimeout(() => {
+                    containersGrid.removeChild(containerCard);
+                    
+                    // Check if it was a low stock item
+                    const stockBadge = containerCard.querySelector('.stock-badge');
+                    if (stockBadge.classList.contains('low-stock')) {
+                        // Update low stock count
+                        const lowStockCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
+                        lowStockCount.textContent = Math.max(0, parseInt(lowStockCount.textContent) - 1);
+                    }
+                    
+                    // Show success message
+                    showNotification('Container deleted successfully!', 'success');
+                }, 300);
+            }
+        }
+        
+        // Function to update container stock
+        function updateContainerStock(containerId) {
+            // Create update stock modal if it doesn't exist
+            let updateStockModal = document.getElementById('updateStockModal');
+            if (!updateStockModal) {
+                updateStockModal = document.createElement('div');
+                updateStockModal.id = 'updateStockModal';
+                updateStockModal.className = 'modal';
+                updateStockModal.innerHTML = `
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Update Container Stock</h3>
+                            <button class="close-btn">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="updateStockForm">
+                                <input type="hidden" id="updateContainerId">
+                                <div class="form-group">
+                                    <label for="currentStock">Current Stock</label>
+                                    <input type="text" id="currentStock" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="updateAction">Action</label>
+                                    <select id="updateAction" required>
+                                        <option value="add">Add to Stock</option>
+                                        <option value="remove">Remove from Stock</option>
+                                        <option value="set">Set Specific Value</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="updateQuantity">Quantity</label>
+                                    <div class="stock-input">
+                                        <input type="number" id="updateQuantity" min="1" required>
+                                        <span class="unit">pcs</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="updateNote">Note (Optional)</label>
+                                    <textarea id="updateNote" placeholder="Reason for update"></textarea>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" class="cancel-btn">Cancel</button>
+                                    <button type="submit" class="save-btn">Update Stock</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(updateStockModal);
+                
+                // Add event listeners to the update stock modal
+                const updateStockCloseBtn = updateStockModal.querySelector('.close-btn');
+                const updateStockCancelBtn = updateStockModal.querySelector('.cancel-btn');
+                const updateStockForm = updateStockModal.querySelector('#updateStockForm');
+                
+                // Close update stock modal
+                updateStockCloseBtn.addEventListener('click', function() {
+                    closeUpdateStockModal();
+                });
+                
+                updateStockCancelBtn.addEventListener('click', function() {
+                    closeUpdateStockModal();
+                });
+                
+                // Close on outside click
+                window.addEventListener('click', function(event) {
+                    if (event.target === updateStockModal) {
+                        closeUpdateStockModal();
+                    }
+                });
+                
+                // Handle update stock form submission
+                updateStockForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    
+                    const containerId = document.getElementById('updateContainerId').value;
+                    const action = document.getElementById('updateAction').value;
+                    const quantity = parseInt(document.getElementById('updateQuantity').value);
+                    
+                    // Get the container stock element
+                    const stockElement = document.querySelector(`.stock-value[data-id="${containerId}"]`);
+                    const currentStock = parseInt(stockElement.textContent);
+                    
+                    // Calculate new stock value
+                    let newStock;
+                    switch (action) {
+                        case 'add':
+                            newStock = currentStock + quantity;
+                            break;
+                        case 'remove':
+                            newStock = Math.max(0, currentStock - quantity);
+                            break;
+                        case 'set':
+                            newStock = quantity;
+                            break;
+                    }
+                    
+                    // Update the stock display
+                    stockElement.textContent = newStock + ' pcs';
+                    
+                    // Update the stock badge
+                    const containerCard = stockElement.closest('.container-card');
+                    const stockBadge = containerCard.querySelector('.stock-badge');
+                    const wasLowStock = stockBadge.classList.contains('low-stock');
+                    const isNowLowStock = newStock < 20;
+                    
+                    if (isNowLowStock) {
+                        stockBadge.className = 'stock-badge low-stock';
+                        stockBadge.textContent = 'Low Stock';
+                        
+                        // Update low stock count if it wasn't low stock before
+                        if (!wasLowStock) {
+                            const lowStockCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
+                            lowStockCount.textContent = parseInt(lowStockCount.textContent) + 1;
+                        }
+                    } else {
+                        stockBadge.className = 'stock-badge in-stock';
+                        stockBadge.textContent = 'In Stock';
+                        
+                        // Update low stock count if it was low stock before
+                        if (wasLowStock) {
+                            const lowStockCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
+                            lowStockCount.textContent = Math.max(0, parseInt(lowStockCount.textContent) - 1);
+                        }
+                    }
+                    
+                    // Show success message
+                    showNotification('Container stock updated successfully!', 'success');
+                    
+                    // Close the modal
+                    closeUpdateStockModal();
+                });
+            }
+            
+            function closeUpdateStockModal() {
+                updateStockModal.classList.remove('show');
+                setTimeout(() => {
+                    updateStockModal.style.display = 'none';
+                    document.getElementById('updateStockForm').reset();
+                }, 300);
+                document.body.style.overflow = '';
+            }
+            
+            // Get current stock value
+            const stockElement = document.querySelector(`.stock-value[data-id="${containerId}"]`);
+            const currentStock = stockElement.textContent;
+            
+            // Set values in the update stock form
+            document.getElementById('updateContainerId').value = containerId;
+            document.getElementById('currentStock').value = currentStock;
+            document.getElementById('updateQuantity').value = '';
+            
+            // Open the update stock modal
+            updateStockModal.style.display = 'flex';
+            setTimeout(() => {
+                updateStockModal.classList.add('show');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Add event listeners to existing container edit, delete, and update stock buttons
+        document.querySelectorAll('.container-card .edit-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const containerCard = this.closest('.container-card');
+                editContainer(containerCard);
+            });
+        });
+        
+        document.querySelectorAll('.container-card .delete-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const containerCard = this.closest('.container-card');
+                confirmDeleteContainer(containerCard);
+            });
+        });
+        
+        document.querySelectorAll('.container-card .update-stock-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const containerId = this.getAttribute('data-id');
+                updateContainerStock(containerId);
+            });
+        });
+    });
+
+    // Add CSS for price and stock inputs
+    const style = document.createElement('style');
+    style.textContent = `
+        /* Add Container Modal Styles */
+        .price-input, .stock-input {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .price-input .currency, .stock-input .unit {
+            position: absolute;
+            color: var(--text-light);
+        }
+        
+        .price-input .currency {
+            left: 12px;
+        }
+        
+        .price-input input {
+            padding-left: 25px;
+        }
+        
+        .stock-input .unit {
+            right: 12px;
+        }
+        
+        .stock-input input {
+            padding-right: 40px;
+        }
+        
+        /* Update Stock Button */
+        .update-stock-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 4px;
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 5px;
+        }
+        
+        .update-stock-btn:hover {
+            background: var(--success);
+            color: white;
+        }
+        
+        /* Container Card Styles */
+        .container-card {
+            border-left: 3px solid var(--primary);
+        }
+        
+        .containers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+    `;
+    document.head.appendChild(style);
     </script>
 </body>
 </html>
