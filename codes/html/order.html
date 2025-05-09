@@ -6,14 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Water - RJane Water Kiosk</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="../../Css/code_order.css">
+    <link rel="stylesheet" href="../../Css/order.css">
 </head>
 
 <body>
     <div class="kiosk-container">
         <!-- Header with back button -->
         <header class="kiosk-header">
-            <a href="Home.html" class="back-button">
+            <a href="index.html" class="back-button">
                 <i class="fas fa-arrow-left"></i>
             </a>
             <h1>Order Water</h1>
@@ -261,33 +261,6 @@
                             <span id="payment-order-total">₱0.00</span>
                         </div>
 
-                        <div class="adjustments-section">
-                            <div class="form-group">
-                                <label for="discount">Discount/Charge:</label>
-                                <div class="input-with-icon">
-                                    <select id="adjustment-type">
-                                        <option value="discount">Discount</option>
-                                        <option value="charge">Extra Charge</option>
-                                    </select>
-                                    <input type="number" id="adjustment-amount" min="0" step="1" value="0">
-                                    <select id="adjustment-unit">
-                                        <option value="percent">%</option>
-                                        <option value="fixed">₱</option>
-                                    </select>
-                                    <button class="btn btn-sm btn-primary" id="apply-adjustment">Apply</button>
-                                </div>
-                            </div>
-
-                            <div id="adjustments-list">
-                                <!-- Adjustments will be listed here -->
-                            </div>
-                        </div>
-
-                        <div class="summary-item total">
-                            <span>Final Amount Due:</span>
-                            <span id="final-amount">₱0.00</span>
-                        </div>
-
                         <div class="payment-input">
                             <div class="form-group">
                                 <label for="payment-amount">Payment Amount:</label>
@@ -347,10 +320,11 @@
 
                 <div class="customer-details">
                     <h4>Customer Information</h4>
-                    <p id="summary-customer-name">Name: John Doe</p>
-                    <p id="summary-customer-phone">Phone: 09123456789</p>
-                    <p id="summary-customer-email">Email: john@example.com</p>
-                    <p id="summary-customer-address">Address: N/A (Pick-up)</p>
+                    <p id="summary-customer-name">Name: </p>
+                    <p id="summary-customer-phone">Phone: </p>
+                    <p id="summary-customer-payment">Payment Method: </p>
+                    <p id="summary-customer-delivery">Delivery Method: </p>
+                    <p id="summary-customer-address">Address: </p>
                 </div>
             </div>
 
@@ -367,7 +341,7 @@
                     </a>
                 </div>
             </div>
-        </main> 
+        </main>
 
         <!-- Navigation Buttons -->
         <div class="nav-buttons">
@@ -574,7 +548,19 @@
 
                 // When on payment tab (third tab)
                 if (currentTabIndex === 2) {
-                    // Payment validation logic could go here
+                    // Payment validation logic - simplified
+                    const paymentAmount = document.getElementById('payment-amount').value;
+                    const finalAmount = getFinalAmount();
+
+                    if (!paymentAmount || paymentAmount === '0') {
+                        alert('Please enter a payment amount.');
+                        return;
+                    }
+
+                    if (parseFloat(paymentAmount) < finalAmount) {
+                        alert('Payment amount must be equal to or greater than the total amount due.');
+                        return;
+                    }
                 }
 
                 // When on review tab (fourth tab) - Place Order button
@@ -717,6 +703,54 @@
                 totalItem.appendChild(totalLabel);
                 totalItem.appendChild(totalAmount);
                 orderSummary.appendChild(totalItem);
+
+                // Update customer details section
+                const customerDetails = reviewContainer.querySelector('.customer-details');
+                if (customerDetails) {
+                    const name = document.getElementById('name').value;
+                    const phone = document.getElementById('phone').value;
+                    const payment = document.getElementById('payment').value;
+                    const delivery = document.getElementById('delivery').value;
+                    const address = document.getElementById('address').value;
+                    const paymentAmount = document.getElementById('payment-amount').value || '0';
+
+                    // Calculate change amount
+                    const due = getFinalAmount();
+                    const paid = parseFloat(paymentAmount) || 0;
+                    const change = paid - due;
+
+                    // Format payment and delivery options to be more readable
+                    const paymentFormatted = payment === 'cash' ? 'Cash' : 'GCash';
+                    const deliveryFormatted = delivery === 'pickup' ? 'Pick-up' : 'Home Delivery';
+
+                    // Update the customer information fields
+                    document.getElementById('summary-customer-name').textContent = `Name: ${name}`;
+                    document.getElementById('summary-customer-phone').textContent = `Phone: ${phone}`;
+                    document.getElementById('summary-customer-payment').textContent = `Payment Method: ${paymentFormatted}`;
+                    document.getElementById('summary-customer-delivery').textContent = `Delivery Method: ${deliveryFormatted}`;
+
+                    // Update address based on delivery option
+                    if (delivery === 'delivery') {
+                        document.getElementById('summary-customer-address').textContent = `Address: ${address}`;
+                    } else {
+                        document.getElementById('summary-customer-address').textContent = 'Address: N/A (Pick-up)';
+                    }
+
+                    // Add payment amount and change information
+                    const paymentInfo = document.getElementById('summary-payment-amount') || document.createElement('p');
+                    if (!paymentInfo.id) {
+                        paymentInfo.id = 'summary-payment-amount';
+                        customerDetails.appendChild(paymentInfo);
+                    }
+                    paymentInfo.textContent = `Payment Amount: ₱${parseFloat(paymentAmount).toFixed(2)}`;
+
+                    const changeInfo = document.getElementById('summary-change-amount') || document.createElement('p');
+                    if (!changeInfo.id) {
+                        changeInfo.id = 'summary-change-amount';
+                        customerDetails.appendChild(changeInfo);
+                    }
+                    changeInfo.textContent = `Change: ₱${Math.max(0, change).toFixed(2)}`;
+                }
             }
 
             function processOrder() {
@@ -787,6 +821,16 @@
                 const payment = document.getElementById('payment').value;
                 const delivery = document.getElementById('delivery').value;
                 const address = document.getElementById('address').value;
+                const paymentAmount = document.getElementById('payment-amount').value || '0';
+
+                // Get the final amount due
+                const finalAmount = getFinalAmount();
+
+                // Validate payment amount
+                if (parseFloat(paymentAmount) < finalAmount) {
+                    alert('Payment amount must be equal to or greater than the total amount due.');
+                    return;
+                }
 
                 // Create form data
                 const formData = new FormData();
@@ -796,6 +840,7 @@
                 formData.append('delivery', delivery);
                 formData.append('address', address);
                 formData.append('cart_total', cartTotal);
+                formData.append('payment_amount', paymentAmount);
 
                 // Add cart items to form data
                 formData.append('cart_items', JSON.stringify(cartItems));
@@ -805,130 +850,70 @@
                     method: 'POST',
                     body: formData
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        console.log("Order successful");
-                        
-                        // Navigate to success tab
-                        currentTabIndex = tabContents.length - 1;
-                        updateTabs();
-                        updateNavButtons(); 
-                        
-                        // Get session username if available (or use a default)
-                        // This assumes you already have this stored somewhere in your page
-                        // If not, we'll just use the customer name
-                        const username = window.sessionUsername || 'Customer';
-                        
-                        // Get current date and time
-                        const orderDate = new Date().toLocaleString();
-                        
-                        // Prepare receipt data
-                        const receiptData = {
-                            orderNumber: data.order_number,
-                            orderDate: orderDate,
-                            customerName: name,
-                            username: username,
-                            customerPhone: phone,
-                            paymentMethod: payment,
-                            deliveryMethod: delivery,
-                            customerAddress: address,
-                            items: [...cartItems]
-                        };
-                        
-                        // Update the receipt link's href to include the order data
-                        const receiptLink = document.querySelector('.Receipt-link');
-                        if (receiptLink) {
-                            receiptLink.href = `Receipt.html?orderData=${encodeURIComponent(JSON.stringify(receiptData))}`;
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log("Order successful");
+
+                            // Navigate to success tab
+                            currentTabIndex = tabContents.length - 1;
+                            updateTabs();
+                            updateNavButtons();
+
+                            // Get session username if available (or use a default)
+                            // This assumes you already have this stored somewhere in your page
+                            // If not, we'll just use the customer name
+                            const username = window.sessionUsername || 'Customer';
+
+                            // Get current date and time
+                            const orderDate = new Date().toLocaleString();
+
+                            // Prepare receipt data
+                            const receiptData = {
+                                orderNumber: data.order_number,
+                                orderDate: orderDate,
+                                customerName: name,
+                                username: username,
+                                customerPhone: phone,
+                                paymentMethod: payment,
+                                deliveryMethod: delivery,
+                                customerAddress: address,
+                                items: [...cartItems]
+                            };
+
+                            // Update the receipt link's href to include the order data
+                            const receiptLink = document.querySelector('.Receipt-link');
+                            if (receiptLink) {
+                                receiptLink.href = `Receipt.html?orderData=${encodeURIComponent(JSON.stringify(receiptData))}`;
+                            }
+
+                            // Clear cart after successful order
+                            cartItems = [];
+                            updateCartUI();
+                        } else {
+                            alert(data.message);
                         }
-                        
-                        // Clear cart after successful order
-                        cartItems = [];
-                        updateCartUI();
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('There was an error processing your order. Please try again.');
-                });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('There was an error processing your order. Please try again.');
+                    });
             }
 
             function updatePaymentTab() {
                 // Update the order total in the payment tab
                 const paymentOrderTotal = document.getElementById('payment-order-total');
-                const finalAmount = document.getElementById('final-amount');
-                if (paymentOrderTotal && finalAmount) {
+                if (paymentOrderTotal) {
                     paymentOrderTotal.textContent = cartTotalElement.textContent;
-                    finalAmount.textContent = cartTotalElement.textContent;
                 }
-                // You can also reset adjustments and payment fields here if needed
-            }
-
-            let adjustments = []; // Store all adjustments (discounts/charges)
-
-            function recalculateFinalAmount() {
-                let baseTotal = cartTotal;
-                let totalAdjustment = 0;
-
-                adjustments.forEach(adj => {
-                    if (adj.unit === 'percent') {
-                        let value = (baseTotal * adj.amount / 100);
-                        totalAdjustment += (adj.type === 'discount' ? -value : value);
-                    } else {
-                        totalAdjustment += (adj.type === 'discount' ? -adj.amount : adj.amount);
-                    }
-                });
-
-                let final = baseTotal + totalAdjustment;
-                if (final < 0) final = 0;
-
-                // Update UI
-                document.getElementById('final-amount').textContent = `₱${final.toFixed(2)}`;
-                document.getElementById('payment-order-total').textContent = `₱${baseTotal.toFixed(2)}`;
-                updateAdjustmentsList();
+                // Reset payment field
+                document.getElementById('payment-amount').value = '';
                 updateChange();
             }
 
-            function updateAdjustmentsList() {
-                const list = document.getElementById('adjustments-list');
-                list.innerHTML = '';
-                adjustments.forEach((adj, idx) => {
-                    const div = document.createElement('div');
-                    div.className = 'adjustment-item';
-                    div.innerHTML = `
-                        <span>${adj.type === 'discount' ? 'Discount' : 'Charge'}: ${adj.amount}${adj.unit === 'percent' ? '%' : '₱'}</span>
-                        <button data-idx="${idx}" class="remove-adjustment">Remove</button>
-                    `;
-                    list.appendChild(div);
-                });
-                // Remove adjustment handler
-                list.querySelectorAll('.remove-adjustment').forEach(btn => {
-                    btn.onclick = function () {
-                        adjustments.splice(parseInt(this.dataset.idx), 1);
-                        recalculateFinalAmount();
-                    };
-                });
-            }
-
-            // Apply adjustment button
-            document.getElementById('apply-adjustment').addEventListener('click', function (e) {
-                e.preventDefault();
-                const type = document.getElementById('adjustment-type').value;
-                const amount = parseFloat(document.getElementById('adjustment-amount').value);
-                const unit = document.getElementById('adjustment-unit').value;
-                if (isNaN(amount) || amount <= 0) {
-                    alert('Enter a valid amount.');
-                    return;
-                }
-                adjustments.push({ type, amount, unit });
-                recalculateFinalAmount();
-            });
-
             function getFinalAmount() {
-                // Get the numeric value from the final amount span
-                const text = document.getElementById('final-amount').textContent.replace(/[₱,]/g, '');
+                // Get the numeric value from the order total span
+                const text = document.getElementById('payment-order-total').textContent.replace(/[₱,]/g, '');
                 return parseFloat(text) || 0;
             }
 
@@ -938,17 +923,26 @@
                 const paid = parseFloat(paymentInput.value) || 0;
                 const due = getFinalAmount();
                 let change = paid - due;
-                if (change < 0) change = 0;
-                changeAmount.textContent = `₱${change.toFixed(2)}`;
-            }
-            function updatePaymentTab() {
-                recalculateFinalAmount();
-                document.getElementById('payment-amount').value = '';
-                updateChange();
+
+                // Show alert if payment is insufficient
+                if (change < 0) {
+                    changeAmount.textContent = '₱0.00';
+                    changeAmount.style.color = '#e74c3c';
+                    addPaymentErrorMessage();
+                } else {
+                    changeAmount.textContent = `₱${change.toFixed(2)}`;
+                    changeAmount.style.color = ''; // Reset to default
+                    // Hide error message if it exists
+                    if (document.getElementById('payment-error-msg')) {
+                        document.getElementById('payment-error-msg').style.display = 'none';
+                    }
+                }
             }
 
-            // Payment input change
-            document.getElementById('payment-amount').addEventListener('input', updateChange);
+            // Also update the payment-amount input to show the message on input
+            document.getElementById('payment-amount').addEventListener('input', function () {
+                updateChange();
+            });
 
             // Quick payment buttons
             document.querySelectorAll('.quick-payment').forEach(btn => {
@@ -962,6 +956,20 @@
                     updateChange();
                 });
             });
+
+            // Check for tab parameter in URL to navigate to specific tab
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabParam = urlParams.get('tab');
+
+            if (tabParam === 'success') {
+                // Find the index of the success tab
+                const successTabIndex = Array.from(tabContents).findIndex(tab => tab.id === 'tab-success');
+                if (successTabIndex !== -1) {
+                    currentTabIndex = successTabIndex;
+                    updateTabs();
+                    updateNavButtons();
+                }
+            }
         });
     </script>
 </body>

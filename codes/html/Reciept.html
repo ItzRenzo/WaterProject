@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Receipt - RJane Water Kiosk</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="../../Css/code_order.css">
+    <link rel="stylesheet" href="../../Css/order.css">
+  
 </head>
 <body>
     <div class="receipt-container">
@@ -59,13 +60,24 @@
             <p>Thank you for your purchase!</p>
         </div>
         
-        <button id="print-receipt" onclick="window.print()">
-            <i class="fas fa-print"></i> Print Receipt
-        </button>
+        <div class="receipt-actions">
+            <button id="print-receipt" onclick="window.print()">
+                <i class="fas fa-print"></i> Print Receipt
+            </button>
+            
+            <button id="back" class="back-button">
+                <i class="fas fa-arrow-left"></i> Back to Order
+            </button>
+        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Single event listener for back button
+            document.getElementById('back').addEventListener('click', function() {
+                window.location.href = 'order.html';
+            });
+            
             // Try to get order data from URL parameters
             try {
                 const params = new URLSearchParams(window.location.search);

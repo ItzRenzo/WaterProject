@@ -811,3 +811,47 @@ body {
         display: none;
     }
 }
+
+.receipt-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.receipt-actions button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.receipt-actions #print-receipt {
+    background-color: var(--primary);
+    color: white;
+}
+
+.receipt-actions #print-receipt:hover {
+    background-color: var(--primary-dark);
+}
+
+.receipt-actions .back-button {
+    background-color: #3498db;
+    color: white;
+    position: static;
+    transform: none;
+}
+
+.receipt-actions .back-button:hover {
+    background-color: #2980b9;
+}
+
+.receipt-actions button i {
+    margin-right: 8px;
+}

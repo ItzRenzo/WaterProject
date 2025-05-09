@@ -10,7 +10,8 @@ CREATE TABLE Product (
     ProductName VARCHAR(100) NOT NULL,
     ProductPrice DECIMAL(10, 2) NOT NULL,
     ProductDescription TEXT,
-    ProductStatus VARCHAR(50) NOT NULL
+    ProductStatus VARCHAR(50) NOT NULL,
+    Stocks INT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE Container (
@@ -23,16 +24,18 @@ CREATE TABLE Container (
 
 CREATE TABLE Employee (
     EmployeeID INT PRIMARY KEY AUTO_INCREMENT,
-    EmployeeName VARCHAR(100) NOT NULL,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL,
     EmployeePosition VARCHAR(50) NOT NULL,
     EmployeeNumber VARCHAR(12) NOT NULL,
-    EmployeeSchedule TEXT,
     EmployeeStatus VARCHAR(50) NOT NULL,
     Username VARCHAR(50) NOT NULL,
-    Password VARCHAR(255) NOT NULL;
+    Password VARCHAR(255) NOT NULL,
+    DateJoined DATE NULL
 );
 
-CREATE TABLE `Transaction` (
+
+CREATE TABLE Transaction (
     TransactionID INT PRIMARY KEY AUTO_INCREMENT,
     CustomerID INT,
     TransactionDate DATETIME NOT NULL,
@@ -52,3 +55,35 @@ CREATE TABLE Order_Details (
     FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID),
 	FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
+
+CREATE TABLE Reports (
+    ReportID INT PRIMARY KEY AUTO_INCREMENT,
+    ContainerID INT,
+    ProductID INT,
+    DeliveryID INT,
+    ExpensesID INT,
+    Stocks_Added INT NOT NULL DEFAULT 0,
+    Stocks_Added_Date DATE NOT NULL,
+
+    FOREIGN KEY (ContainerID) REFERENCES Container(ContainerID),
+    FOREIGN KEY (ProductID) REFERENCES Product(ProductID),
+    FOREIGN KEY (DeliveryID) REFERENCES Order_Details(DeliveryID),
+    FOREIGN KEY (ExpensesID) REFERENCES Expenses(ExpensesID)
+);
+
+
+
+CREATE TABLE ExpenseTypes (
+    ExpenseTypeID INT PRIMARY KEY AUTO_INCREMENT,
+    TypeName VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE LoggedExpenses (
+    ExpensesID INT PRIMARY KEY AUTO_INCREMENT,
+    ExpenseTypeID INT,
+    Amount DECIMAL(10, 2) NOT NULL,
+    ExpenseDate DATE NOT NULL,
+    FOREIGN KEY (ExpenseTypeID) REFERENCES ExpenseTypes(ExpenseTypeID)
+);
+
+

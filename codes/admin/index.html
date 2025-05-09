@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REssence Water Refilling Station</title>
+    <link rel="stylesheet" href="../../Css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <span class="logo-icon"><i class="fas fa-water"></i></span>
+            <h1>R<span>Jane</span></h1>
+        </div>
+        <nav class="menu">
+            <ul>
+                <li class="active">
+                    <a href="index.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="Customers.html"><i class="fas fa-users"></i> Customers</a>
+                </li>
+                <li>
+                    <a href="orders.html"><i class="fas fa-shopping-cart"></i> Orders</a>
+                </li>
+                <li>
+                    <a href="inventory.html"><i class="fas fa-boxes"></i> Inventory</a>
+                </li>
+                <li>
+                    <a href="deliveries.html"><i class="fas fa-truck"></i> Deliveries</a>
+                </li>
+                <li>
+                    <a href="employees.html"><i class="fas fa-id-card"></i> Employees</a>
+                </li>
+                <li>
+                    <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
+                </li>
+                <li>
+                    <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+                </li>
+            </ul>
+        </nav>
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-details">
+                <h4>Admin User</h4>
+                <p>Water Manager</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <header class="top-bar">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search...">
+            </div>
+            <div class="header-actions">
+                <a href="#" class="notification-icon">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </a>
+                <a href="#" class="settings-icon">
+                    <i class="fas fa-cog"></i>
+                </a>
+            </div>
+        </header>
+
+        <div class="dashboard-header">
+            <h2>Dashboard Overview</h2>
+            <p class="date">Today: <span id="current-date">March 31, 2025</span></p>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon water-icon">
+                    <i class="fas fa-droplet"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>46</h3>
+                    <p>Gallons Sold</p>
+                </div>
+                <div class="stat-progress">
+                    <div class="progress-bar" style="width: 46%;"></div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon client-icon">
+                    <i class="fas fa-user-group"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>5</h3>
+                    <p>Active Clients</p>
+                </div>
+                <div class="stat-progress">
+                    <div class="progress-bar" style="width: 60%;"></div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon order-icon">
+                    <i class="fas fa-list-check"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>2</h3>
+                    <p>Pending Orders</p>
+                </div>
+                <div class="stat-progress">
+                    <div class="progress-bar" style="width: 25%;"></div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon revenue-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>$240</h3>
+                    <p>Today's Revenue</p>
+                </div>
+                <div class="stat-progress">
+                    <div class="progress-bar" style="width: 70%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Water level card - Fixed HTML -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-glass-water"></i> Water Tank Level</h3>
+                    <div class="card-actions">
+                        <button class="refresh-btn" id="refresh-tank"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="water-level-container">
+                        <div class="water-level">
+                            <div class="water" id="water-fill" style="height: 70%;"></div>
+                            <div class="level-indicators">
+                                <div class="level critical"></div>
+                                <div class="level warning"></div>
+                                <div class="level good"></div>
+                            </div>
+                        </div>
+                        <div class="water-info">
+                            <div class="water-percentage" id="water-percentage">70%</div>
+                            <div class="water-status good" id="water-status">
+                                <i class="fas fa-check-circle"></i> Good Level
+                            </div>
+                            <button class="refill-btn" id="refill-tank">Refill Tank</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Order card -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-cart-plus"></i> New Order</h3>
+                </div>
+                <div class="card-body">
+                    <form class="order-form">
+                        <div class="form-group">
+                            <label for="client-name">Client Name</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="client-name" placeholder="Enter client name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="water-type">Water Type</label>
+                            <div class="select-wrapper">
+                                <select id="water-type">
+                                    <option value="mineral">Mineral Water</option>
+                                    <option value="purified">Purified Water</option>
+                                    <option value="alkaline">Alkaline Water</option>
+                                    <option value="kanjen">Kanjen Water</option>
+                                </select>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">Quantity (Gallons)</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-bottle-water"></i>
+                                <input type="number" id="quantity" min="1" value="1">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="delivery-date">Delivery Date</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-calendar"></i>
+                                <input type="date" id="delivery-date">
+                            </div>
+                        </div>
+                        <button type="button" class="primary-btn" onclick="placeOrder()">
+                            <i class="fas fa-check"></i> Place Order
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Recent clients card -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-users"></i> Recent Clients</h3>
+                    <div class="card-actions">
+                        <button class="view-all-btn">View All</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="client-list">
+                        <div class="client-item">
+                            <div class="client-avatar">
+                                <span>E</span>
+                            </div>
+                            <div class="client-info">
+                                <div class="client-name">Ed</div>
+                                <div class="client-orders">3 orders</div>
+                            </div>
+                            <div class="client-status status-active">Active</div>
+                        </div>
+                        <div class="client-item">
+                            <div class="client-avatar">
+                                <span>Z</span>
+                            </div>
+                            <div class="client-info">
+                                <div class="client-name">Zen</div>
+                                <div class="client-orders">5 orders</div>
+                            </div>
+                            <div class="client-status status-active">Active</div>
+                        </div>
+                        <div class="client-item">
+                            <div class="client-avatar">
+                                <span>W</span>
+                            </div>
+                            <div class="client-info">
+                                <div class="client-name">Walton</div>
+                                <div class="client-orders">New client</div>
+                            </div>
+                            <div class="client-status status-pending">Pending</div>
+                        </div>
+                        <div class="client-item">
+                            <div class="client-avatar">
+                                <span>C</span>
+                            </div>
+                            <div class="client-info">
+                                <div class="client-name">Clak</div>
+                                <div class="client-orders">2 orders</div>
+                            </div>
+                            <div class="client-status status-active">Active</div>
+                        </div>
+                        <div class="client-item">
+                            <div class="client-avatar">
+                                <span>J</span>
+                            </div>
+                            <div class="client-info">
+                                <div class="client-name">Jorge</div>
+                                <div class="client-orders">New client</div>
+                            </div>
+                            <div class="client-status status-pending">Pending</div>
+                        </div>
+                    </div>
+                    <button class="add-client-btn">
+                        <i class="fas fa-plus"></i> Add New Client
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Sales summary card -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-chart-bar"></i> Today's Sales</h3>
+                    <div class="card-actions">
+                        <div class="date-selector">
+                            <button class="date-btn active">Day</button>
+                            <button class="date-btn">Week</button>
+                            <button class="date-btn">Month</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="sales-chart">
+                        <div class="chart-bar" style="height: 30%;">
+                            <div class="bar-label">Mineral</div>
+                        </div>
+                        <div class="chart-bar" style="height: 50%;">
+                            <div class="bar-label">Purified</div>
+                        </div>
+                        <div class="chart-bar" style="height: 15%;">
+                            <div class="bar-label">Alkaline</div>
+                        </div>
+                        <div class="chart-bar" style="height: 15%;">
+                            <div class="bar-label">Kanjen</div>
+                        </div>
+                    </div>
+                    <div class="sales-summary">
+                        <div class="sales-item">
+                            <div class="sales-label">Mineral Water</div>
+                            <div class="sales-value">15 gallons</div>
+                        </div>
+                        <div class="sales-item">
+                            <div class="sales-label">Purified Water</div>
+                            <div class="sales-value">23 gallons</div>
+                        </div>
+                        <div class="sales-item">
+                            <div class="sales-label">Alkaline Water</div>
+                            <div class="sales-value">8 gallons</div>
+                        </div>
+                        <div class="sales-item">
+                            <div class="sales-label">Kanjen Water</div>
+                            <div class="sales-value">8 gallons</div>
+                        </div>
+                        <div class="sales-item total">
+                            <div class="sales-label">Total</div>
+                            <div class="sales-value">46 gallons</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Set current date
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        // JavaScript functionality
+        function placeOrder() {
+            // Get form values
+            const clientName = document.getElementById('client-name').value;
+            const waterType = document.getElementById('water-type').value;
+            const quantity = document.getElementById('quantity').value;
+            const deliveryDate = document.getElementById('delivery-date').value;
+            
+            if (!clientName || !quantity || !deliveryDate) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            // In a real application, you would send this data to a server
+            alert(`Order placed successfully!\nClient: ${clientName}\nWater Type: ${waterType}\nQuantity: ${quantity} gallons\nDelivery Date: ${deliveryDate}`);
+            
+            // Clear form
+            document.getElementById('client-name').value = '';
+            document.getElementById('quantity').value = '1';
+            document.getElementById('delivery-date').value = '';
+            
+            // Update water level (simulated)
+            updateWaterLevel(Math.max(0, parseInt(document.getElementById('water-fill').style.height) - 5));
+        }
+        
+                function updateWaterLevel(percentage) {
+            document.getElementById('water-fill').style.height = percentage + '%';
+            document.querySelector('.water-percentage').textContent = percentage + '%';
+            
+            // Update water status based on percentage
+            const waterStatus = document.querySelector('.water-status');
+            if (percentage < 20) {
+                waterStatus.textContent = '';
+                waterStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Critical Level';
+                waterStatus.className = 'water-status critical';
+            } else if (percentage < 40) {
+                waterStatus.textContent = '';
+                waterStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> Low Level';
+                waterStatus.className = 'water-status low';
+            } else {
+                waterStatus.textContent = '';
+                waterStatus.innerHTML = '<i class="fas fa-check-circle"></i> Good Level';
+                waterStatus.className = 'water-status good';
+            }
+        }
+    </script>
+</body>
+</html>
