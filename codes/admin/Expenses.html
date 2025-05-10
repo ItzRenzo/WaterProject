@@ -7,57 +7,22 @@
     <title>Expenses - RJane Water Refilling Station</title>
     <link rel="stylesheet" href="../../Css/expenses.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="NavBar.html">
 </head>
 
 <body>
-    <!-- Sidebar Navigation -->
-    <div class="sidebar">
-        <div class="logo">
-            <span class="logo-icon"><i class="fas fa-water"></i></span>
-            <h1>R<span>Jane</span></h1>
-        </div>
-        <nav class="menu">
-            <ul>
-                <li>
-                    <a href="Admin_dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
-                </li>
-                <li>
-                    <a href="Customers.html"><i class="fas fa-users"></i> Customers</a>
-                </li>
-                <li>
-                    <a href="orders.html"><i class="fas fa-shopping-cart"></i> Orders</a>
-                </li>
-                <li>
-                    <a href="inventory.html"><i class="fas fa-boxes"></i> Inventory</a>
-                </li>
-                <li>
-                    <a href="delivery.html"><i class="fas fa-truck"></i> Deliveries</a>
-                </li>
-                <li>
-                    <a href="employees.html"><i class="fas fa-id-card"></i> Employees</a>
-                </li>
-                
-                <li class="active">
-                    <a href="expenses.html"><i class="fas fa-receipt"></i> Expenses</a>
-                </li>
-                <li>
-                    <a href="reports.html"><i class="fas fa-file-alt"></i> Reports</a>
-                </li>
-                <li> <a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
-            </ul>
-        </nav>
-        <div class="user-info">
-            <div class="user-avatar">
-                <i class="fas fa-user"></i>
-            </div>
-            <div class="user-details">
-                <h4>Admin User</h4>
-                <p>Water Manager</p>
-            </div>
-        </div>
-    </div>
+    <div id="navbar"></div>
+
+    <script>
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbar').innerHTML = data;
+            });
+    </script>
 
     <div class="main-content">
         <!-- Header Section -->
@@ -170,7 +135,7 @@
                                     <button class="edit-btn" data-id="2"><i class="fas fa-edit"></i></button>
                                     <button class="delete-btn" data-id="2"><i class="fas fa-trash"></i></button>
                                 </td>
-                            </tr>                         
+                            </tr>
                             <tr>
                                 <td>Vehicle Maintenance</td>
                                 <td>Maintenance</td>
@@ -180,7 +145,7 @@
                                     <button class="edit-btn" data-id="4"><i class="fas fa-edit"></i></button>
                                     <button class="delete-btn" data-id="4"><i class="fas fa-trash"></i></button>
                                 </td>
-                            </tr>                           
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -246,7 +211,8 @@
 
                     <div class="form-group">
                         <label for="expenseDescription">Description (Optional)</label>
-                        <textarea id="expenseDescription" rows="3" placeholder="Add details about this expense"></textarea>
+                        <textarea id="expenseDescription" rows="3"
+                            placeholder="Add details about this expense"></textarea>
                     </div>
 
                     <div class="form-actions">
@@ -293,7 +259,8 @@
                             <label for="editExpenseAmount">Amount</label>
                             <div class="amount-input">
                                 <span class="currency">₱</span>
-                                <input type="number" id="editExpenseAmount" placeholder="0.00" step="0.01" min="0" required>
+                                <input type="number" id="editExpenseAmount" placeholder="0.00" step="0.01" min="0"
+                                    required>
                             </div>
                         </div>
                     </div>
@@ -316,7 +283,8 @@
 
                     <div class="form-group">
                         <label for="editExpenseDescription">Description (Optional)</label>
-                        <textarea id="editExpenseDescription" rows="3" placeholder="Add details about this expense"></textarea>
+                        <textarea id="editExpenseDescription" rows="3"
+                            placeholder="Add details about this expense"></textarea>
                     </div>
 
                     <div class="form-actions">
@@ -343,14 +311,15 @@
                 </div>
                 <div class="form-actions">
                     <button type="button" class="cancel-btn"><i class="fas fa-times"></i> Cancel</button>
-                    <button type="button" id="confirmDeleteBtn" class="delete-btn"><i class="fas fa-trash"></i> Delete</button>
+                    <button type="button" id="confirmDeleteBtn" class="delete-btn"><i class="fas fa-trash"></i>
+                        Delete</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // DOM Elements
             const addExpenseBtn = document.getElementById('addExpenseBtn');
             const addExpenseModal = document.getElementById('addExpenseModal');
@@ -363,34 +332,34 @@
             const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
             const expenseForm = document.getElementById('expenseForm');
             const editExpenseForm = document.getElementById('editExpenseForm');
-            
+
             // Set today's date as the default for the expense date input
             document.getElementById('expenseDate').valueAsDate = new Date();
-            
+
             // Open Add Expense Modal
-            addExpenseBtn.addEventListener('click', function() {
+            addExpenseBtn.addEventListener('click', function () {
                 addExpenseModal.classList.add('show');
             });
-            
+
             // Close Modals
             closeButtons.forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     addExpenseModal.classList.remove('show');
                     editExpenseModal.classList.remove('show');
                     deleteConfirmModal.classList.remove('show');
                 });
             });
-            
+
             cancelButtons.forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     addExpenseModal.classList.remove('show');
                     editExpenseModal.classList.remove('show');
                     deleteConfirmModal.classList.remove('show');
                 });
             });
-            
+
             // Close on outside click
-            window.addEventListener('click', function(e) {
+            window.addEventListener('click', function (e) {
                 if (e.target === addExpenseModal) {
                     addExpenseModal.classList.remove('show');
                 }
@@ -401,134 +370,134 @@
                     deleteConfirmModal.classList.remove('show');
                 }
             });
-            
+
             // Handle Edit Button Click
             editButtons.forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     // Get expense ID
                     const expenseId = this.getAttribute('data-id');
-                    
+
                     // Get the table row
                     const row = this.closest('tr');
                     const name = row.cells[0].textContent;
                     const category = row.cells[1].textContent.toLowerCase();
                     const amount = row.cells[2].textContent.replace('₱', '').replace(',', '');
                     const date = row.cells[3].textContent;
-                    
+
                     // Set form values
                     document.getElementById('editExpenseId').value = expenseId;
                     document.getElementById('editExpenseName').value = name;
-                    document.getElementById('editExpenseCategory').value = 
+                    document.getElementById('editExpenseCategory').value =
                         category === 'utilities' ? 'utilities' :
-                        category === 'supplies' ? 'supplies' :
-                        category === 'maintenance' ? 'maintenance' : 'other';
+                            category === 'supplies' ? 'supplies' :
+                                category === 'maintenance' ? 'maintenance' : 'other';
                     document.getElementById('editExpenseAmount').value = parseFloat(amount);
-                    
+
                     // Convert date to yyyy-mm-dd format for input
                     const dateParts = date.split(', ');
                     const monthDay = dateParts[0].split(' ');
                     const month = new Date(Date.parse(monthDay[0] + " 1, 2000")).getMonth() + 1;
                     const day = parseInt(monthDay[1]);
                     const year = parseInt(dateParts[1]);
-                    document.getElementById('editExpenseDate').value = 
+                    document.getElementById('editExpenseDate').value =
                         `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-                    
+
                     // Show modal
                     editExpenseModal.classList.add('show');
                 });
             });
-            
+
             // Handle Delete Button Click
             deleteButtons.forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     // Get expense ID
                     const expenseId = this.getAttribute('data-id');
-                    
+
                     // Get the table row
                     const row = this.closest('tr');
                     const name = row.cells[0].textContent;
                     const amount = row.cells[2].textContent;
-                    
+
                     // Set confirmation details
                     document.getElementById('deleteExpenseName').textContent = name;
                     document.getElementById('deleteExpenseAmount').textContent = amount;
-                    
+
                     // Store expense ID for deletion
                     confirmDeleteBtn.setAttribute('data-id', expenseId);
-                    
+
                     // Show modal
                     deleteConfirmModal.classList.add('show');
                 });
             });
-            
+
             // Handle Confirm Delete
-            confirmDeleteBtn.addEventListener('click', function() {
+            confirmDeleteBtn.addEventListener('click', function () {
                 const expenseId = this.getAttribute('data-id');
-                
+
                 // Here you would normally send a request to delete the expense
                 // For now, we'll just remove it from the table
                 const row = document.querySelector(`.delete-btn[data-id="${expenseId}"]`).closest('tr');
                 row.remove();
-                
+
                 // Close the modal
                 deleteConfirmModal.classList.remove('show');
-                
+
                 // Show success notification (assuming you have this function)
                 showNotification('Expense deleted successfully');
             });
-            
+
             // Handle Add Expense Form Submit
-            expenseForm.addEventListener('submit', function(e) {
+            expenseForm.addEventListener('submit', function (e) {
                 e.preventDefault();
-                
+
                 // Get form values
                 const name = document.getElementById('expenseName').value;
                 const category = document.getElementById('expenseCategory').value;
                 const amount = document.getElementById('expenseAmount').value;
                 const date = document.getElementById('expenseDate').value;
-                
+
                 // Here you would normally send these values to your backend
-                
+
                 // For demo purposes, add to table
                 addExpenseToTable(name, category, amount, date);
-                
+
                 // Reset form and close modal
                 this.reset();
                 document.getElementById('expenseDate').valueAsDate = new Date();
                 addExpenseModal.classList.remove('show');
-                
+
                 // Show success notification (assuming you have this function)
                 showNotification('Expense added successfully');
             });
-            
+
             // Handle Edit Expense Form Submit
-            editExpenseForm.addEventListener('submit', function(e) {
+            editExpenseForm.addEventListener('submit', function (e) {
                 e.preventDefault();
-                
+
                 // Get form values
                 const expenseId = document.getElementById('editExpenseId').value;
                 const name = document.getElementById('editExpenseName').value;
                 const category = document.getElementById('editExpenseCategory').value;
                 const amount = document.getElementById('editExpenseAmount').value;
                 const date = document.getElementById('editExpenseDate').value;
-                
+
                 // Here you would normally send these values to your backend
-                
+
                 // For demo purposes, update the table
                 updateExpenseInTable(expenseId, name, category, amount, date);
-                
+
                 // Close modal
                 editExpenseModal.classList.remove('show');
-                
+
                 // Show success notification (assuming you have this function)
                 showNotification('Expense updated successfully');
             });
-            
+
             // Function to add new expense to the table
             function addExpenseToTable(name, category, amount, date) {
                 const table = document.querySelector('.expense-table tbody');
                 const newRow = table.insertRow(0);
-                
+
                 // Format the date for display
                 const dateObj = new Date(date);
                 const formattedDate = dateObj.toLocaleDateString('en-US', {
@@ -536,29 +505,29 @@
                     day: 'numeric',
                     year: 'numeric'
                 });
-                
+
                 // Create a unique ID for the new row
                 const newId = Date.now();
-                
+
                 // Format the category for display (capitalize first letter)
                 const displayCategory = category.charAt(0).toUpperCase() + category.slice(1);
-                
+
                 newRow.innerHTML = `
                     <td>${name}</td>
                     <td>${displayCategory}</td>
-                    <td>₱${parseFloat(amount).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td>₱${parseFloat(amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                     <td>${formattedDate}</td>
                     <td class="actions">
                         <button class="edit-btn" data-id="${newId}"><i class="fas fa-edit"></i></button>
                         <button class="delete-btn" data-id="${newId}"><i class="fas fa-trash"></i></button>
                     </td>
                 `;
-                
+
                 // Add event listeners to the new buttons
                 const newEditBtn = newRow.querySelector('.edit-btn');
                 const newDeleteBtn = newRow.querySelector('.delete-btn');
-                
-                newEditBtn.addEventListener('click', function() {
+
+                newEditBtn.addEventListener('click', function () {
                     // Use the same logic as for existing edit buttons
                     const expenseId = this.getAttribute('data-id');
                     const row = this.closest('tr');
@@ -566,44 +535,44 @@
                     const category = row.cells[1].textContent.toLowerCase();
                     const amount = row.cells[2].textContent.replace('₱', '').replace(',', '');
                     const date = row.cells[3].textContent;
-                    
+
                     document.getElementById('editExpenseId').value = expenseId;
                     document.getElementById('editExpenseName').value = name;
-                    document.getElementById('editExpenseCategory').value = 
+                    document.getElementById('editExpenseCategory').value =
                         category === 'utilities' ? 'utilities' :
-                        category === 'supplies' ? 'supplies' :
-                        category === 'maintenance' ? 'maintenance' : 'other';
+                            category === 'supplies' ? 'supplies' :
+                                category === 'maintenance' ? 'maintenance' : 'other';
                     document.getElementById('editExpenseAmount').value = parseFloat(amount);
-                    
+
                     const dateParts = date.split(', ');
                     const monthDay = dateParts[0].split(' ');
                     const month = new Date(Date.parse(monthDay[0] + " 1, 2000")).getMonth() + 1;
                     const day = parseInt(monthDay[1]);
                     const year = parseInt(dateParts[1]);
-                    document.getElementById('editExpenseDate').value = 
+                    document.getElementById('editExpenseDate').value =
                         `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-                    
+
                     editExpenseModal.classList.add('show');
                 });
-                
-                newDeleteBtn.addEventListener('click', function() {
+
+                newDeleteBtn.addEventListener('click', function () {
                     const expenseId = this.getAttribute('data-id');
                     const row = this.closest('tr');
                     const name = row.cells[0].textContent;
                     const amount = row.cells[2].textContent;
-                    
+
                     document.getElementById('deleteExpenseName').textContent = name;
                     document.getElementById('deleteExpenseAmount').textContent = amount;
                     confirmDeleteBtn.setAttribute('data-id', expenseId);
-                    
+
                     deleteConfirmModal.classList.add('show');
                 });
             }
-            
+
             // Function to update existing expense in the table
             function updateExpenseInTable(id, name, category, amount, date) {
                 const row = document.querySelector(`.edit-btn[data-id="${id}"]`).closest('tr');
-                
+
                 // Format the date for display
                 const dateObj = new Date(date);
                 const formattedDate = dateObj.toLocaleDateString('en-US', {
@@ -611,16 +580,16 @@
                     day: 'numeric',
                     year: 'numeric'
                 });
-                
+
                 // Format the category for display (capitalize first letter)
                 const displayCategory = category.charAt(0).toUpperCase() + category.slice(1);
-                
+
                 row.cells[0].textContent = name;
                 row.cells[1].textContent = displayCategory;
-                row.cells[2].textContent = `₱${parseFloat(amount).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                row.cells[2].textContent = `₱${parseFloat(amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
                 row.cells[3].textContent = formattedDate;
             }
-            
+
             // Show notification function
             function showNotification(message) {
                 const notification = document.createElement('div');
@@ -632,11 +601,11 @@
                     </div>
                 `;
                 document.body.appendChild(notification);
-                
+
                 setTimeout(() => {
                     notification.classList.add('show');
                 }, 10);
-                
+
                 setTimeout(() => {
                     notification.classList.remove('show');
                     setTimeout(() => {
@@ -644,7 +613,7 @@
                     }, 300);
                 }, 3000);
             }
-            
+
             // Initialize Chart
             const ctx = document.getElementById('expenseChart').getContext('2d');
             const expenseChart = new Chart(ctx, {
@@ -698,16 +667,16 @@
                     maintainAspectRatio: false
                 }
             });
-            
+
             // Update chart on filter change
-            document.getElementById('chartFilter').addEventListener('change', function() {
+            document.getElementById('chartFilter').addEventListener('change', function () {
                 // Here you would normally fetch new data based on the selected period
                 // For now, we'll just change the title
-                
+
                 let titleText;
                 let newData;
-                
-                switch(this.value) {
+
+                switch (this.value) {
                     case 'month':
                         titleText = 'Expenses by Category (May 2025)';
                         newData = [6250, 850, 2500, 0, 0, 2900, 0];
@@ -721,7 +690,7 @@
                         newData = [45250, 12850, 18500, 192000, 120000, 35900, 8500];
                         break;
                 }
-                
+
                 expenseChart.options.plugins.title.text = titleText;
                 expenseChart.data.datasets[0].data = newData;
                 expenseChart.update();

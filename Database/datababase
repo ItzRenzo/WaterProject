@@ -68,14 +68,15 @@ CREATE TABLE Reports (
     FOREIGN KEY (ContainerID) REFERENCES Container(ContainerID),
     FOREIGN KEY (ProductID) REFERENCES Product(ProductID),
     FOREIGN KEY (DeliveryID) REFERENCES Order_Details(DeliveryID),
-    FOREIGN KEY (ExpensesID) REFERENCES Expenses(ExpensesID)
+    FOREIGN KEY (ExpensesID) REFERENCES LoggedExpenses(ExpensesID)
 );
 
 
 
 CREATE TABLE ExpenseTypes (
     ExpenseTypeID INT PRIMARY KEY AUTO_INCREMENT,
-    TypeName VARCHAR(100) NOT NULL
+    TypeName VARCHAR(100) NOT NULL,
+    Category VARCHAR(100)
 );
 
 CREATE TABLE LoggedExpenses (
@@ -83,7 +84,9 @@ CREATE TABLE LoggedExpenses (
     ExpenseTypeID INT,
     Amount DECIMAL(10, 2) NOT NULL,
     ExpenseDate DATE NOT NULL,
+    Description TEXT,
     FOREIGN KEY (ExpenseTypeID) REFERENCES ExpenseTypes(ExpenseTypeID)
 );
+
 
 

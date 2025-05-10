@@ -9,58 +9,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="NavBar.html">
 </head>
 
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="logo">
-            <span class="logo-icon"><i class="fas fa-water"></i></span>
-            <h1>R<span>Jane</span></h1>
-        </div>
-        <nav class="menu">
-            <ul>
-                <li>
-                    <a href="Admin_dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
-                </li>
-                <li class="active">
-                    <a href="Customers.html"><i class="fas fa-users"></i> Customers</a>
-                </li>
-                <li>
-                    <a href="orders.html"><i class="fas fa-shopping-cart"></i> Orders</a>
-                </li>
-                <li>
-                    <a href="inventory.html"><i class="fas fa-boxes"></i> Inventory</a>
-                </li>
-                <li>
-                    <a href="deliveries.html"><i class="fas fa-truck"></i> Deliveries</a>
-                </li>
-                <li>
-                    <a href="employees.html"><i class="fas fa-id-card"></i> Employees</a>
-                </li>
-                <li>
-                    <a href="expenses.html"><i class="fas fa-receipt"></i> Expenses</a>
-                </li>
-                <li>
-                    <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
-                </li>
-                <li> <a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
-                
-            </ul>
-        </nav>
-        <div class="user-info">
-            <div class="user-avatar">
-                <i class="fas fa-user"></i>
-            </div>
-            <div class="user-details">
-                <h4>Admin User</h4>
-                <p>Water Manager</p>
-            </div>
-        </div>
-    </div>
+    <div id="navbar"></div>
 
+    <script>
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbar').innerHTML = data;
+            });
+    </script>
     <div class="main-content">
-       
+
 
         <!-- Client Management Header -->
         <div class="dashboard-header">
@@ -439,10 +402,10 @@
             }, 3000);
         }
 
-        
+
     </script>
 
-    
+
 </body>
 
 </html>

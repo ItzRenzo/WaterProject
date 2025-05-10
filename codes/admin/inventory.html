@@ -1,60 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventory - RJane Water Refilling Station</title>
     <link rel="stylesheet" href="../../Css/inventory.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="NavBar.html">
 </head>
+
 <body>
-    <div class="sidebar">
-        <div class="logo">
-            <span class="logo-icon"><i class="fas fa-water"></i></span>
-            <h1>R<span>Jane</span></h1>
-        </div>
-        <nav class="menu">
-            <ul>
-                
-                <li>
-                    <a href="Admin_dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
-                </li>
-                <li>
-                    <a href="Customers.html"><i class="fas fa-users"></i> Customers</a>
-                </li>
-                <li>
-                    <a href="Orders.html"><i class="fas fa-shopping-cart"></i> Orders</a>
-                </li>
-                <li class="active">
-                    <a href="inventory.html"><i class="fas fa-boxes"></i> Inventory</a>
-                </li>
-                <li>
-                    <a href="deliveries.html"><i class="fas fa-truck"></i> Deliveries</a>
-                </li>
-                <li>
-                    <a href="employees.html"><i class="fas fa-id-card"></i> Employees</a>
-                </li>
-                <li>
-                    <a href="expenses.html"><i class="fas fa-receipt"></i> Expenses</a>
-                </li>
-                <li>
-                    <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
-                </li>
-                <li> <a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
-                
-            </ul>
-        </nav>
-        <div class="user-info">
-            <div class="user-avatar">
-                <i class="fas fa-user"></i>
-            </div>
-            <div class="user-details">
-                <h4>Admin User</h4>
-                <p>Water Manager</p>
-            </div>
-        </div>
-    </div>
+    <div id="navbar"></div>
+
+    <script>
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbar').innerHTML = data;
+            });
+    </script>
 
     <div class="main-content">
         <!-- Inventory Header -->
@@ -63,7 +30,7 @@
             <div class="header-actions">
                 <button class="add-product-btn">
                     <i class="fas fa-plus"></i> Add Product
-                </button>              
+                </button>
             </div>
         </div>
 
@@ -78,7 +45,7 @@
                     <p>4</p>
                 </div>
             </div>
-            
+
             <div class="stat-card">
                 <div class="stat-icon low-stock">
                     <i class="fas fa-exclamation-triangle"></i>
@@ -99,7 +66,7 @@
                     <input type="text" placeholder="Search products...">
                 </div>
             </div>
-            
+
             <div class="products-grid">
                 <!-- Product Card -->
                 <div class="product-card">
@@ -128,7 +95,7 @@
                 </div>
                 <!-- More product cards here -->
             </div>
-        </div>      
+        </div>
 
         <!-- Containers Section -->
         <div class="inventory-section">
@@ -140,7 +107,7 @@
                     </button>
                 </div>
             </div>
-            
+
             <div class="containers-grid">
                 <!-- Container Card -->
                 <div class="product-card container-card">
@@ -237,100 +204,100 @@
     </div>
 
     <script>
-    // Modal functionality for inventory management
-    document.addEventListener('DOMContentLoaded', function() {
-        // Get DOM elements
-        const modal = document.getElementById('addProductModal');
-        const addProductBtn = document.querySelector('.add-product-btn');
-        const closeBtn = modal.querySelector('.close-btn');
-        const cancelBtn = modal.querySelector('.cancel-btn');
-        const saveBtn = modal.querySelector('.save-btn');
-        const productForm = document.getElementById('productForm');
-        const productsGrid = document.querySelector('.products-grid');
-        const totalProductsCount = document.querySelector('.stat-card:first-child .stat-info p');
-        
-        // Counter for new products (for generating unique IDs)
-        let productCounter = 5; // Starting after the initial 4 products
-        
-        // Open modal
-        addProductBtn.addEventListener('click', function() {
-            modal.style.display = 'flex';
-            setTimeout(() => {
-                modal.classList.add('show');
-            }, 10);
-            document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
-        });
-        
-        // Close modal function
-        function closeModal() {
-            modal.classList.remove('show');
-            setTimeout(() => {
-                modal.style.display = 'none';
-                productForm.reset(); // Reset form fields
-            }, 300);
-            document.body.style.overflow = ''; // Restore scrolling
-        }
-        
-        // Close modal when clicking close button
-        closeBtn.addEventListener('click', closeModal);
-        
-        // Close modal when clicking cancel button
-        cancelBtn.addEventListener('click', closeModal);
-        
-        // Close modal when clicking outside the modal content
-        window.addEventListener('click', function(event) {
-            if (event.target === modal) {
+        // Modal functionality for inventory management
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get DOM elements
+            const modal = document.getElementById('addProductModal');
+            const addProductBtn = document.querySelector('.add-product-btn');
+            const closeBtn = modal.querySelector('.close-btn');
+            const cancelBtn = modal.querySelector('.cancel-btn');
+            const saveBtn = modal.querySelector('.save-btn');
+            const productForm = document.getElementById('productForm');
+            const productsGrid = document.querySelector('.products-grid');
+            const totalProductsCount = document.querySelector('.stat-card:first-child .stat-info p');
+
+            // Counter for new products (for generating unique IDs)
+            let productCounter = 5; // Starting after the initial 4 products
+
+            // Open modal
+            addProductBtn.addEventListener('click', function () {
+                modal.style.display = 'flex';
+                setTimeout(() => {
+                    modal.classList.add('show');
+                }, 10);
+                document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+            });
+
+            // Close modal function
+            function closeModal() {
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    productForm.reset(); // Reset form fields
+                }, 300);
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+
+            // Close modal when clicking close button
+            closeBtn.addEventListener('click', closeModal);
+
+            // Close modal when clicking cancel button
+            cancelBtn.addEventListener('click', closeModal);
+
+            // Close modal when clicking outside the modal content
+            window.addEventListener('click', function (event) {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Handle form submission
+            productForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                // Get form values
+                const name = document.getElementById('productName').value;
+                const price = document.getElementById('productPrice').value;
+                const description = document.getElementById('productDescription').value;
+                const status = document.getElementById('productStatus').value;
+
+                // Create a new product card
+                const newProduct = createProductCard(name, price, description, status);
+
+                // Add the new product to the grid
+                productsGrid.insertBefore(newProduct, productsGrid.firstChild);
+
+                // Update product count
+                const currentCount = parseInt(totalProductsCount.textContent);
+                totalProductsCount.textContent = currentCount + 1;
+
+                // Show success message
+                showNotification('Product added successfully!', 'success');
+
+                // Close the modal
                 closeModal();
-            }
-        });
-        
-        // Handle form submission
-        productForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            // Get form values
-            const name = document.getElementById('productName').value;
-            const price = document.getElementById('productPrice').value;
-            const description = document.getElementById('productDescription').value;
-            const status = document.getElementById('productStatus').value;
-            
-            // Create a new product card
-            const newProduct = createProductCard(name, price, description, status);
-            
-            // Add the new product to the grid
-            productsGrid.insertBefore(newProduct, productsGrid.firstChild);
-            
-            // Update product count
-            const currentCount = parseInt(totalProductsCount.textContent);
-            totalProductsCount.textContent = currentCount + 1;
-            
-            // Show success message
-            showNotification('Product added successfully!', 'success');
-            
-            // Close the modal
-            closeModal();
-        });
-        
-        // Function to create a new product card
-        function createProductCard(name, price, description, status) {
-            const productCard = document.createElement('div');
-            productCard.className = 'product-card';
-            productCard.id = 'product-' + productCounter++;
-            
-            // Generate random available amount for demonstration
-            const available = Math.floor(Math.random() * 900) + 100; // 100-999 L
-            const isActive = status === 'active';
-            
-            // Add stock badge class based on available amount
-            let stockBadgeClass = 'in-stock';
-            let stockBadgeText = 'In Stock';
-            
-            if (available < 50) {
-                stockBadgeClass = 'low-stock';
-                stockBadgeText = 'Low Stock';
-            }
-            
-            productCard.innerHTML = `
+            });
+
+            // Function to create a new product card
+            function createProductCard(name, price, description, status) {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.id = 'product-' + productCounter++;
+
+                // Generate random available amount for demonstration
+                const available = Math.floor(Math.random() * 900) + 100; // 100-999 L
+                const isActive = status === 'active';
+
+                // Add stock badge class based on available amount
+                let stockBadgeClass = 'in-stock';
+                let stockBadgeText = 'In Stock';
+
+                if (available < 50) {
+                    stockBadgeClass = 'low-stock';
+                    stockBadgeText = 'Low Stock';
+                }
+
+                productCard.innerHTML = `
                 <div class="product-header">
                     <div class="product-name">${name}</div>
                     <span class="stock-badge ${stockBadgeClass}">${stockBadgeText}</span>
@@ -359,165 +326,165 @@
                     <button class="delete-btn"><i class="fas fa-trash"></i></button>
                 </div>
             `;
-            
-            // Add event listeners to the new product card buttons
-            setTimeout(() => {
-                const deleteBtn = productCard.querySelector('.delete-btn');
-                const editBtn = productCard.querySelector('.edit-btn');
-                
-                deleteBtn.addEventListener('click', function() {
-                    confirmDelete(productCard);
-                });
-                
-                editBtn.addEventListener('click', function() {
-                    editProduct(productCard);
-                });
-            }, 0);
-            
-            return productCard;
-        }
-        
-        // Function to show notification
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.innerHTML = `
+
+                // Add event listeners to the new product card buttons
+                setTimeout(() => {
+                    const deleteBtn = productCard.querySelector('.delete-btn');
+                    const editBtn = productCard.querySelector('.edit-btn');
+
+                    deleteBtn.addEventListener('click', function () {
+                        confirmDelete(productCard);
+                    });
+
+                    editBtn.addEventListener('click', function () {
+                        editProduct(productCard);
+                    });
+                }, 0);
+
+                return productCard;
+            }
+
+            // Function to show notification
+            function showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.innerHTML = `
                 <div class="notification-icon">
-                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 
-                                   type === 'error' ? 'fa-exclamation-circle' : 
-                                   'fa-info-circle'}"></i>
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' :
+                        type === 'error' ? 'fa-exclamation-circle' :
+                            'fa-info-circle'}"></i>
                 </div>
                 <div class="notification-message">${message}</div>
             `;
-            
-            document.body.appendChild(notification);
-            
-            // Show notification
-            setTimeout(() => {
-                notification.classList.add('show');
-            }, 10);
-            
-            // Hide and remove notification after 3 seconds
-            setTimeout(() => {
-                notification.classList.remove('show');
+
+                document.body.appendChild(notification);
+
+                // Show notification
                 setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 3000);
-        }
-        
-        // Function to confirm deletion of a product
-        function confirmDelete(productCard) {
-            if (confirm('Are you sure you want to delete this product?')) {
-                // Remove product card with animation
-                productCard.classList.add('removing');
+                    notification.classList.add('show');
+                }, 10);
+
+                // Hide and remove notification after 3 seconds
                 setTimeout(() => {
-                    productsGrid.removeChild(productCard);
-                    
-                    // Update product count
-                    const currentCount = parseInt(totalProductsCount.textContent);
-                    totalProductsCount.textContent = currentCount - 1;
-                    
-                    // Show success message
-                    showNotification('Product deleted successfully!', 'success');
-                }, 300);
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
             }
-        }
-        
-        // Function to edit a product
-        function editProduct(productCard) {
-            // Get product details
-            const name = productCard.querySelector('.product-name').textContent;
-            const price = productCard.querySelector('.detail-item:nth-child(1) span:last-child').textContent.replace('₱', '');
-            const status = productCard.querySelector('.status').classList.contains('active') ? 'active' : 'inactive';
-            const description = productCard.querySelector('.description')?.textContent || '';
-            
-            // Set form values
-            document.getElementById('productName').value = name;
-            document.getElementById('productPrice').value = parseFloat(price);
-            document.getElementById('productDescription').value = description;
-            document.getElementById('productStatus').value = status;
-            
-            // Update form submit to edit product instead of adding new one
-            const originalSubmitHandler = productForm.onsubmit;
-            productForm.onsubmit = function(event) {
-                event.preventDefault();
-                
-                // Update product details
-                productCard.querySelector('.product-name').textContent = document.getElementById('productName').value;
-                productCard.querySelector('.detail-item:nth-child(1) span:last-child').textContent = '₱' + parseFloat(document.getElementById('productPrice').value).toFixed(2);
-                
-                const newStatus = document.getElementById('productStatus').value;
-                const statusElement = productCard.querySelector('.status');
-                statusElement.textContent = newStatus === 'active' ? 'Active' : 'Inactive';
-                statusElement.className = `status ${newStatus}`;
-                
-                const newDescription = document.getElementById('productDescription').value;
-                let descriptionItem = productCard.querySelector('.detail-item:nth-child(4)');
-                
-                if (newDescription) {
-                    if (descriptionItem) {
-                        descriptionItem.querySelector('.description').textContent = newDescription;
-                    } else {
-                        const newDescriptionItem = document.createElement('div');
-                        newDescriptionItem.className = 'detail-item';
-                        newDescriptionItem.innerHTML = `
+
+            // Function to confirm deletion of a product
+            function confirmDelete(productCard) {
+                if (confirm('Are you sure you want to delete this product?')) {
+                    // Remove product card with animation
+                    productCard.classList.add('removing');
+                    setTimeout(() => {
+                        productsGrid.removeChild(productCard);
+
+                        // Update product count
+                        const currentCount = parseInt(totalProductsCount.textContent);
+                        totalProductsCount.textContent = currentCount - 1;
+
+                        // Show success message
+                        showNotification('Product deleted successfully!', 'success');
+                    }, 300);
+                }
+            }
+
+            // Function to edit a product
+            function editProduct(productCard) {
+                // Get product details
+                const name = productCard.querySelector('.product-name').textContent;
+                const price = productCard.querySelector('.detail-item:nth-child(1) span:last-child').textContent.replace('₱', '');
+                const status = productCard.querySelector('.status').classList.contains('active') ? 'active' : 'inactive';
+                const description = productCard.querySelector('.description')?.textContent || '';
+
+                // Set form values
+                document.getElementById('productName').value = name;
+                document.getElementById('productPrice').value = parseFloat(price);
+                document.getElementById('productDescription').value = description;
+                document.getElementById('productStatus').value = status;
+
+                // Update form submit to edit product instead of adding new one
+                const originalSubmitHandler = productForm.onsubmit;
+                productForm.onsubmit = function (event) {
+                    event.preventDefault();
+
+                    // Update product details
+                    productCard.querySelector('.product-name').textContent = document.getElementById('productName').value;
+                    productCard.querySelector('.detail-item:nth-child(1) span:last-child').textContent = '₱' + parseFloat(document.getElementById('productPrice').value).toFixed(2);
+
+                    const newStatus = document.getElementById('productStatus').value;
+                    const statusElement = productCard.querySelector('.status');
+                    statusElement.textContent = newStatus === 'active' ? 'Active' : 'Inactive';
+                    statusElement.className = `status ${newStatus}`;
+
+                    const newDescription = document.getElementById('productDescription').value;
+                    let descriptionItem = productCard.querySelector('.detail-item:nth-child(4)');
+
+                    if (newDescription) {
+                        if (descriptionItem) {
+                            descriptionItem.querySelector('.description').textContent = newDescription;
+                        } else {
+                            const newDescriptionItem = document.createElement('div');
+                            newDescriptionItem.className = 'detail-item';
+                            newDescriptionItem.innerHTML = `
                             <span>Description:</span>
                             <span class="description">${newDescription}</span>
                         `;
-                        productCard.querySelector('.product-details').appendChild(newDescriptionItem);
+                            productCard.querySelector('.product-details').appendChild(newDescriptionItem);
+                        }
+                    } else if (descriptionItem) {
+                        productCard.querySelector('.product-details').removeChild(descriptionItem);
                     }
-                } else if (descriptionItem) {
-                    productCard.querySelector('.product-details').removeChild(descriptionItem);
-                }
-                
-                // Show success message
-                showNotification('Product updated successfully!', 'success');
-                
-                // Close the modal
-                closeModal();
-                
-                // Restore original submit handler
-                productForm.onsubmit = originalSubmitHandler;
-            };
-            
-            // Open modal
-            modal.style.display = 'flex';
-            setTimeout(() => {
-                modal.classList.add('show');
-            }, 10);
-            document.body.style.overflow = 'hidden';
-        }
-        
-        // Add event listeners to all delete buttons
-        document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const productCard = this.closest('.product-card');
-                confirmDelete(productCard);
-            });
-        });
-        
-        // Add event listeners to all edit buttons
-        document.querySelectorAll('.edit-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const productCard = this.closest('.product-card');
-                editProduct(productCard);
-            });
-        });
-    });
 
-    // Add Container Modal Functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        // Get DOM elements for Add Container functionality
-        const addContainerBtn = document.querySelector('.add-container-btn');
-        const containersGrid = document.querySelector('.containers-grid');
-        const totalContainersCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
-        
-        // Create the modal if it doesn't exist
-        let containerModal = document.createElement('div');
-        containerModal.id = 'addContainerModal';
-        containerModal.className = 'modal';
-        containerModal.innerHTML = `
+                    // Show success message
+                    showNotification('Product updated successfully!', 'success');
+
+                    // Close the modal
+                    closeModal();
+
+                    // Restore original submit handler
+                    productForm.onsubmit = originalSubmitHandler;
+                };
+
+                // Open modal
+                modal.style.display = 'flex';
+                setTimeout(() => {
+                    modal.classList.add('show');
+                }, 10);
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Add event listeners to all delete buttons
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const productCard = this.closest('.product-card');
+                    confirmDelete(productCard);
+                });
+            });
+
+            // Add event listeners to all edit buttons
+            document.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const productCard = this.closest('.product-card');
+                    editProduct(productCard);
+                });
+            });
+        });
+
+        // Add Container Modal Functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get DOM elements for Add Container functionality
+            const addContainerBtn = document.querySelector('.add-container-btn');
+            const containersGrid = document.querySelector('.containers-grid');
+            const totalContainersCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
+
+            // Create the modal if it doesn't exist
+            let containerModal = document.createElement('div');
+            containerModal.id = 'addContainerModal';
+            containerModal.className = 'modal';
+            containerModal.innerHTML = `
             <div class="modal-content">
                 <div class="modal-header">
                     <h3><i class="fas fa-cube"></i> Add New Container</h3>
@@ -562,151 +529,151 @@
                 </div>
             </div>
         `;
-        document.body.appendChild(containerModal);
-        
-        // Counter for new containers (for generating unique IDs)
-        let containerCounter = 3; // Starting after the initial 2 containers
-        
-        // Get modal elements
-        const closeBtn = containerModal.querySelector('.close-btn');
-        const cancelBtn = containerModal.querySelector('.cancel-btn');
-        const containerForm = document.getElementById('containerForm');
-        
-        // Open container modal
-        addContainerBtn.addEventListener('click', function() {
-            containerModal.style.display = 'flex';
-            setTimeout(() => {
-                containerModal.classList.add('show');
-            }, 10);
-            document.body.style.overflow = 'hidden';
-        });
-        
-        // Close container modal function
-        function closeContainerModal() {
-            containerModal.classList.remove('show');
-            setTimeout(() => {
-                containerModal.style.display = 'none';
-                containerForm.reset(); // Reset form fields
-            }, 300);
-            document.body.style.overflow = ''; // Restore scrolling
-        }
-        
-        // Close modal when clicking close button
-        closeBtn.addEventListener('click', closeContainerModal);
-        
-        // Close modal when clicking cancel button
-        cancelBtn.addEventListener('click', closeContainerModal);
-        
-        // Close modal when clicking outside the modal content
-        window.addEventListener('click', function(event) {
-            if (event.target === containerModal) {
-                closeContainerModal();
+            document.body.appendChild(containerModal);
+
+            // Counter for new containers (for generating unique IDs)
+            let containerCounter = 3; // Starting after the initial 2 containers
+
+            // Get modal elements
+            const closeBtn = containerModal.querySelector('.close-btn');
+            const cancelBtn = containerModal.querySelector('.cancel-btn');
+            const containerForm = document.getElementById('containerForm');
+
+            // Open container modal
+            addContainerBtn.addEventListener('click', function () {
+                containerModal.style.display = 'flex';
+                setTimeout(() => {
+                    containerModal.classList.add('show');
+                }, 10);
+                document.body.style.overflow = 'hidden';
+            });
+
+            // Close container modal function
+            function closeContainerModal() {
+                containerModal.classList.remove('show');
+                setTimeout(() => {
+                    containerModal.style.display = 'none';
+                    containerForm.reset(); // Reset form fields
+                }, 300);
+                document.body.style.overflow = ''; // Restore scrolling
             }
-        });
-        
-        // Handle container form submission
-        containerForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            // Get form values
-            const name = document.getElementById('containerName').value;
-            const depositFee = document.getElementById('depositFee').value;
-            const availableStock = document.getElementById('availableStock').value;
-            const status = document.getElementById('containerStatus').value;
-            const description = document.getElementById('containerDescription').value;
-            
-            // Create a new container card
-            const newContainer = createContainerCard(name, depositFee, availableStock, status, description);
-            
-            // Add the new container to the grid
-            containersGrid.insertBefore(newContainer, containersGrid.firstChild);
-            
-            // Update low stock count if needed
-            const lowStockCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
-            if (parseInt(availableStock) < 20) {
-                lowStockCount.textContent = parseInt(lowStockCount.textContent) + 1;
-            }
-            
-            // Show success message
-            showNotification('Container added successfully!', 'success');
-            
-            // Close the modal
-            closeContainerModal();
-        });
-        
-        // Updated edit container function without circulation
-        function editContainer(containerCard) {
-            // Get container details
-            const name = containerCard.querySelector('.product-name').textContent;
-            const depositFee = containerCard.querySelector('.detail-item:nth-child(1) span:last-child').textContent.replace('₱', '');
-            const availableStock = containerCard.querySelector('.detail-item:nth-child(2) span:last-child').textContent.split(' ')[0];
-            const status = containerCard.querySelector('.status').classList.contains('active') ? 'active' : 'inactive';
-            const description = containerCard.querySelector('.description')?.textContent || '';
-            
-            // Set form values
-            document.getElementById('containerName').value = name;
-            document.getElementById('depositFee').value = parseFloat(depositFee);
-            document.getElementById('availableStock').value = parseInt(availableStock);
-            document.getElementById('containerStatus').value = status;
-            document.getElementById('containerDescription').value = description;
-            
-            // Update form submit to edit container instead of adding new one
-            const originalSubmitHandler = containerForm.onsubmit;
-            containerForm.onsubmit = function(event) {
+
+            // Close modal when clicking close button
+            closeBtn.addEventListener('click', closeContainerModal);
+
+            // Close modal when clicking cancel button
+            cancelBtn.addEventListener('click', closeContainerModal);
+
+            // Close modal when clicking outside the modal content
+            window.addEventListener('click', function (event) {
+                if (event.target === containerModal) {
+                    closeContainerModal();
+                }
+            });
+
+            // Handle container form submission
+            containerForm.addEventListener('submit', function (event) {
                 event.preventDefault();
-                
-                // Get updated values
-                const newName = document.getElementById('containerName').value;
-                const newDepositFee = document.getElementById('depositFee').value;
-                const newAvailableStock = document.getElementById('availableStock').value;
-                const newStatus = document.getElementById('containerStatus').value;
-                const newDescription = document.getElementById('containerDescription').value;
-                
-                // Update container details (removing circulation update)
-                containerCard.querySelector('.product-name').textContent = newName;
-                containerCard.querySelector('.detail-item:nth-child(1) span:last-child').textContent = '₱' + parseFloat(newDepositFee).toFixed(2);
-                containerCard.querySelector('.detail-item:nth-child(2) span:last-child').textContent = newAvailableStock + ' pcs';
-                
-                const statusElement = containerCard.querySelector('.status');
-                statusElement.textContent = newStatus === 'active' ? 'Active' : 'Inactive';
-                statusElement.className = `status ${newStatus}`;
-                
-                // Stock badge update code remains the same
-                
-                // Description update code remains the same
-                
-                // Show success message and close modal
-                showNotification('Container updated successfully!', 'success');
+
+                // Get form values
+                const name = document.getElementById('containerName').value;
+                const depositFee = document.getElementById('depositFee').value;
+                const availableStock = document.getElementById('availableStock').value;
+                const status = document.getElementById('containerStatus').value;
+                const description = document.getElementById('containerDescription').value;
+
+                // Create a new container card
+                const newContainer = createContainerCard(name, depositFee, availableStock, status, description);
+
+                // Add the new container to the grid
+                containersGrid.insertBefore(newContainer, containersGrid.firstChild);
+
+                // Update low stock count if needed
+                const lowStockCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
+                if (parseInt(availableStock) < 20) {
+                    lowStockCount.textContent = parseInt(lowStockCount.textContent) + 1;
+                }
+
+                // Show success message
+                showNotification('Container added successfully!', 'success');
+
+                // Close the modal
                 closeContainerModal();
-                containerForm.onsubmit = originalSubmitHandler;
-            };
-            
-            // Open modal
-            containerModal.style.display = 'flex';
-            setTimeout(() => {
-                containerModal.classList.add('show');
-            }, 10);
-            document.body.style.overflow = 'hidden';
-        }
-        
-        // Updated function to create container cards without circulation
-        function createContainerCard(name, depositFee, availableStock, status, description) {
-            const containerId = 'container-' + containerCounter++;
-            const containerCard = document.createElement('div');
-            containerCard.className = 'product-card container-card';
-            
-            // Add stock badge class based on available amount
-            let stockBadgeClass = 'in-stock';
-            let stockBadgeText = 'In Stock';
-            
-            if (parseInt(availableStock) < 20) {
-                stockBadgeClass = 'low-stock';
-                stockBadgeText = 'Low Stock';
+            });
+
+            // Updated edit container function without circulation
+            function editContainer(containerCard) {
+                // Get container details
+                const name = containerCard.querySelector('.product-name').textContent;
+                const depositFee = containerCard.querySelector('.detail-item:nth-child(1) span:last-child').textContent.replace('₱', '');
+                const availableStock = containerCard.querySelector('.detail-item:nth-child(2) span:last-child').textContent.split(' ')[0];
+                const status = containerCard.querySelector('.status').classList.contains('active') ? 'active' : 'inactive';
+                const description = containerCard.querySelector('.description')?.textContent || '';
+
+                // Set form values
+                document.getElementById('containerName').value = name;
+                document.getElementById('depositFee').value = parseFloat(depositFee);
+                document.getElementById('availableStock').value = parseInt(availableStock);
+                document.getElementById('containerStatus').value = status;
+                document.getElementById('containerDescription').value = description;
+
+                // Update form submit to edit container instead of adding new one
+                const originalSubmitHandler = containerForm.onsubmit;
+                containerForm.onsubmit = function (event) {
+                    event.preventDefault();
+
+                    // Get updated values
+                    const newName = document.getElementById('containerName').value;
+                    const newDepositFee = document.getElementById('depositFee').value;
+                    const newAvailableStock = document.getElementById('availableStock').value;
+                    const newStatus = document.getElementById('containerStatus').value;
+                    const newDescription = document.getElementById('containerDescription').value;
+
+                    // Update container details (removing circulation update)
+                    containerCard.querySelector('.product-name').textContent = newName;
+                    containerCard.querySelector('.detail-item:nth-child(1) span:last-child').textContent = '₱' + parseFloat(newDepositFee).toFixed(2);
+                    containerCard.querySelector('.detail-item:nth-child(2) span:last-child').textContent = newAvailableStock + ' pcs';
+
+                    const statusElement = containerCard.querySelector('.status');
+                    statusElement.textContent = newStatus === 'active' ? 'Active' : 'Inactive';
+                    statusElement.className = `status ${newStatus}`;
+
+                    // Stock badge update code remains the same
+
+                    // Description update code remains the same
+
+                    // Show success message and close modal
+                    showNotification('Container updated successfully!', 'success');
+                    closeContainerModal();
+                    containerForm.onsubmit = originalSubmitHandler;
+                };
+
+                // Open modal
+                containerModal.style.display = 'flex';
+                setTimeout(() => {
+                    containerModal.classList.add('show');
+                }, 10);
+                document.body.style.overflow = 'hidden';
             }
-            
-            const isActive = status === 'active';
-            
-            containerCard.innerHTML = `
+
+            // Updated function to create container cards without circulation
+            function createContainerCard(name, depositFee, availableStock, status, description) {
+                const containerId = 'container-' + containerCounter++;
+                const containerCard = document.createElement('div');
+                containerCard.className = 'product-card container-card';
+
+                // Add stock badge class based on available amount
+                let stockBadgeClass = 'in-stock';
+                let stockBadgeText = 'In Stock';
+
+                if (parseInt(availableStock) < 20) {
+                    stockBadgeClass = 'low-stock';
+                    stockBadgeText = 'Low Stock';
+                }
+
+                const isActive = status === 'active';
+
+                containerCard.innerHTML = `
                 <div class="product-header">
                     <div class="product-name">${name}</div>
                     <span class="stock-badge ${stockBadgeClass}">${stockBadgeText}</span>
@@ -736,46 +703,46 @@
                     <button class="delete-btn" title="Delete Container"><i class="fas fa-trash"></i></button>
                 </div>
             `;
-            
-            // Add event listeners to the buttons
-            setTimeout(() => {
-                // Event listener code remains the same
-            }, 0);
-            
-            return containerCard;
-        }
-        
-        // Function to confirm deletion of a container
-        function confirmDeleteContainer(containerCard) {
-            if (confirm('Are you sure you want to delete this container?')) {
-                // Remove container card with animation
-                containerCard.classList.add('removing');
+
+                // Add event listeners to the buttons
                 setTimeout(() => {
-                    containersGrid.removeChild(containerCard);
-                    
-                    // Check if it was a low stock item
-                    const stockBadge = containerCard.querySelector('.stock-badge');
-                    if (stockBadge.classList.contains('low-stock')) {
-                        // Update low stock count
-                        const lowStockCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
-                        lowStockCount.textContent = Math.max(0, parseInt(lowStockCount.textContent) - 1);
-                    }
-                    
-                    // Show success message
-                    showNotification('Container deleted successfully!', 'success');
-                }, 300);
+                    // Event listener code remains the same
+                }, 0);
+
+                return containerCard;
             }
-        }
-        
-        // Function to update container stock
-        function updateContainerStock(containerId) {
-            // Create update stock modal if it doesn't exist
-            let updateStockModal = document.getElementById('updateStockModal');
-            if (!updateStockModal) {
-                updateStockModal = document.createElement('div');
-                updateStockModal.id = 'updateStockModal';
-                updateStockModal.className = 'modal';
-                updateStockModal.innerHTML = `
+
+            // Function to confirm deletion of a container
+            function confirmDeleteContainer(containerCard) {
+                if (confirm('Are you sure you want to delete this container?')) {
+                    // Remove container card with animation
+                    containerCard.classList.add('removing');
+                    setTimeout(() => {
+                        containersGrid.removeChild(containerCard);
+
+                        // Check if it was a low stock item
+                        const stockBadge = containerCard.querySelector('.stock-badge');
+                        if (stockBadge.classList.contains('low-stock')) {
+                            // Update low stock count
+                            const lowStockCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
+                            lowStockCount.textContent = Math.max(0, parseInt(lowStockCount.textContent) - 1);
+                        }
+
+                        // Show success message
+                        showNotification('Container deleted successfully!', 'success');
+                    }, 300);
+                }
+            }
+
+            // Function to update container stock
+            function updateContainerStock(containerId) {
+                // Create update stock modal if it doesn't exist
+                let updateStockModal = document.getElementById('updateStockModal');
+                if (!updateStockModal) {
+                    updateStockModal = document.createElement('div');
+                    updateStockModal.id = 'updateStockModal';
+                    updateStockModal.className = 'modal';
+                    updateStockModal.innerHTML = `
                     <div class="modal-content">
                         <div class="modal-header">
                             <h3>Update Container Stock</h3>
@@ -815,144 +782,144 @@
                         </div>
                     </div>
                 `;
-                document.body.appendChild(updateStockModal);
-                
-                // Add event listeners to the update stock modal
-                const updateStockCloseBtn = updateStockModal.querySelector('.close-btn');
-                const updateStockCancelBtn = updateStockModal.querySelector('.cancel-btn');
-                const updateStockForm = updateStockModal.querySelector('#updateStockForm');
-                
-                // Close update stock modal
-                updateStockCloseBtn.addEventListener('click', function() {
-                    closeUpdateStockModal();
-                });
-                
-                updateStockCancelBtn.addEventListener('click', function() {
-                    closeUpdateStockModal();
-                });
-                
-                // Close on outside click
-                window.addEventListener('click', function(event) {
-                    if (event.target === updateStockModal) {
-                        closeUpdateStockModal();
-                    }
-                });
-                
-                // Handle update stock form submission
-                updateStockForm.addEventListener('submit', function(event) {
-                    event.preventDefault();
-                    
-                    const containerId = document.getElementById('updateContainerId').value;
-                    const action = document.getElementById('updateAction').value;
-                    const quantity = parseInt(document.getElementById('updateQuantity').value);
-                    
-                    // Get the container stock element
-                    const stockElement = document.querySelector(`.stock-value[data-id="${containerId}"]`);
-                    const currentStock = parseInt(stockElement.textContent);
-                    
-                    // Calculate new stock value
-                    let newStock;
-                    switch (action) {
-                        case 'add':
-                            newStock = currentStock + quantity;
-                            break;
-                        case 'remove':
-                            newStock = Math.max(0, currentStock - quantity);
-                            break;
-                        case 'set':
-                            newStock = quantity;
-                            break;
-                    }
-                    
-                    // Update the stock display
-                    stockElement.textContent = newStock + ' pcs';
-                    
-                    // Update the stock badge
-                    const containerCard = stockElement.closest('.container-card');
-                    const stockBadge = containerCard.querySelector('.stock-badge');
-                    const wasLowStock = stockBadge.classList.contains('low-stock');
-                    const isNowLowStock = newStock < 20;
-                    
-                    if (isNowLowStock) {
-                        stockBadge.className = 'stock-badge low-stock';
-                        stockBadge.textContent = 'Low Stock';
-                        
-                        // Update low stock count if it wasn't low stock before
-                        if (!wasLowStock) {
-                            const lowStockCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
-                            lowStockCount.textContent = parseInt(lowStockCount.textContent) + 1;
-                        }
-                    } else {
-                        stockBadge.className = 'stock-badge in-stock';
-                        stockBadge.textContent = 'In Stock';
-                        
-                        // Update low stock count if it was low stock before
-                        if (wasLowStock) {
-                            const lowStockCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
-                            lowStockCount.textContent = Math.max(0, parseInt(lowStockCount.textContent) - 1);
-                        }
-                    }
-                    
-                    // Show success message
-                    showNotification('Container stock updated successfully!', 'success');
-                    
-                    // Close the modal
-                    closeUpdateStockModal();
-                });
-            }
-            
-            function closeUpdateStockModal() {
-                updateStockModal.classList.remove('show');
-                setTimeout(() => {
-                    updateStockModal.style.display = 'none';
-                    document.getElementById('updateStockForm').reset();
-                }, 300);
-                document.body.style.overflow = '';
-            }
-            
-            // Get current stock value
-            const stockElement = document.querySelector(`.stock-value[data-id="${containerId}"]`);
-            const currentStock = stockElement.textContent;
-            
-            // Set values in the update stock form
-            document.getElementById('updateContainerId').value = containerId;
-            document.getElementById('currentStock').value = currentStock;
-            document.getElementById('updateQuantity').value = '';
-            
-            // Open the update stock modal
-            updateStockModal.style.display = 'flex';
-            setTimeout(() => {
-                updateStockModal.classList.add('show');
-            }, 10);
-            document.body.style.overflow = 'hidden';
-        }
-        
-        // Add event listeners to existing container edit, delete, and update stock buttons
-        document.querySelectorAll('.container-card .edit-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const containerCard = this.closest('.container-card');
-                editContainer(containerCard);
-            });
-        });
-        
-        document.querySelectorAll('.container-card .delete-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const containerCard = this.closest('.container-card');
-                confirmDeleteContainer(containerCard);
-            });
-        });
-        
-        document.querySelectorAll('.container-card .update-stock-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const containerId = this.getAttribute('data-id');
-                updateContainerStock(containerId);
-            });
-        });
-    });
+                    document.body.appendChild(updateStockModal);
 
-    // Add CSS for price and stock inputs
-    const style = document.createElement('style');
-    style.textContent = `
+                    // Add event listeners to the update stock modal
+                    const updateStockCloseBtn = updateStockModal.querySelector('.close-btn');
+                    const updateStockCancelBtn = updateStockModal.querySelector('.cancel-btn');
+                    const updateStockForm = updateStockModal.querySelector('#updateStockForm');
+
+                    // Close update stock modal
+                    updateStockCloseBtn.addEventListener('click', function () {
+                        closeUpdateStockModal();
+                    });
+
+                    updateStockCancelBtn.addEventListener('click', function () {
+                        closeUpdateStockModal();
+                    });
+
+                    // Close on outside click
+                    window.addEventListener('click', function (event) {
+                        if (event.target === updateStockModal) {
+                            closeUpdateStockModal();
+                        }
+                    });
+
+                    // Handle update stock form submission
+                    updateStockForm.addEventListener('submit', function (event) {
+                        event.preventDefault();
+
+                        const containerId = document.getElementById('updateContainerId').value;
+                        const action = document.getElementById('updateAction').value;
+                        const quantity = parseInt(document.getElementById('updateQuantity').value);
+
+                        // Get the container stock element
+                        const stockElement = document.querySelector(`.stock-value[data-id="${containerId}"]`);
+                        const currentStock = parseInt(stockElement.textContent);
+
+                        // Calculate new stock value
+                        let newStock;
+                        switch (action) {
+                            case 'add':
+                                newStock = currentStock + quantity;
+                                break;
+                            case 'remove':
+                                newStock = Math.max(0, currentStock - quantity);
+                                break;
+                            case 'set':
+                                newStock = quantity;
+                                break;
+                        }
+
+                        // Update the stock display
+                        stockElement.textContent = newStock + ' pcs';
+
+                        // Update the stock badge
+                        const containerCard = stockElement.closest('.container-card');
+                        const stockBadge = containerCard.querySelector('.stock-badge');
+                        const wasLowStock = stockBadge.classList.contains('low-stock');
+                        const isNowLowStock = newStock < 20;
+
+                        if (isNowLowStock) {
+                            stockBadge.className = 'stock-badge low-stock';
+                            stockBadge.textContent = 'Low Stock';
+
+                            // Update low stock count if it wasn't low stock before
+                            if (!wasLowStock) {
+                                const lowStockCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
+                                lowStockCount.textContent = parseInt(lowStockCount.textContent) + 1;
+                            }
+                        } else {
+                            stockBadge.className = 'stock-badge in-stock';
+                            stockBadge.textContent = 'In Stock';
+
+                            // Update low stock count if it was low stock before
+                            if (wasLowStock) {
+                                const lowStockCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
+                                lowStockCount.textContent = Math.max(0, parseInt(lowStockCount.textContent) - 1);
+                            }
+                        }
+
+                        // Show success message
+                        showNotification('Container stock updated successfully!', 'success');
+
+                        // Close the modal
+                        closeUpdateStockModal();
+                    });
+                }
+
+                function closeUpdateStockModal() {
+                    updateStockModal.classList.remove('show');
+                    setTimeout(() => {
+                        updateStockModal.style.display = 'none';
+                        document.getElementById('updateStockForm').reset();
+                    }, 300);
+                    document.body.style.overflow = '';
+                }
+
+                // Get current stock value
+                const stockElement = document.querySelector(`.stock-value[data-id="${containerId}"]`);
+                const currentStock = stockElement.textContent;
+
+                // Set values in the update stock form
+                document.getElementById('updateContainerId').value = containerId;
+                document.getElementById('currentStock').value = currentStock;
+                document.getElementById('updateQuantity').value = '';
+
+                // Open the update stock modal
+                updateStockModal.style.display = 'flex';
+                setTimeout(() => {
+                    updateStockModal.classList.add('show');
+                }, 10);
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Add event listeners to existing container edit, delete, and update stock buttons
+            document.querySelectorAll('.container-card .edit-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const containerCard = this.closest('.container-card');
+                    editContainer(containerCard);
+                });
+            });
+
+            document.querySelectorAll('.container-card .delete-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const containerCard = this.closest('.container-card');
+                    confirmDeleteContainer(containerCard);
+                });
+            });
+
+            document.querySelectorAll('.container-card .update-stock-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const containerId = this.getAttribute('data-id');
+                    updateContainerStock(containerId);
+                });
+            });
+        });
+
+        // Add CSS for price and stock inputs
+        const style = document.createElement('style');
+        style.textContent = `
         /* Add Container Modal Styles */
         .price-input, .stock-input {
             position: relative;
@@ -1014,7 +981,8 @@
             margin-top: 20px;
         }
     `;
-    document.head.appendChild(style);
+        document.head.appendChild(style);
     </script>
 </body>
+
 </html>

@@ -1,46 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reports - RJane Water Refilling Station</title>
     <link rel="stylesheet" href="../../Css/reports.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="NavBar.html">
 </head>
+
 <body>
-    <!-- Sidebar Navigation -->
-    <div class="sidebar">
-        <div class="logo">
-            <span class="logo-icon"><i class="fas fa-water"></i></span>
-            <h1>R<span>Jane</span></h1>
-        </div>
-        <nav class="menu">
-            <ul>
-                <li><a href="Admin_dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-                <li><a href="Customers.html"><i class="fas fa-users"></i> Customers</a></li>
-                <li><a href="Orders.html"><i class="fas fa-shopping-cart"></i> Orders</a></li>
-                <li><a href="inventory.html"><i class="fas fa-boxes"></i> Inventory</a></li>
-                <li><a href="deliveries.html"><i class="fas fa-truck"></i> Deliveries</a></li>
-                <li><a href="employees.html"><i class="fas fa-id-card"></i> Employees</a></li>
-                <li>
-                    <a href="expenses.html"><i class="fas fa-receipt"></i> Expenses</a>
-                </li>
-                <li class="active"><a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a></li>
-                <li> <a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
-            </ul>
-        </nav>
-        <div class="user-info">
-            <div class="user-avatar">
-                <i class="fas fa-user"></i>
-            </div>
-            <div class="user-details">
-                <h4>Admin User</h4>
-                <p>Water Manager</p>
-            </div>
-        </div>
-    </div>
+    <div id="navbar"></div>
+
+    <script>
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbar').innerHTML = data;
+            });
+    </script>
 
     <div class="main-content">
         <!-- Header Section -->
@@ -221,7 +203,7 @@
                         <option value="csv">CSV</option>
                     </select>
                 </div>
-                
+
                 <div class="form-actions">
                     <button class="cancel-btn">Cancel</button>
                     <button class="export-now-btn"><i class="fas fa-file-export"></i> Export</button>
@@ -235,37 +217,37 @@
         // Set default dates
         const today = new Date();
         const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-        
+
         document.getElementById('startDate').valueAsDate = firstDay;
         document.getElementById('endDate').valueAsDate = today;
-        
+
         // Export modal functionality
         const exportBtn = document.querySelector('.export-btn');
         const exportModal = document.getElementById('exportModal');
         const closeBtn = document.querySelector('.close-btn');
         const cancelBtn = document.querySelector('.cancel-btn');
-        
-        exportBtn.addEventListener('click', function() {
+
+        exportBtn.addEventListener('click', function () {
             exportModal.classList.add('show');
         });
-        
-        closeBtn.addEventListener('click', function() {
+
+        closeBtn.addEventListener('click', function () {
             exportModal.classList.remove('show');
         });
-        
-        cancelBtn.addEventListener('click', function() {
+
+        cancelBtn.addEventListener('click', function () {
             exportModal.classList.remove('show');
         });
-        
+
         // Close modal on outside click
-        window.addEventListener('click', function(e) {
+        window.addEventListener('click', function (e) {
             if (e.target === exportModal) {
                 exportModal.classList.remove('show');
             }
         });
-        
+
         // Initialize chart
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const salesCtx = document.getElementById('salesChart').getContext('2d');
             new Chart(salesCtx, {
                 type: 'bar',
@@ -288,7 +270,7 @@
                         },
                         tooltip: {
                             callbacks: {
-                                label: function(context) {
+                                label: function (context) {
                                     return '₱' + context.parsed.y.toLocaleString();
                                 }
                             }
@@ -298,7 +280,7 @@
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                callback: function(value) {
+                                callback: function (value) {
                                     return '₱' + value.toLocaleString();
                                 }
                             }
@@ -309,4 +291,5 @@
         });
     </script>
 </body>
+
 </html>

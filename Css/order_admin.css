@@ -1,0 +1,379 @@
+/* Root Variables */
+:root {
+    --primary: #0288D1;
+    --primary-light: #B3E5FC;
+    --primary-dark: #01579B;
+    --success: #2ECC71;
+    --warning: #F39C12;
+    --danger: #E74C3C;
+    --gray: #E0E6ED;
+    --gray-light: #F5F7FA;
+    --text-dark: #2C3E50;
+    --text-light: #7F8C8D;
+    --white: #FFFFFF;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--gray-light);
+    display: flex;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background: var(--white);
+    position: fixed;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    padding: 24px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--gray);
+}
+
+.logo-icon {
+    color: var(--primary);
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--primary-light);
+    border-radius: 10px;
+}
+
+.logo h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.logo span {
+    color: var(--primary);
+}
+/* Menu Styles */
+.menu {
+    margin-top: 20px;
+    height: calc(100vh - 180px); /* Account for logo and user info */
+    overflow-y: auto;
+}
+
+.menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+.menu li {
+    margin: 8px 10px; /* Move margin from a to li */
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: var(--text-light);
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s; /* Only transition these properties */
+    border-radius: 6px;
+    margin: 0; /* Remove margin from a element */
+    width: 100%; /* Fix the width */
+    box-sizing: border-box; /* Ensure padding is included in width */
+}
+
+.menu a i {
+    width: 20px; /* Fixed width for icons */
+    margin-right: 10px;
+    text-align: center; /* Center the icons */
+    font-size: 18px;
+}
+
+.menu a:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+/* Fix for active state */
+.menu li.active a {
+    background: var(--primary);
+    color: var(--white);
+    /* No additional padding or margin */
+}
+
+/* Add scrollbar styling for menu */
+.menu::-webkit-scrollbar {
+    width: 4px;
+}
+
+.menu::-webkit-scrollbar-track {
+    background: var(--gray-light);
+}
+
+.menu::-webkit-scrollbar-thumb {
+    background: var(--primary-light);
+    border-radius: 4px;
+}
+
+/* User Info Styles */
+.user-info {
+    padding: 20px;
+    border-top: 1px solid var(--gray);
+    margin-top: auto;  /* Push to bottom */
+    background: var(--white);  /* Ensure background covers */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+}
+
+.user-details h4 {
+    color: var(--text-dark);
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.user-details p {
+    color: var(--text-light);
+    font-size: 12px;
+}
+/* Main Content Styles */
+.main-content {
+    margin-left:240px;
+    padding: 20px;
+    width: calc(100% - 260px);
+}
+
+/* Orders Header */
+.orders-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.orders-header h2 {
+    font-size: 24px;
+
+}
+
+.new-order-btn {
+    padding: 10px 20px;
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.new-order-btn:hover {
+    background: var(--primary-dark);
+}
+
+/* Status Cards Grid */
+.orders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.status-card {
+    background: var(--white);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.status-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.status-icon.pending {
+    background: var(--warning);
+    color: var(--white);
+}
+
+.status-icon.processing {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.status-icon.completed {
+    background: var(--success);
+    color: var(--white);
+}
+
+.status-info h3 {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-bottom: 4px;
+}
+
+.status-info p {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* Orders Table Styles */
+.orders-table-container {
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: 20px;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background: var(--gray-light);
+    padding: 8px 12px;
+    border-radius: 6px;
+    width: 300px;
+}
+
+.search-bar i {
+    color: var(--text-light);
+    margin-right: 8px;
+}
+
+.search-bar input {
+    border: none;
+    background: none;
+    outline: none;
+    width: 100%;
+    color: var(--text-dark);
+}
+
+.table-filters {
+    display: flex;
+    gap: 12px;
+}
+
+.table-filters select {
+    padding: 8px 12px;
+    border: 1px solid var(--gray);
+    border-radius: 6px;
+    color: var(--text-dark);
+    cursor: pointer;
+}
+
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.orders-table th,
+.orders-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--gray);
+}
+
+.orders-table th {
+    font-weight: 500;
+    color: var(--text-light);
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.status-badge.pending {
+    background: rgba(243, 156, 18, 0.1);
+    color: var(--warning);
+}
+
+.status-badge.processing {
+    background: rgba(2, 136, 209, 0.1);
+    color: var(--primary);
+}
+
+.status-badge.completed {
+    background: rgba(46, 204, 113, 0.1);
+    color: var(--success);
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
+.actions button {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.view-btn {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.edit-btn {
+    background: var(--warning);
+    color: var(--white);
+}
+
+.delete-btn {
+    background: var(--danger);
+    color: var(--white);
+}
+
+.actions button:hover {
+    opacity: 0.8;
+    transform: translateY(-2px);
+}
