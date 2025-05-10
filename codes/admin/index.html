@@ -9,17 +9,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="NavBar.html">
+    
 </head>
 
 <body>
     <div id="navbar"></div>
 
     <script>
-        fetch('navbar.html')
+        fetch('NavBar.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('navbar').innerHTML = data;
+
+                // Set active menu item based on current page
+                const path = window.location.pathname.split('/').pop().toLowerCase();
+                document.querySelectorAll('.menu a').forEach(link => {
+                    if (link.getAttribute('href').toLowerCase() === path) {
+                        link.parentElement.classList.add('active');
+                    } else {
+                        link.parentElement.classList.remove('active');
+                    }
+                });
             });
     </script>
 
@@ -81,6 +91,52 @@
                 </div>
                 <div class="stat-progress">
                     <div class="progress-bar" style="width: 70%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="report-overview">
+            <div class="report-card">
+                <div class="report-card-icon sales">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="report-card-info">
+                    <h3>Total Sales</h3>
+                    <p class="amount">₱152,450.00</p>
+                    <p class="trend positive"><i class="fas fa-arrow-up"></i> 12.5%</p>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-card-icon orders">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="report-card-info">
+                    <h3>Orders</h3>
+                    <p class="amount">385</p>
+                    <p class="trend positive"><i class="fas fa-arrow-up"></i> 8.2%</p>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-card-icon customers">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="report-card-info">
+                    <h3>Customers</h3>
+                    <p class="amount">42</p>
+                    <p class="trend positive"><i class="fas fa-arrow-up"></i> 15.3%</p>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-card-icon expenses">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <div class="report-card-info">
+                    <h3>Expenses</h3>
+                    <p class="amount">₱62,780.00</p>
+                    <p class="trend negative"><i class="fas fa-arrow-up"></i> 5.8%</p>
                 </div>
             </div>
         </div>
@@ -171,8 +227,109 @@
                 </div>
             </div>
         </div>
-    </div>
 
+        <!-- Sales Overview Chart Section (moved from reports.html) -->
+        <div class="report-section" style="margin-top: 40px; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.07);">
+            <div class="section-header">
+                <h3>Sales Overview</h3>
+                <div class="section-actions">
+                    <select class="report-filter" id="salesFilter">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly" selected>Monthly</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+                </div>
+            </div>
+            <div class="chart-container" style="height: 350px;">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Chart.js library -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+        // Sales Overview Chart (interactive)
+        document.addEventListener('DOMContentLoaded', function () {
+            const salesCtx = document.getElementById('salesChart').getContext('2d');
+            const salesData = {
+                daily: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    data: [12000, 14500, 11000, 17000, 16000, 21000, 19500],
+                    title: 'Sales (This Week)'
+                },
+                weekly: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    data: [65000, 72000, 69000, 74000],
+                    title: 'Sales (This Month)'
+                },
+                monthly: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    data: [112500, 118900, 135600, 152450, 140000, 145000, 148000, 152000, 158500, 163000, 172500, 178000],
+                    title: 'Sales (2025)'
+                },
+                yearly: {
+                    labels: ['2021', '2022', '2023', '2024', '2025'],
+                    data: [950000, 1020000, 1105000, 1200000, 1350000],
+                    title: 'Sales (Yearly)'
+                }
+            };
+
+            let currentType = 'monthly';
+            let chart = new Chart(salesCtx, {
+                type: 'bar',
+                data: {
+                    labels: salesData[currentType].labels,
+                    datasets: [{
+                        label: 'Sales',
+                        data: salesData[currentType].data,
+                        backgroundColor: 'rgba(2, 136, 209, 0.7)',
+                        borderColor: 'rgba(2, 136, 209, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: salesData[currentType].title,
+                            font: { size: 16 }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return '₱' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return '₱' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            document.getElementById('salesFilter').addEventListener('change', function () {
+                currentType = this.value;
+                chart.data.labels = salesData[currentType].labels;
+                chart.data.datasets[0].data = salesData[currentType].data;
+                chart.options.plugins.title.text = salesData[currentType].title;
+                chart.update();
+            });
+        });
+        </script>
+    </div>
+ 
     <script>
         // Set current date
         document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
@@ -227,3 +384,5 @@
             }
         }
     </script>
+</body>
+</html>

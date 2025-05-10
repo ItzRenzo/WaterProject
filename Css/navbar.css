@@ -1,0 +1,108 @@
+
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background: var(--white);
+    position: fixed;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+
+/* Menu Styles */
+.menu {
+    margin-top: 20px;
+    height: calc(100vh - 180px); /* Account for logo and user info */
+    overflow-y: auto;
+}
+
+.menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+.menu li {
+    margin: 8px 10px; /* Move margin from a to li */
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: var(--text-light);
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s; /* Only transition these properties */
+    border-radius: 6px;
+    margin: 0; /* Remove margin from a element */
+    width: 100%; /* Fix the width */
+    box-sizing: border-box; /* Ensure padding is included in width */
+}
+
+.menu a i {
+    width: 20px; /* Fixed width for icons */
+    margin-right: 10px;
+    text-align: center; /* Center the icons */
+    font-size: 18px;
+}
+
+.menu a:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+/* Fix for active state */
+.menu li.active a {
+    background: var(--primary);
+    color: var(--white);
+    /* No additional padding or margin */
+}
+
+/* Add scrollbar styling for menu */
+.menu::-webkit-scrollbar {
+    width: 4px;
+}
+
+.menu::-webkit-scrollbar-track {
+    background: var(--gray-light);
+}
+
+.menu::-webkit-scrollbar-thumb {
+    background: var(--primary-light);
+    border-radius: 4px;
+}
+
+/* User Info Styles */
+.user-info {
+    padding: 20px;
+    border-top: 1px solid var(--gray);
+    margin-top: auto;  /* Push to bottom */
+    background: var(--white);  /* Ensure background covers */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+}
+
+.user-details h4 {
+    color: var(--text-dark);
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.user-details p {
+    color: var(--text-light);
+    font-size: 12px;
+}
