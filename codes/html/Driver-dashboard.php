@@ -1,3 +1,9 @@
+<?php
+session_start();
+include_once '../../Database/db_config.php';
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +20,7 @@
             <h1><i class="fas fa-water"></i> RJane Water Driver</h1>
             <div class="user-actions">
                 <span class="driver-info">John Driver (DRV-001)</span>
-                <a href="../kios.html" class="action-btn logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                <a href="../Controllers/Logout.php" class="action-btn logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
         </header>
 

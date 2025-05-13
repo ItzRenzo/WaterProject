@@ -32,36 +32,50 @@
                 <h2>Welcome Back</h2>
                 <p>Sign in to your RJane Water account</p>
             </div>
-            
-            <!-- Updated form action to point to the login.php file -->
             <form id="login-form" action="../Controllers/login.php" method="post">
                 <div class="form-group">
-                    <label for="username">Username or Email</label>
+                    <label for="username">Username</label>
                     <i class="fas fa-user"></i>
                     <input type="text" id="username" name="username" placeholder="Enter your username" required>
                 </div>
-                
                 <div class="form-group">
                     <label for="password">Password</label>
                     <i class="fas fa-lock"></i>
-                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    <div style="position:relative; display:flex; align-items:center;">
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required style="flex:1; padding-right:40px;">
+                        <button type="button" id="togglePassword" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; padding:0; height:24px; width:24px; display:flex; align-items:center; justify-content:center;">
+                            <i class="fas fa-eye" id="togglePasswordIcon"></i>
+                        </button>
+                    </div>
                 </div>
-                
                 <div class="remember-forgot">
                     <div class="remember">
                         <input type="checkbox" id="remember" name="remember">
                         <label for="remember">Remember me</label>
                     </div>
-                    <div class="forgot">
-                        <a href="#">Forgot password?</a>
-                    </div>
                 </div>
-                
                 <button type="submit" class="login-btn">Login</button>
-                
             </form>
         </div>
     </div>
-
+<script>
+// Password show/hide toggle
+const passwordInput = document.getElementById('password');
+const togglePasswordBtn = document.getElementById('togglePassword');
+const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+if (togglePasswordBtn) {
+    togglePasswordBtn.addEventListener('click', function () {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            togglePasswordIcon.classList.remove('fa-eye');
+            togglePasswordIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            togglePasswordIcon.classList.remove('fa-eye-slash');
+            togglePasswordIcon.classList.add('fa-eye');
+        }
+    });
+}
+</script>
 </body>
 </html>

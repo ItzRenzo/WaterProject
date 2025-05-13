@@ -11,7 +11,9 @@ CREATE TABLE Product (
     ProductPrice DECIMAL(10, 2) NOT NULL,
     ProductDescription TEXT,
     ProductStatus VARCHAR(50) NOT NULL,
-    Stocks INT NOT NULL DEFAULT 0
+    Stocks INT NOT NULL DEFAULT 0,
+    COLUMN ContainerID INT, 
+    FOREIGN KEY (ContainerID) REFERENCES Container(ContainerID);
 );
 
 CREATE TABLE Container (
@@ -38,36 +40,24 @@ CREATE TABLE Employee (
 CREATE TABLE Transaction (
     TransactionID INT PRIMARY KEY AUTO_INCREMENT,
     CustomerID INT,
-    TransactionDate DATETIME NOT NULL,
-    TotalAmount DECIMAL(10, 2) NOT NULL,
+    TransactionDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Price DECIMAL(10, 2) NOT NULL,
     PaymentMethod VARCHAR(50),
     DeliveryStatus VARCHAR(50),
+    DeliveryMethod VARCHAR(50),  
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
 
-CREATE TABLE Order_Details (
-    DeliveryID INT PRIMARY KEY AUTO_INCREMENT,
-    TransactionID INT,
-    EmployeeID INT,
-    CustomerID INT,
-    DeliveryStatus VARCHAR(50),
-    FOREIGN KEY (TransactionID) REFERENCES Transaction`(TransactionID),
-    FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID),
-	FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
-);
 
 CREATE TABLE Reports (
     ReportID INT PRIMARY KEY AUTO_INCREMENT,
     ContainerID INT,
     ProductID INT,
-    DeliveryID INT,
     ExpensesID INT,
     Stocks_Added INT NOT NULL DEFAULT 0,
     Stocks_Added_Date DATE NOT NULL,
-
     FOREIGN KEY (ContainerID) REFERENCES Container(ContainerID),
     FOREIGN KEY (ProductID) REFERENCES Product(ProductID),
-    FOREIGN KEY (DeliveryID) REFERENCES Order_Details(DeliveryID),
     FOREIGN KEY (ExpensesID) REFERENCES LoggedExpenses(ExpensesID)
 );
 

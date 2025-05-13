@@ -113,8 +113,9 @@ body {
 
 .kiosk-options {
     display: grid;
+    grid-template-columns: 1fr;
     gap: 24px;
-    width: 50%;
+    width: 60%;
     max-width: 800px;
 }
 
@@ -210,13 +211,16 @@ a.kiosk-btn:active {
     color: white;
 }
 
-/* Special styling for each button */
-#order-water {
-    background-color: rgba(25, 152, 255, 0.05);
+/* Styles for forms inside kiosk-options */
+.kiosk-options form {
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
-#check-status {
-    background-color: rgba(46, 204, 113, 0.05);
+.kiosk-options button.kiosk-btn {
+    width: 100%;
+    cursor: pointer;
 }
 
 #contact-us {
@@ -231,6 +235,26 @@ a.kiosk-btn:active {
 #check-status i { color: var(--success); }
 #contact-us i { color: var(--warning); }
 #admin-login i { color: #9b59b6; }
+
+/* Move cashier info more to the right and style it for Cashier.html */
+.cashier-info {
+    position: absolute;
+    right: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    color: white;
+    background-color: rgba(0, 136, 204, 0.15);
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    z-index: 2;
+}
+
+#header-cashier-name {
+    font-weight: bold;
+    color: #fff;
+}
 
 /* For touch screens */
 @media (pointer: coarse) {

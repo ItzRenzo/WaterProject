@@ -49,6 +49,27 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+
+.cashier-info {
+   position: absolute;
+    left: 50%;
+    left: 100px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    color: white;
+    background-color: rgba(0, 136, 204, 0.15);
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    z-index: 2;
+}
+
+#header-cashier-name {
+    font-weight: bold;
+    color: #fff;
+}
+
 .kiosk-header h1 {
     color: white;
     font-size: 28px;
@@ -855,3 +876,17 @@ body {
 .receipt-actions button i {
     margin-right: 8px;
 }
+
+.stock-info {
+    margin-top: 5px;
+    font-size: 12px;
+    color: var(--gray-dark);
+    font-weight: bold;
+}
+
+.product-card .add-to-cart:disabled {
+    background-color: var(--gray-dark);
+    cursor: not-allowed;
+}
+
+/* Add more styles below */

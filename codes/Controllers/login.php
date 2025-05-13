@@ -3,33 +3,28 @@ session_start();
 
 require_once '../../Database/db_config.php';
 
-// Check if already logged in
+// Redirect if already logged in
 if (isset($_SESSION['user_id']) && isset($_SESSION['position'])) {
-    $position = $_SESSION['position'];
-    if ($position === 'Admin') {
-        header("Location: ../admin/index.html");
-    } elseif ($position === 'Driver') {
-        header("Location: ../html/Driver-dashboard.html");
-    } elseif ($position === 'Cashier') {
-        header("Location: ../html/Cashier.html");
+    $position = strtolower($_SESSION['position']);
+    if ($position === 'admin') {
+        header('Location: ../admin/index.html');
+    } elseif ($position === 'driver') {
+        header('Location: ../html/Driver-dashboard.html');
+    } elseif ($position === 'cashier') {
+        header('Location: ../html/Cashier.php');
     } else {
-        header("Location: ../html/index.html");
+        header('Location: ../html/index.html');
     }
     exit();
 }
 
-$error = null; // Initialize error variable
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $conn->real_escape_string($_POST['username']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = trim($_POST['username']);
     $password = $_POST['password'];
     
-    // Query to fetch user details based on the Username column
-    $stmt = $conn->prepare("SELECT EmployeeID, CONCAT(FirstName, ' ', LastName) AS FullName, 
-                           EmployeePosition, EmployeeStatus, Password 
-                           FROM Employee 
-                           WHERE Username = ? AND EmployeeStatus = 'Active'");
-    $stmt->bind_param("s", $username);
+    // Only allow login by username (case-insensitive)
+    $stmt = $conn->prepare('SELECT EmployeeID, CONCAT(FirstName, " ", LastName) AS FullName, EmployeePosition, EmployeeStatus, Username, Password FROM Employee WHERE LOWER(Username) = LOWER(?) AND EmployeeStatus = "Active"');
+    $stmt->bind_param('s', $username);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -42,32 +37,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user_id'] = $user['EmployeeID'];
             $_SESSION['username'] = $user['FullName'];
             $_SESSION['position'] = $user['EmployeePosition'];
-            
-            // Redirect based on position
-            if ($user['EmployeePosition'] === 'Admin') {
-                header("Location: ../admin/index.html");
-            } elseif ($user['EmployeePosition'] === 'Driver') {
-                header("Location: ../html/Driver-dashboard.html");
-            } elseif ($user['EmployeePosition'] === 'Cashier') {
-                header("Location: ../html/Cashier.html");
+            $pos = strtolower($user['EmployeePosition']);
+            if ($pos === 'admin') {
+                header('Location: ../admin/index.html');
+            } elseif ($pos === 'driver') {
+                header('Location: ../html/Driver-dashboard.php');
+            } elseif ($pos === 'cashier') {
+                header('Location: ../html/Cashier.php');
             } else {
-                header("Location: ../html/index.html");
+                header('Location: ../html/index.html');
             }
-            exit(); // Important: make sure script execution stops after redirect
+            exit();
         } else {
-            $error = "Invalid username or password";
+            echo "<script>alert('Invalid username or password.');window.location.href='../html/login.html';</script>";
+            exit();
         }
     } else {
-        $error = "Invalid username or password";
+        echo "<script>alert('Invalid username or password.');window.location.href='../html/login.html';</script>";
+        exit();
     }
 
     $stmt->close();
 }
 $conn->close();
 
-if ($error) {
-    echo "<script>alert('$error');</script>";
-}
+
 
 include '../html/login.html';
 ?>

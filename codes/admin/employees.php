@@ -1,11 +1,71 @@
+<?php
+// Include database config
+include_once '../../Database/db_config.php';
+
+$errorMessages = [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_employee'])) {
+    $firstName = $_POST['firstName'];
+    $lastName = $_POST['lastName'];
+    $employeeNumber = $_POST['employeeNumber'];
+    $position = $_POST['position'];
+    $employeeStatus = $_POST['employeeStatus'];
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    $dateJoined = $_POST['joinDate'];
+    
+    // The HTML5 date input returns Y-m-d format which MySQL DATE can use directly
+    if (empty($dateJoined)) {
+        $dateJoined = null;
+    }
+
+    // Validate employee number: must start with 09 and be 12 digits
+    if (!preg_match('/^09\\d{10}$/', $employeeNumber)) {
+        $errorMessages[] = 'Employee number must start with 09 and be 12 digits.';
+    }
+    // Validate password: at least 6 characters
+    if (strlen($password) < 6) {
+        $errorMessages[] = 'Password must be at least 6 characters.';
+    }
+
+    if (empty($errorMessages)) {
+        // Use PASSWORD_DEFAULT for bcrypt, same as login.php
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $sql = "INSERT INTO Employee (FirstName, LastName, EmployeePosition, EmployeeNumber, EmployeeStatus, Username, Password, DateJoined) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        if ($stmt) {
+            // For debugging - Check all values that will be inserted
+            error_log("Inserting Employee with values: FN=$firstName, LN=$lastName, POS=$position, NUM=$employeeNumber, STAT=$employeeStatus, USER=$username, DATE=" . ($dateJoined ?? 'NULL'));
+            
+            $stmt->bind_param('ssssssss', $firstName, $lastName, $position, $employeeNumber, $employeeStatus, $username, $passwordHash, $dateJoined);            
+            if ($stmt->execute()) {
+                echo "<script>alert('Employee added successfully.'); window.location.href=window.location.href;</script>";
+                exit();
+            } else {
+                $errorMessages[] = "Database error: " . $stmt->error . " (MySQL error code: " . $stmt->errno . ")";
+                // Log the error
+                error_log("MySQL error in employee.php: " . $stmt->error . " (Code: " . $stmt->errno . ")");
+            }
+            $stmt->close();
+        } else {
+            $errorMessages[] = "Database error: " . $conn->error;
+        }
+    }
+    if (!empty($errorMessages)) {
+        $alertMsg = implode("\n", $errorMessages);
+        echo "<script>alert('" . addslashes($alertMsg) . "');</script>";
+    }
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employees - RJane Water Refilling Station</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Employees - RJane Water Refilling Station</title>
     <link rel="stylesheet" href="../../Css/employees.css">
+    <link rel="stylesheet" href="../../Css/modal.css">
+    <link rel="stylesheet" href="../../Css/password-toggle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
@@ -79,9 +139,7 @@
         <div class="employee-tabs">
             <button class="tab-btn active" data-tab="all">All Employees</button>
             <button class="tab-btn" data-tab="drivers">Drivers</button>
-            <button class="tab-btn" data-tab="production">Production</button>
-            <button class="tab-btn" data-tab="admin">Admin</button>
-            <button class="tab-btn" data-tab="attendance">Attendance</button>
+            <button class="tab-btn" data-tab="Cashier">Cashier</button>
         </div>
 
         <!-- Employee Search and Filter -->
@@ -277,28 +335,37 @@
                         <button class="close-btn">&times;</button>
                     </div>
                     <div class="modal-body">
-                        <form id="employeeForm">
+                        <?php if (!empty($errorMessages)): ?>
+                            <div class="error-messages" style="color: red; margin-bottom: 10px;">
+                                <ul>
+                                    <?php foreach ($errorMessages as $msg): ?>
+                                        <li><?php echo htmlspecialchars($msg); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+                        <form id="employeeForm" method="POST">
                             <div class="form-section">
                                 <h4><i class="fas fa-user-circle"></i> Personal Information</h4>
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label for="firstName">First Name</label>
-                                        <input type="text" id="firstName" placeholder="Enter first name" required>
+                                        <input type="text" id="firstName" name="firstName" placeholder="Enter first name" required>
                                     </div>
                                     <div class="form-group">
                                         <label for="lastName">Last Name</label>
-                                        <input type="text" id="lastName" placeholder="Enter last name" required>
+                                        <input type="text" id="lastName" name="lastName" placeholder="Enter last name" required>
                                     </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label for="contactNumber">Contact Number</label>
-                                        <input type="tel" id="contactNumber" placeholder="+63 9XX XXX XXXX" required>
+                                        <label for="employeeNumber">Employee Number</label>
+                                        <input type="tel" id="employeeNumber" name="employeeNumber" placeholder="09XXXXXXXXXX" required>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="address">Address</label>
-                                    <textarea id="address" placeholder="Enter complete address"></textarea>
+                                    <textarea id="address" name="address" placeholder="Enter complete address"></textarea>
                                 </div>
                             </div>
 
@@ -307,21 +374,21 @@
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label for="position">Position</label>
-                                        <select id="position" required>
+                                        <select id="position" name="position" required>
                                             <option value="">Select Position</option>
                                             <option value="driver">Driver</option>
                                             <option value="senior_driver">Cashier</option>
                                         </select>
                                     </div>
-                                </div>
-                                <div class="form-row">
+                                </div>                                <div class="form-row">
                                     <div class="form-group">
                                         <label for="joinDate">Date Joined</label>
-                                        <input type="date" id="joinDate" required>
+                                        <input type="date" id="joinDate" name="joinDate" required>
+                                        <!-- Using type="date" input which provides consistent YYYY-MM-DD format -->
                                     </div>
                                     <div class="form-group">
                                         <label for="employeeStatus">Status</label>
-                                        <select id="employeeStatus" required>
+                                        <select id="employeeStatus" name="employeeStatus" required>
                                             <option value="active">Active</option>
                                             <option value="inactive">Inactive</option>
                                             <option value="probation">On Probation</option>
@@ -330,46 +397,27 @@
                                 </div>
                             </div>
 
-                            <div class="form-section" id="driverDetails" style="display: none;">
-                                <h4><i class="fas fa-truck"></i> Driver Details</h4>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="licenseNumber">License Number</label>
-                                        <input type="text" id="licenseNumber" placeholder="e.g. N01-12-345678">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="licenseExpiry">License Expiry</label>
-                                        <input type="date" id="licenseExpiry">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="assignedVehicle">Assigned Vehicle</label>
-                                    <select id="assignedVehicle">
-                                        <option value="">Select Vehicle</option>
-                                        <option value="truck001">Truck #001</option>
-                                        <option value="truck002">Truck #002</option>
-                                        <option value="motorcycle001">Motorcycle #001</option>
-                                    </select>
-                                </div>
-                            </div>
-
                             <div class="form-section">
                                 <h4><i class="fas fa-lock"></i> Account</h4>
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label for="username">Username</label>
-                                        <input type="text" id="username" placeholder="Choose a username">
-                                    </div>
-                                    <div class="form-group">
+                                        <input type="text" id="username" name="username" placeholder="Choose a username">
+                                    </div>                                    <div class="form-group">
                                         <label for="password">Password</label>
-                                        <input type="password" id="password" placeholder="••••••••">
+                                        <div class="password-field" style="position:relative;">
+                                            <input type="password" id="password" name="password" placeholder="••••••••" style="padding-right:35px; width:100%;">
+                                            <button type="button" id="togglePassword" style="position:absolute; right:5px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer;">
+                                                <i class="fas fa-eye" id="togglePasswordIcon"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-actions">
                                 <button type="button" class="cancel-btn"><i class="fas fa-times"></i> Cancel</button>
-                                <button type="submit" class="submit-btn"><i class="fas fa-save"></i> Save
+                                <button type="submit" name="add_employee" class="submit-btn"><i class="fas fa-save"></i> Save
                                     Employee</button>
                             </div>
                         </form>
@@ -531,7 +579,8 @@
 
                 // Show/hide driver details based on position selection
                 positionSelect.addEventListener('change', function () {
-                    if (this.value === 'driver' || this.value === 'senior_driver') {
+                    // Only show driver details if position is exactly 'driver'
+                    if (this.value === 'driver') {
                         driverDetails.style.display = 'block';
                     } else {
                         driverDetails.style.display = 'none';
@@ -553,22 +602,63 @@
                             // Show notification
                             showNotification('Employee removed successfully');
                         }
+                    });                });                // Toggle password visibility
+                if (document.getElementById('togglePassword')) {
+                    document.getElementById('togglePassword').addEventListener('click', function(e) {
+                        // Prevent the button from submitting the form
+                        e.preventDefault();
+                        
+                        const passwordInput = document.getElementById('password');
+                        const toggleIcon = document.getElementById('togglePasswordIcon');
+                        
+                        if (passwordInput.type === 'password') {
+                            passwordInput.type = 'text';
+                            toggleIcon.classList.remove('fa-eye');
+                            toggleIcon.classList.add('fa-eye-slash');
+                        } else {
+                            passwordInput.type = 'password';
+                            toggleIcon.classList.remove('fa-eye-slash');
+                            toggleIcon.classList.add('fa-eye');
+                        }
                     });
-                });
-
-                // Form submission
+                }
+                
+                // Form pre-submission validation (but allow PHP form submission)
                 const employeeForm = document.getElementById('employeeForm');
                 employeeForm.addEventListener('submit', function (e) {
-                    e.preventDefault();
-
-                    // Get form values
+                    // Perform client-side validation if needed
                     const firstName = document.getElementById('firstName').value;
                     const lastName = document.getElementById('lastName').value;
                     const position = document.getElementById('position');
                     const positionText = position.options[position.selectedIndex].text;
-                    const contactNumber = document.getElementById('contactNumber').value;
-                    const email = document.getElementById('email').value;
-                    const status = document.getElementById('employeeStatus').value;
+                    const employeeNumber = document.getElementById('employeeNumber').value;
+                    const username = document.getElementById('username').value;
+                    const password = document.getElementById('password').value;
+                    
+                    // Validation
+                    let isValid = true;
+                    
+                    if (!employeeNumber.match(/^09\d{10}$/)) {
+                        isValid = false;
+                        alert('Employee number must start with 09 and be 12 digits.');
+                    }
+                    
+                    if (password.length < 6) {
+                        isValid = false;
+                        alert('Password must be at least 6 characters.');
+                    }
+                    
+                    if (!username || !firstName || !lastName) {
+                        isValid = false;
+                        alert('Please fill in all required fields.');
+                    }
+                    
+                    // If validation fails, prevent form submission
+                    if (!isValid) {
+                        e.preventDefault();
+                    }
+                    
+                    // If validation passes, the form will submit to PHP
 
                     // Create new employee card
                     const newEmployee = document.createElement('div');
@@ -585,7 +675,7 @@
                     <p class="employee-position">${positionText}</p>
                     <div class="detail-item">
                         <i class="fas fa-phone"></i>
-                        <span>${contactNumber}</span>
+                        <span>${employeeNumber}</span>
                     </div>
                     <div class="detail-item">
                         <i class="fas fa-envelope"></i>
@@ -639,6 +729,13 @@
                     showNotification('Employee added successfully');
                 });
 
+                // Hide modal on PHP form submit (page reload)
+                if (window.location.search.includes('add_employee')) {
+                    document.addEventListener('DOMContentLoaded', function () {
+                        addEmployeeModal.classList.remove('show');
+                    });
+                }
+
                 // Set date picker to today's date
                 document.getElementById('attendanceDate').valueAsDate = new Date();
 
@@ -685,7 +782,7 @@
                             const firstName = nameParts[0] || '';
                             const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
                             const position = document.querySelector('.profile-info p').textContent;
-                            const contactNumber = document.querySelector('.detail-grid .detail-item:nth-child(1) .value').textContent;
+                            const employeeNumber = document.querySelector('.detail-grid .detail-item:nth-child(1) .value').textContent;
                             const status = document.querySelector('.profile-info .status-badge').textContent;
 
                             // Create a simple edit form modal
@@ -724,8 +821,8 @@
                                                 </select>
                                             </div>
                                             <div class="form-group">
-                                                <label for="editContactNumber">Contact Number</label>
-                                                <input type="tel" id="editContactNumber" value="${contactNumber}" required>
+                                                <label for="editEmployeeNumber">Employee Number</label>
+                                                <input type="tel" id="editEmployeeNumber" value="${employeeNumber}" required>
                                             </div>
                                         </div>
                                         <div class="form-row">
@@ -807,7 +904,7 @@
                                 // Update the view modal with new values
                                 document.querySelector('.profile-info h2').textContent = `${newFirstName} ${newLastName}`;
                                 document.querySelector('.profile-info p').textContent = newPositionText;
-                                document.querySelector('.detail-grid .detail-item:nth-child(1) .value').textContent = document.getElementById('editContactNumber').value;
+                                document.querySelector('.detail-grid .detail-item:nth-child(1) .value').textContent = document.getElementById('editEmployeeNumber').value;
 
                                 // Update status badge
                                 const statusBadge = document.querySelector('.profile-info .status-badge');
@@ -839,7 +936,27 @@
                         });
                     }
                 });
+
+                // Password show/hide toggle
+                const passwordInput = document.getElementById('password');
+                const togglePasswordBtn = document.getElementById('togglePassword');
+                const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+                if (togglePasswordBtn) {
+                    togglePasswordBtn.addEventListener('click', function () {
+                        if (passwordInput.type === 'password') {
+                            passwordInput.type = 'text';
+                            togglePasswordIcon.classList.remove('fa-eye');
+                            togglePasswordIcon.classList.add('fa-eye-slash');
+                        } else {
+                            passwordInput.type = 'password';
+                            togglePasswordIcon.classList.remove('fa-eye-slash');
+                            togglePasswordIcon.classList.add('fa-eye');
+                        }
+                    });
+                }
             </script>
 </body>
 
 </html>
+<php?
+
