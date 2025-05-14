@@ -104,16 +104,16 @@ while ($row = $result->fetch_assoc()) {
             $groupedOrders = [];
             $groupedAcceptedOrders = [];
             foreach ($orders as $order) {
-                // Only include orders with DeliveryMethod = 'delivery' and DeliveryStatus = 'In Transit' for Available Orders
-                if (strtolower($order['delivery_method']) === 'delivery' && strtolower($order['delivery_status'] ?? '') === 'in transit') {
+                // Only include orders with DeliveryMethod = 'delivery' and DeliveryStatus = 'pending' for Available Orders
+                if (strtolower($order['delivery_method']) === 'delivery' && strtolower($order['delivery_status'] ?? '') === 'pending') {
                     $dateKey = date('M d, Y h:i A', strtotime($order['date']));
                     if (!isset($groupedOrders[$dateKey])) {
                         $groupedOrders[$dateKey] = [];
                     }
                     $groupedOrders[$dateKey][] = $order;
                 }
-                // For Accepted Orders tab: DeliveryMethod = 'delivery' and DeliveryStatus = 'pending'
-                if (strtolower($order['delivery_method']) === 'delivery' && strtolower($order['delivery_status'] ?? '') === 'pending') {
+                // For Accepted Orders tab: DeliveryMethod = 'delivery' and DeliveryStatus = 'assigned'
+                if (strtolower($order['delivery_method']) === 'delivery' && strtolower($order['delivery_status'] ?? '') === 'assigned') {
                     $dateKey = date('M d, Y h:i A', strtotime($order['date']));
                     if (!isset($groupedAcceptedOrders[$dateKey])) {
                         $groupedAcceptedOrders[$dateKey] = [];
@@ -171,13 +171,13 @@ while ($row = $result->fetch_assoc()) {
         </div>
         <div class="orders" id="accepted-orders" style="display:none;">
             <?php
-            // Always freshly query for accepted orders (DeliveryMethod = 'Delivery' and DeliveryStatus = 'Pending')
+            // Always freshly query for accepted orders (DeliveryMethod = 'Delivery' and DeliveryStatus = 'assigned')
             $acceptedQuery = "SELECT t.*, c.CustomerName, c.CustomerNumber, c.CustomerAddress, p.ProductName, p.ProductPrice 
                 FROM Transaction t 
                 JOIN Customer c ON t.CustomerID = c.CustomerID
                 JOIN Product p ON p.ProductID = t.ProductID
                 WHERE (t.DeliveryMethod = 'Delivery' OR t.DeliveryMethod = 'delivery')
-                  AND t.DeliveryStatus = 'pending'
+                  AND t.DeliveryStatus = 'assigned'
                 ORDER BY t.TransactionDate DESC";
             $acceptedResult = $conn->query($acceptedQuery);
             $acceptedOrders = [];
@@ -375,7 +375,7 @@ while ($row = $result->fetch_assoc()) {
                     ordersContainer.classList.remove('grid-restored');
                 }, 300);
                 
-                // Then mark them as accepted (update status to 'pending' via AJAX)
+                // Then mark them as accepted (update status to 'assigned' via AJAX)
                 const transactionIds = [];
                 const orderCardsToRemove = [];
                 
@@ -391,11 +391,11 @@ while ($row = $result->fetch_assoc()) {
                     }
                 });
                 
-                // AJAX call to update all selected orders to 'pending'
+                // AJAX call to update all selected orders to 'assigned'
                 fetch('../controllers/update_order_status.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ transaction_ids: transactionIds, status: 'pending' })
+                    body: JSON.stringify({ transaction_ids: transactionIds, status: 'Assigned' })
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -499,7 +499,7 @@ while ($row = $result->fetch_assoc()) {
                 });
             });
             
-            // Accept order functionality (print and set status to pending)
+            // Accept order functionality (print and set status to assigned)
             document.querySelectorAll('.btn-accept').forEach(button => {
                 button.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -527,7 +527,7 @@ while ($row = $result->fetch_assoc()) {
                     fetch('../controllers/update_order_status.php', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ transaction_id: transactionId, status: 'pending' })
+                        body: JSON.stringify({ transaction_id: transactionId, status: 'Assigned' })
                     })
                     .then(res => res.json())
                     .then(data => {
@@ -831,7 +831,7 @@ while ($row = $result->fetch_assoc()) {
                 fetch('../Controllers/update_order_status.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ transaction_id: transactionId, status: 'In Transit' })
+                    body: JSON.stringify({ transaction_id: transactionId, status: 'Cancelled' })
                 })
                 .then(res => res.json())
                 .then(data => {

@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['from_cashier'])) {
                 }
                 $total_price = $product_price * $item_quantity;
                 // Set delivery status
-                $delivery_status = ($delivery_method === 'delivery' || $delivery_method === 'Delivery') ? 'In Transit' : 'N/A';
+                $delivery_status = ($delivery_method === 'delivery' || $delivery_method === 'Delivery') ? 'Pending' : 'N/A';
                 // Insert transaction for this product (now with quantity)
                 $transactionStmt = $conn->prepare("INSERT INTO Transaction (CustomerID, ProductID, Price, Quantity, PaymentMethod, DeliveryMethod, DeliveryStatus) VALUES (?, ?, ?, ?, ?, ?, ?)");
                 $transactionStmt->bind_param('iidisss', $customer_id, $product_id, $total_price, $item_quantity, $payment_method, $delivery_method, $delivery_status);
