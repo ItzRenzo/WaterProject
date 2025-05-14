@@ -1,16 +1,46 @@
 <?php
 require_once '../../Database/db_config.php';
-// Fetch deliveries from Transaction table, join with Customer and Employee (Driver) if needed
-$sql = "SELECT t.TransactionID, t.DeliveryStatus, t.DeliveryMethod, t.TransactionDate, t.Price, t.Quantity, c.CustomerName, c.CustomerAddress, c.CustomerNumber
-FROM Transaction t
-JOIN Customer c ON t.CustomerID = c.CustomerID
-WHERE t.DeliveryMethod = 'delivery' OR t.DeliveryMethod = 'Delivery'
-ORDER BY t.TransactionDate DESC";
+
+// Filter logic for status and date
+$statusFilter = isset($_GET['status']) ? $_GET['status'] : 'all';
+$dateFilter = isset($_GET['date']) ? $_GET['date'] : 'all';
+
+$where = [];
+$where[] = "(t.DeliveryMethod = 'delivery' OR t.DeliveryMethod = 'Delivery')";
+
+// Handle status filter with proper case matching
+if ($statusFilter !== 'all') {
+    // Convert first letter to uppercase for proper matching
+    $status = ucfirst($statusFilter);
+    $where[] = "t.DeliveryStatus = '" . $conn->real_escape_string($status) . "'";
+}
+
+// Date filter logic
+if ($dateFilter !== 'all') {
+    if ($dateFilter === 'today') {
+        $where[] = "DATE(t.TransactionDate) = CURDATE()";
+    } elseif ($dateFilter === 'week') {
+        $where[] = "YEARWEEK(DATE(t.TransactionDate), 1) = YEARWEEK(CURDATE(), 1)";
+    } elseif ($dateFilter === 'month') {
+        $where[] = "YEAR(DATE(t.TransactionDate)) = YEAR(CURDATE()) AND MONTH(DATE(t.TransactionDate)) = MONTH(CURDATE())";
+    }
+}
+
+$whereClause = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
+
+$sql = "SELECT t.TransactionID, t.DeliveryStatus, t.DeliveryMethod, t.TransactionDate, 
+               t.Price, t.Quantity, c.CustomerName, c.CustomerAddress, c.CustomerNumber
+        FROM Transaction t
+        JOIN Customer c ON t.CustomerID = c.CustomerID
+        $whereClause
+        ORDER BY t.TransactionDate DESC";
+
 $result = $conn->query($sql);
 $deliveries = [];
 $pendingCount = 0;
 $deliveredCount = 0;
 $cancelledCount = 0;
+
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $deliveries[] = $row;
@@ -93,20 +123,20 @@ if ($result && $result->num_rows > 0) {
                         <i class="fas fa-search"></i>
                         <input type="text" placeholder="Search deliveries...">
                     </div>
-                    <div class="filters">
-                        <select class="status-filter">
-                            <option value="all">All Status</option>
-                            <option value="pending">Pending</option>
-                            <option value="assigned">Assigned</option>
-                            <option value="in-transit">In Transit</option>
-                            <option value="delivered">Delivered</option>
-                            <option value="cancelled">Cancelled</option>
+                    <div class="filters">  
+                        <select class="status-filter" id="statusFilter">
+                            <option value="all" <?php if($statusFilter==='all') echo 'selected'; ?>>All Status</option>
+                            <option value="pending" <?php if($statusFilter==='pending') echo 'selected'; ?>>Pending</option>
+                            <option value="assigned" <?php if($statusFilter==='assigned') echo 'selected'; ?>>Assigned</option>
+                            <option value="in transit" <?php if($statusFilter==='in transit') echo 'selected'; ?>>In Transit</option>
+                            <option value="delivered" <?php if($statusFilter==='delivered') echo 'selected'; ?>>Delivered</option>
+                            <option value="cancelled" <?php if($statusFilter==='cancelled') echo 'selected'; ?>>Cancelled</option>
                         </select>
-                        <select class="date-filter">
-                            <option value="today">Today</option>
-                            <option value="week">This Week</option>
-                            <option value="month">This Month</option>
-                            <option value="all">All Time</option>
+                        <select class="date-filter" id="dateFilter">
+                            <option value="today" <?php if($dateFilter==='today') echo 'selected'; ?>>Today</option>
+                            <option value="week" <?php if($dateFilter==='week') echo 'selected'; ?>>This Week</option>
+                            <option value="month" <?php if($dateFilter==='month') echo 'selected'; ?>>This Month</option>
+                            <option value="all" <?php if($dateFilter==='all') echo 'selected'; ?>>All Time</option>
                         </select>
                     </div>
                 </div>
@@ -124,7 +154,7 @@ if ($result && $result->num_rows > 0) {
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="deliveriesTableBody">
                         <?php foreach ($deliveries as $delivery): ?>
                         <tr>
                             <td>#DEL<?= htmlspecialchars($delivery['TransactionID']) ?></td>
@@ -317,38 +347,48 @@ if ($result && $result->num_rows > 0) {
         const updateButtons = document.querySelectorAll('.update-btn');
 
         // Open Assign Delivery Modal
-        assignDeliveryBtn.addEventListener('click', function () {
-            assignDeliveryModal.classList.add('show');
-        });
+        if (assignDeliveryBtn && assignDeliveryModal) {
+            assignDeliveryBtn.addEventListener('click', function () {
+                assignDeliveryModal.classList.add('show');
+            });
+        }
 
         // Open Delivery Detail Modal
-        viewButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                deliveryDetailModal.classList.add('show');
+        if (viewButtons && deliveryDetailModal) {
+            viewButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    deliveryDetailModal.classList.add('show');
+                });
             });
-        });
+        }
 
         // Update Status Buttons
-        updateButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                deliveryDetailModal.classList.add('show');
+        if (updateButtons && deliveryDetailModal) {
+            updateButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    deliveryDetailModal.classList.add('show');
+                });
             });
-        });
+        }
 
         // Close Modals
-        closeButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                assignDeliveryModal.classList.remove('show');
-                deliveryDetailModal.classList.remove('show');
+        if (closeButtons) {
+            closeButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    if (assignDeliveryModal) assignDeliveryModal.classList.remove('show');
+                    if (deliveryDetailModal) deliveryDetailModal.classList.remove('show');
+                });
             });
-        });
+        }
 
-        cancelButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                assignDeliveryModal.classList.remove('show');
-                deliveryDetailModal.classList.remove('show');
+        if (cancelButtons) {
+            cancelButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    if (assignDeliveryModal) assignDeliveryModal.classList.remove('show');
+                    if (deliveryDetailModal) deliveryDetailModal.classList.remove('show');
+                });
             });
-        });
+        }
 
         // Close on outside click
         window.addEventListener('click', function (e) {
@@ -493,6 +533,30 @@ if ($result && $result->num_rows > 0) {
                 }, 300);
             });
         }
+
+        // Filter logic for status and date
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusFilter = document.getElementById('statusFilter');
+            const dateFilter = document.getElementById('dateFilter');
+            const tableBody = document.getElementById('deliveriesTableBody');
+            function filterTable() {
+                const status = statusFilter.value;
+                const date = dateFilter.value;
+                const rows = tableBody.querySelectorAll('tr');
+                rows.forEach(row => {
+                    const statusBadge = row.querySelector('.status-badge');
+                    const statusText = statusBadge ? statusBadge.textContent.trim().toLowerCase() : '';
+                    let show = true;
+                    if (status !== 'all' && statusText !== status.toLowerCase()) {
+                        show = false;
+                    }
+                    row.style.display = show ? '' : 'none';
+                });
+            }
+            statusFilter.addEventListener('change', filterTable);
+            dateFilter.addEventListener('change', filterTable);
+            filterTable();
+        });
     </script>
 </body>
 
