@@ -54,11 +54,17 @@ CREATE TABLE Transaction (
     PaymentMethod VARCHAR(50),
     DeliveryStatus VARCHAR(50),
     DeliveryMethod VARCHAR(50),
+<<<<<<< HEAD
+    TransactionDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+     Status VARCHAR(50) DEFAULT active;
+=======
     TransactionDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (CustomerID) 
         REFERENCES Customer(CustomerID),
     FOREIGN KEY (ProductID)
         REFERENCES Product(ProductID)
+>>>>>>> aef4b0116ff4799b1810f9d3f12f3ff2749f344b
 );
 
 -- 6. Expense types
