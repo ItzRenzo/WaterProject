@@ -1,7 +1,27 @@
 <?php
 require_once '../../Database/db_config.php';
 $customers = [];
-$sql = "SELECT * FROM Customer ORDER BY CustomerID DESC";
+
+// Pagination logic
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$per_page = isset($_GET['per_page']) ? max(1, intval($_GET['per_page'])) : 10;
+$offset = ($page - 1) * $per_page;
+
+// Get total count for pagination
+$total_sql = "SELECT COUNT(*) as total FROM Customer WHERE CustomerName NOT LIKE '%-'";
+$total_result = $conn->query($total_sql);
+$total_customers = 0;
+if ($total_result && $row = $total_result->fetch_assoc()) {
+    $total_customers = (int)$row['total'];
+}
+
+// Exclude customers whose CustomerName ends with '-'
+$sql = "SELECT c.*, 
+    (SELECT COUNT(*) FROM Transaction t WHERE t.CustomerID = c.CustomerID) as orders
+FROM Customer c 
+WHERE c.CustomerName NOT LIKE '%-' 
+ORDER BY c.CustomerID DESC
+LIMIT $per_page OFFSET $offset";
 $result = $conn->query($sql);
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
@@ -10,15 +30,18 @@ if ($result && $result->num_rows > 0) {
             'name' => $row['CustomerName'],
             'phone' => $row['CustomerNumber'],
             'address' => $row['CustomerAddress'],
-            'orders' => 0, // Placeholder, update if you have order data
-            'lastOrder' => '-' // Placeholder, update if you have order data
+            'orders' => (int)$row['orders']
         ];
     }
 }
 
 if (isset($_GET['fetch'])) {
     header('Content-Type: application/json');
-    echo json_encode($customers);
+    echo json_encode([
+        'customers' => $customers,
+        'total' => $total_customers,
+        'per_page' => $per_page
+    ]);
     exit;
 }
 ?>
@@ -83,8 +106,7 @@ if (isset($_GET['fetch'])) {
                         <th>Name</th>
                         <th>Contact</th>
                         <th>Address</th>
-                        <th>Orders</th>
-                        <th>Last Order</th>
+                        <th>Total Orders</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -95,13 +117,7 @@ if (isset($_GET['fetch'])) {
         </div>
 
         <!-- Pagination -->
-        <div class="pagination">
-            <button class="pagination-btn"><i class="fas fa-chevron-left"></i></button>
-            <button class="pagination-btn active">1</button>
-            <button class="pagination-btn">2</button>
-            <button class="pagination-btn">3</button>
-            <button class="pagination-btn"><i class="fas fa-chevron-right"></i></button>
-        </div>
+        <div class="pagination"></div>
     </div>
 
     <!-- Add Client Modal -->
@@ -135,7 +151,92 @@ if (isset($_GET['fetch'])) {
         </div>
     </div>
 
+    <!-- Edit Client Modal -->
+    <div class="modal" id="editClientModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Client</h3>
+                <button class="close-btn" id="closeEditModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editClientForm">
+                    <input type="hidden" id="EditCustomerID" name="CustomerID">
+                    <div class="form-group">
+                        <label for="EditCustomerName">Customer Name</label>
+                        <input type="text" id="EditCustomerName" name="CustomerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="EditCustomerNumber">Contact Number</label>
+                        <input type="tel" id="EditCustomerNumber" name="CustomerNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="EditCustomerAddress">Address</label>
+                        <input type="text" id="EditCustomerAddress" name="CustomerAddress" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="secondary-btn" id="cancelEditBtn">Cancel</button>
+                        <button type="submit" class="primary-btn">Update Customer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Pagination state
+        let currentPage = 1;
+        let totalPages = 1;
+        const perPage = 10;
+        const paginationContainer = document.querySelector('.pagination');
+
+        // Fetch customers from server with pagination
+        function fetchCustomers(page = 1) {
+            fetch(`customers.php?fetch=1&page=${page}&per_page=${perPage}`)
+                .then(response => response.json())
+                .then(data => {
+                    clients = data.customers;
+                    totalPages = Math.ceil(data.total / perPage) || 1;
+                    renderGridView();
+                    renderListView();
+                    renderPagination();
+                });
+        }
+
+        // Render pagination buttons
+        function renderPagination() {
+            paginationContainer.innerHTML = '';
+            // Previous button
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'pagination-btn';
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => changePage(currentPage - 1);
+            paginationContainer.appendChild(prevBtn);
+
+            // Page number buttons
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = 'pagination-btn' + (i === currentPage ? ' active' : '');
+                pageBtn.textContent = i;
+                pageBtn.onclick = () => changePage(i);
+                paginationContainer.appendChild(pageBtn);
+            }
+
+            // Next button
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'pagination-btn';
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.onclick = () => changePage(currentPage + 1);
+            paginationContainer.appendChild(nextBtn);
+        }
+
+        function changePage(page) {
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            fetchCustomers(currentPage);
+        }
+
         // Load customers from PHP
         let clients = <?php echo json_encode($customers); ?>;
 
@@ -152,8 +253,7 @@ if (isset($_GET['fetch'])) {
 
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function () {
-            renderGridView();
-            renderListView();
+            fetchCustomers(1);
             setupEventListeners();
         });
 
@@ -165,7 +265,6 @@ if (isset($_GET['fetch'])) {
                 const card = document.createElement('div');
                 card.className = 'client-card';
 
-                const statusClass = '';
                 const firstLetter = client.name.charAt(0);
 
                 card.innerHTML = `
@@ -178,20 +277,15 @@ if (isset($_GET['fetch'])) {
                 <p><i class="fas fa-location-dot"></i> ${client.address}</p>
             </div>
             <div class="client-card-footer">
-                <div class="client-stats">
+                <div class="client-stats" style="justify-content: center;">
                     <div>
-                        <span>Orders</span>
+                        <span>Total Orders</span>
                         <h4>${client.orders}</h4>
-                    </div>
-                    <div>
-                        <span>Last Order</span>
-                        <h4>${client.lastOrder}</h4>
                     </div>
                 </div>
                 <div class="client-actions">
-                    <button title="View Details"><i class="fas fa-eye"></i></button>
-                    <button title="Edit"><i class="fas fa-edit"></i></button>
-                    <button title="Delete"><i class="fas fa-trash"></i></button>
+                    <button title="Edit" class="edit-btn" data-id="${client.id}"><i class="fas fa-edit"></i></button>
+                    <button title="Delete" class="delete-btn" data-id="${client.id}"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
         `;
@@ -206,19 +300,16 @@ if (isset($_GET['fetch'])) {
 
             clients.forEach(client => {
                 const row = document.createElement('tr');
-                const statusClass = '';
 
                 row.innerHTML = `
             <td>${client.name}</td>
             <td>${client.phone}</td>
             <td>${client.address}</td>
             <td>${client.orders}</td>
-            <td>${client.lastOrder}</td>
             <td>
                 <div class="action-buttons">
-                    <button title="View Details"><i class="fas fa-eye"></i></button>
-                    <button title="Edit"><i class="fas fa-edit"></i></button>
-                    <button title="Delete"><i class="fas fa-trash"></i></button>
+                    <button title="Edit" class="edit-btn" data-id="${client.id}"><i class="fas fa-edit"></i></button>
+                    <button title="Delete" class="delete-btn" data-id="${client.id}"><i class="fas fa-trash"></i></button>
                 </div>
             </td>
         `;
@@ -297,17 +388,63 @@ if (isset($_GET['fetch'])) {
                     showNotification(error.message, 'error');
                 }
             });
-        }
 
-        // Fetch customers from server
-        function fetchCustomers() {
-            fetch('customers.php?fetch=1')
-                .then(response => response.json())
-                .then(data => {
-                    clients = data;
-                    renderGridView();
-                    renderListView();
-                });
+            // Edit and Delete buttons (delegated)
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.edit-btn')) {
+                    const id = e.target.closest('.edit-btn').dataset.id;
+                    openEditModal(id);
+                }
+                if (e.target.closest('.delete-btn')) {
+                    const id = e.target.closest('.delete-btn').dataset.id;
+                    deleteCustomer(id);
+                }
+            });
+
+            // Edit modal functionality
+            const editClientModal = document.getElementById('editClientModal');
+            const closeEditModalBtn = document.getElementById('closeEditModal');
+            const cancelEditBtn = document.getElementById('cancelEditBtn');
+            closeEditModalBtn.addEventListener('click', closeEditModal);
+            cancelEditBtn.addEventListener('click', closeEditModal);
+            window.addEventListener('click', function (event) {
+                if (event.target === editClientModal) {
+                    closeEditModal();
+                }
+            });
+
+            // Edit form submission
+            document.getElementById('editClientForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = {
+                    id: document.getElementById('EditCustomerID').value,
+                    name: document.getElementById('EditCustomerName').value,
+                    phone: document.getElementById('EditCustomerNumber').value,
+                    address: document.getElementById('EditCustomerAddress').value
+                };
+                try {
+                    if (validateClientData(formData)) {
+                        fetch('../Controllers/update_customer.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(formData)
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                fetchCustomers();
+                                showNotification('Customer updated successfully!');
+                                closeEditModal();
+                            } else {
+                                showNotification(data.message || 'Failed to update customer', 'error');
+                            }
+                        })
+                        .catch(() => showNotification('Server error', 'error'));
+                    }
+                } catch (error) {
+                    showNotification(error.message, 'error');
+                }
+            });
         }
 
         // Add this function before the form submission handler
@@ -340,6 +477,44 @@ if (isset($_GET['fetch'])) {
         function closeModal() {
             addClientModal.classList.remove('show');
             document.body.style.overflow = ''; // Re-enable scrolling
+        }
+
+        // Open edit modal function
+        function openEditModal(id) {
+            const client = clients.find(c => c.id == id);
+            if (!client) return;
+            document.getElementById('EditCustomerID').value = client.id;
+            document.getElementById('EditCustomerName').value = client.name;
+            document.getElementById('EditCustomerNumber').value = client.phone;
+            document.getElementById('EditCustomerAddress').value = client.address;
+            document.getElementById('editClientModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close edit modal function
+        function closeEditModal() {
+            document.getElementById('editClientModal').classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        // Delete customer function
+        function deleteCustomer(id) {
+            if (!confirm('Are you sure you want to delete this customer?')) return;
+            fetch('../Controllers/delete_customer.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    fetchCustomers();
+                    showNotification('Customer deleted successfully!');
+                } else {
+                    showNotification(data.message || 'Failed to delete customer', 'error');
+                }
+            })
+            .catch(() => showNotification('Server error', 'error'));
         }
 
         // Show notification function
