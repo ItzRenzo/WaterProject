@@ -92,24 +92,6 @@
             </div>
         </div>
 
-        <!-- Report Section -->
-        <div class="report-section">
-            <div class="section-header">
-                <h3>Sales Overview</h3>
-                <div class="section-actions">
-                    <select class="report-filter">
-                        <option value="daily">Daily</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="monthly" selected>Monthly</option>
-                        <option value="yearly">Yearly</option>
-                    </select>
-                </div>
-            </div>
-            <div class="chart-container">
-                <canvas id="salesChart"></canvas>
-            </div>
-        </div>
-
         <!-- Recent Transactions Table -->
         <div class="report-section">
             <div class="section-header">
@@ -244,50 +226,6 @@
             if (e.target === exportModal) {
                 exportModal.classList.remove('show');
             }
-        });
-
-        // Initialize chart
-        document.addEventListener('DOMContentLoaded', function () {
-            const salesCtx = document.getElementById('salesChart').getContext('2d');
-            new Chart(salesCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    datasets: [{
-                        label: 'Sales',
-                        data: [112500, 118900, 135600, 152450, 140000, 145000, 148000, 152000, 158500, 163000, 172500, 178000],
-                        backgroundColor: 'rgba(2, 136, 209, 0.7)',
-                        borderColor: 'rgba(2, 136, 209, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    return '₱' + context.parsed.y.toLocaleString();
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function (value) {
-                                    return '₱' + value.toLocaleString();
-                                }
-                            }
-                        }
-                    }
-                }
-            });
         });
     </script>
 </body>
