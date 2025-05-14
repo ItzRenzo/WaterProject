@@ -166,7 +166,7 @@ include_once '../../Database/db_check.php';
                         <div class="form-group">
                             <label for="expenseAmount">Amount</label>
                             <div class="amount-input">
-                                <span class="currency">₱</span>
+                                <span class="currency"></span>
                                 <input type="number" id="expenseAmount" placeholder="0.00" step="0.01" min="0" required>
                             </div>
                         </div>
@@ -181,9 +181,7 @@ include_once '../../Database/db_check.php';
                             <label for="paymentMethod">Payment Method</label>
                             <select id="paymentMethod">
                                 <option value="cash">Cash</option>
-                                <option value="bank_transfer">Bank Transfer</option>
-                                <option value="credit_card">Credit Card</option>
-                                <option value="other">Other</option>
+                                <option value="Gcash">Gcash</option>
                             </select>
                         </div>
                     </div>
@@ -237,7 +235,7 @@ include_once '../../Database/db_check.php';
                         <div class="form-group">
                             <label for="editExpenseAmount">Amount</label>
                             <div class="amount-input">
-                                <span class="currency">₱</span>
+                                <span class="currency"></span>
                                 <input type="number" id="editExpenseAmount" placeholder="0.00" step="0.01" min="0" required>
                             </div>
                         </div>
@@ -394,8 +392,8 @@ include_once '../../Database/db_check.php';
                     const name = row.cells[0].textContent;
                     const amount = row.cells[2].textContent;
 
-                    // Set confirmation details
-                    document.getElementById('deleteExpenseName').textContent = name;
+                    // Set confirmation details (add (delete) to name)
+                    document.getElementById('deleteExpenseName').textContent = name + ' (delete)';
                     document.getElementById('deleteExpenseAmount').textContent = amount;
 
                     // Store expense ID for deletion
@@ -409,17 +407,24 @@ include_once '../../Database/db_check.php';
             // Handle Confirm Delete
             confirmDeleteBtn.addEventListener('click', function () {
                 const expenseId = this.getAttribute('data-id');
-
-                // Here you would normally send a request to delete the expense
-                // For now, we'll just remove it from the table
-                const row = document.querySelector(`.delete-btn[data-id="${expenseId}"]`).closest('tr');
-                row.remove();
-
+                // Send AJAX request to mark the expense type as (delete)
+                fetch('delete_expense.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'id=' + encodeURIComponent(expenseId)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Refresh the table
+                        fetchExpenses();
+                        showNotification('Expense marked as deleted');
+                    } else {
+                        showNotification('Failed to delete expense');
+                    }
+                });
                 // Close the modal
                 deleteConfirmModal.classList.remove('show');
-
-                // Show success notification (assuming you have this function)
-                showNotification('Expense deleted successfully');
             });
 
             // Handle Add Expense Form Submit
@@ -431,19 +436,34 @@ include_once '../../Database/db_check.php';
                 const category = document.getElementById('expenseCategory').value;
                 const amount = document.getElementById('expenseAmount').value;
                 const date = document.getElementById('expenseDate').value;
+                const paymentMethod = document.getElementById('paymentMethod').value;
+                const description = document.getElementById('expenseDescription').value;
 
-                // Here you would normally send these values to your backend
-
-                // For demo purposes, add to table
-                addExpenseToTable(name, category, amount, date);
-
-                // Reset form and close modal
-                this.reset();
-                document.getElementById('expenseDate').valueAsDate = new Date();
-                addExpenseModal.classList.remove('show');
-
-                // Show success notification (assuming you have this function)
-                showNotification('Expense added successfully');
+                // Send to backend
+                fetch('add_expense.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name,
+                        category,
+                        amount,
+                        date,
+                        paymentMethod,
+                        description
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        fetchExpenses();
+                        showNotification('Expense added successfully');
+                        expenseForm.reset();
+                        document.getElementById('expenseDate').valueAsDate = new Date();
+                        addExpenseModal.classList.remove('show');
+                    } else {
+                        showNotification('Failed to add expense');
+                    }
+                });
             });
 
             // Handle Edit Expense Form Submit
@@ -456,17 +476,33 @@ include_once '../../Database/db_check.php';
                 const category = document.getElementById('editExpenseCategory').value;
                 const amount = document.getElementById('editExpenseAmount').value;
                 const date = document.getElementById('editExpenseDate').value;
+                const paymentMethod = document.getElementById('editPaymentMethod').value;
+                const description = document.getElementById('editExpenseDescription').value;
 
-                // Here you would normally send these values to your backend
-
-                // For demo purposes, update the table
-                updateExpenseInTable(expenseId, name, category, amount, date);
-
-                // Close modal
-                editExpenseModal.classList.remove('show');
-
-                // Show success notification (assuming you have this function)
-                showNotification('Expense updated successfully');
+                // Send to backend
+                fetch('edit_expense.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: expenseId,
+                        name,
+                        category,
+                        amount,
+                        date,
+                        paymentMethod,
+                        description
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        fetchExpenses();
+                        showNotification('Expense updated successfully');
+                        editExpenseModal.classList.remove('show');
+                    } else {
+                        showNotification('Failed to update expense');
+                    }
+                });
             });
 
             // Function to add new expense to the table
@@ -537,7 +573,7 @@ include_once '../../Database/db_check.php';
                     const name = row.cells[0].textContent;
                     const amount = row.cells[2].textContent;
 
-                    document.getElementById('deleteExpenseName').textContent = name;
+                    document.getElementById('deleteExpenseName').textContent = name + ' (delete)';
                     document.getElementById('deleteExpenseAmount').textContent = amount;
                     confirmDeleteBtn.setAttribute('data-id', expenseId);
 
@@ -823,7 +859,7 @@ include_once '../../Database/db_check.php';
                     const name = row.cells[0].textContent;
                     const amount = row.cells[2].textContent;
 
-                    document.getElementById('deleteExpenseName').textContent = name;
+                    document.getElementById('deleteExpenseName').textContent = name + ' (delete)';
                     document.getElementById('deleteExpenseAmount').textContent = amount;
                     confirmDeleteBtn.setAttribute('data-id', expenseId);
 

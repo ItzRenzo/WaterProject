@@ -29,7 +29,13 @@ $sql = "SELECT le.ExpensesID, et.TypeName, et.Category, le.Amount, le.ExpenseDat
         FROM LoggedExpenses le
         JOIN ExpenseTypes et ON le.ExpenseTypeID = et.ExpenseTypeID";
 if ($where) {
-    $sql .= ' WHERE ' . implode(' AND ', $where);
+    $sql .= ' WHERE ' . implode(' AND ', $where) . ' AND et.TypeName NOT LIKE ?';
+    $params[] = '% (delete)';
+    $types .= 's';
+} else {
+    $sql .= ' WHERE et.TypeName NOT LIKE ?';
+    $params[] = '% (delete)';
+    $types .= 's';
 }
 $sql .= ' ORDER BY le.ExpenseDate DESC, le.ExpensesID DESC';
 

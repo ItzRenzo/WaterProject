@@ -417,10 +417,12 @@ body {
 
 .edit-btn {
     color: var(--primary);
+    opacity: 0.8;
+    
 }
 
 .delete-btn {
-    color: var(--danger);
+    color: var(--text-dark);
 }
 
 .edit-btn:hover, .delete-btn:hover {
@@ -478,7 +480,7 @@ body {
 }
 
 .delete-header h3 i {
-    color: var(--danger);
+    color: var(--gray);
 }
 
 .close-btn {
@@ -590,7 +592,7 @@ body {
 }
 
 .cancel-btn {
-    background-color: var(--gray-light);
+    background-color: var(--gray);
     color: var(--text-dark);
     border: none;
 }
