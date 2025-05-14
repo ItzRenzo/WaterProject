@@ -450,7 +450,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Format payment and delivery options to be more readable
             const paymentFormatted = payment === 'cash' ? 'Cash' : 'GCash';
-            const deliveryFormatted = delivery === 'pickup' ? 'Pick-up' : 'Home Delivery';
+            const deliveryFormatted = delivery === 'pickup' ? 'Pick-up' : 'Delivery';
 
             // Update the customer information fields
             document.getElementById('summary-customer-name').textContent = `Name: ${name}`;
@@ -477,10 +477,15 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!changeInfo.id) {
                 changeInfo.id = 'summary-change-amount';
                 customerDetails.appendChild(changeInfo);
-            }
-            changeInfo.textContent = `Change: ₱${Math.max(0, change).toFixed(2)}`;
+            }            changeInfo.textContent = `Change: ₱${Math.max(0, change).toFixed(2)}`;
+
+            // Show total quantity from cart items
+            const totalQuantity = cartItems.reduce((sum, item) => sum + (item.quantity || 0), 0);
+            document.getElementById('summary-customer-quantity').textContent = 'Quantity: ' + totalQuantity;
         }
     }
+
+    // --- Show stocks in tab-products ---    // Stock display is now handled only once at page load
 
     function processOrder() {
         // Here you would typically send the order to the server

@@ -55,10 +55,12 @@ if ($result->num_rows > 0) {
             'TransactionID' => $row['TransactionID'],
             'ProductName' => $row['ProductName'],
             'Price' => $row['Price'],
+            'Quantity' => isset($row['Quantity']) ? (int)$row['Quantity'] : 1,
+            'ProductPrice' => isset($row['ProductPrice']) ? $row['ProductPrice'] : $row['Price'],
             'PaymentMethod' => $row['PaymentMethod'],
-            'DeliveryMethod' => $row['DeliveryMethod']
+            'DeliveryMethod' => $row['DeliveryMethod'],
+            'DeliveryStatus' => $row['DeliveryStatus']
         ];
-        
         // Store customer info (only need to do this once)
         if (empty($customerInfo)) {
             $customerInfo = [
@@ -67,7 +69,8 @@ if ($result->num_rows > 0) {
                 'CustomerAddress' => $row['CustomerAddress'],
                 'TransactionDate' => $row['TransactionDate'],
                 'PaymentMethod' => $row['PaymentMethod'],
-                'DeliveryMethod' => $row['DeliveryMethod']
+                'DeliveryMethod' => $row['DeliveryMethod'],
+                'DeliveryStatus' => $row['DeliveryStatus']
             ];
         }
     }
@@ -88,7 +91,15 @@ if ($result->num_rows > 0) {
             <p><strong>Phone:</strong> <span id="customer-phone"><?php echo !empty($customerInfo) ? htmlspecialchars($customerInfo['CustomerNumber']) : 'N/A'; ?></span></p>
             <p><strong>Payment Method:</strong> <span id="payment-method"><?php echo !empty($customerInfo) ? htmlspecialchars($customerInfo['PaymentMethod']) : 'N/A'; ?></span></p>
             <p><strong>Delivery:</strong> <span id="delivery-method"><?php echo !empty($customerInfo) ? htmlspecialchars($customerInfo['DeliveryMethod']) : 'N/A'; ?></span></p>
-            <p id="address-row"><strong>Address:</strong> <span id="customer-address"><?php echo (!empty($customerInfo) && $customerInfo['DeliveryMethod'] == 'Home Delivery') ? htmlspecialchars($customerInfo['CustomerAddress']) : 'N/A'; ?></span></p>
+            <p><strong>Delivery Status:</strong> <span id="delivery-status"><?php echo !empty($customerInfo) && isset($customerInfo['DeliveryStatus']) ? htmlspecialchars($customerInfo['DeliveryStatus']) : (isset($transactions[0]['DeliveryStatus']) ? htmlspecialchars($transactions[0]['DeliveryStatus']) : 'N/A'); ?></span></p>
+            <p id="address-row"><strong>Address:</strong> <span id="customer-address"><?php 
+                if (!empty($customerInfo) && 
+                    (strtolower($customerInfo['DeliveryMethod']) == 'home delivery' || strtolower($customerInfo['DeliveryMethod']) == 'delivery')) {
+                    echo htmlspecialchars($customerInfo['CustomerAddress']);
+                } else {
+                    echo 'N/A';
+                }
+            ?></span></p>
         </div>
           <h4>Items:</h4>
         <table class="receipt-items">
@@ -105,14 +116,15 @@ if ($result->num_rows > 0) {
                 if (!empty($transactions)) {
                     $totalAmount = 0;
                     foreach ($transactions as $transaction) {
-                        $totalAmount += $transaction['Price'];
-                        // For now, we assume quantity is 1 as it's not explicitly stored in your schema
-                        $quantity = 1;
+                        $quantity = isset($transaction['Quantity']) ? (int)$transaction['Quantity'] : 1;
+                        $unitPrice = isset($transaction['ProductPrice']) ? $transaction['ProductPrice'] : ($transaction['Price'] / $quantity);
+                        $lineTotal = $unitPrice * $quantity;
+                        $totalAmount += $lineTotal;
                         echo '<tr>';
                         echo '<td>' . htmlspecialchars($transaction['ProductName']) . '</td>';
                         echo '<td>' . $quantity . '</td>';
-                        echo '<td>₱' . number_format($transaction['Price'] / $quantity, 2) . '</td>';
-                        echo '<td>₱' . number_format($transaction['Price'], 2) . '</td>';
+                        echo '<td>₱' . number_format($unitPrice, 2) . '</td>';
+                        echo '<td>₱' . number_format($lineTotal, 2) . '</td>';
                         echo '</tr>';
                     }
                 } else {

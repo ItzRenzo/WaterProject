@@ -65,6 +65,7 @@ header .user-actions {
 }
 
 header .driver-info {
+    right: auto;
     font-size: 15px;
     color: var(--gray-dark);
     display: flex;
@@ -170,6 +171,17 @@ header .action-btn.logout:hover {
     color: white;
 }
 
+.toolbar-btn.accept-btn {
+    background: var(--primary);
+    color: var(--white);
+    font-weight: bold;
+}
+
+.toolbar-btn.accept-btn:hover {
+    background: var(--primary-dark);
+    color: white;
+}
+
 .orders {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -177,7 +189,14 @@ header .action-btn.logout:hover {
     margin-top: 20px;
 }
 
+.orders.grid-restored {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)) !important;
+}
+
 .order-card {
+    display: flex;
+    flex-direction: column;
     border-radius: 12px;
     overflow: hidden;
     background: var(--white);
@@ -393,3 +412,187 @@ button {
         justify-content: space-between;
     }
 }
+
+/* ABSOLUTE OVERRIDE: Make all driver dashboard styles !important and use #driver-dashboard-root for max specificity */
+#driver-dashboard-root, #driver-dashboard-root * {
+    all: unset !important;
+    box-sizing: border-box !important;
+}
+
+#driver-dashboard-root {
+    font-family: 'Segoe UI', 'Roboto', sans-serif !important;
+    background: #f8f9fa !important;
+    color: #202124 !important;
+    width: 100vw !important;
+    min-height: 100vh !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+#driver-dashboard-root .dashboard {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 30px 20px !important;
+    background: none !important;
+}
+
+#driver-dashboard-root header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 30px !important;
+    padding-bottom: 15px !important;
+    border-bottom: 1px solid #f1f3f4 !important;
+}
+
+#driver-dashboard-root header h1 {
+    display: flex !important;
+    align-items: center !important;
+    font-size: 24px !important;
+    font-weight: 500 !important;
+    color: #1a73e8 !important;
+}
+
+#driver-dashboard-root .toolbar-tabs button {
+    background: #e8f0fe !important;
+    color: #1a73e8 !important;
+    border: 1px solid #1a73e8 !important;
+    border-radius: 4px !important;
+    padding: 8px 16px !important;
+    margin-right: 8px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.3s !important;
+}
+#driver-dashboard-root .toolbar-tabs button.active {
+    background: #1a73e8 !important;
+    color: #fff !important;
+}
+
+#driver-dashboard-root .orders {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)) !important;
+    gap: 20px !important;
+    margin-top: 20px !important;
+}
+
+#driver-dashboard-root .order-card {
+    display: flex !important;
+    flex-direction: column !important;
+    border-radius: 12px !important;
+    background: #fff !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+    border: 1px solid #e8f0fe !important;
+    position: relative !important;
+    cursor: pointer !important;
+}
+
+#driver-dashboard-root .order-header {
+    background: #0d47a1 !important;
+    color: #fff !important;
+    padding: 15px 20px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+}
+
+#driver-dashboard-root .order-header.selected {
+    background: #1a73e8 !important;
+}
+
+#driver-dashboard-root .order-footer {
+    display: flex !important;
+    justify-content: space-between !important;
+    padding: 15px 20px !important;
+    background: #e8f0fe !important;
+    align-items: center !important;
+    font-weight: 500 !important;
+}
+
+#driver-dashboard-root .btn-accept, #driver-dashboard-root .btn-delivered {
+    background: #1a73e8 !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 10px 16px !important;
+    font-weight: 500 !important;
+    margin-right: 8px !important;
+    cursor: pointer !important;
+}
+#driver-dashboard-root .btn-accept:hover, #driver-dashboard-root .btn-delivered:hover {
+    background: #0d47a1 !important;
+}
+
+#driver-dashboard-root .btn-skip {
+    background: #f1f3f4 !important;
+    color: #5f6368 !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 10px 16px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+}
+#driver-dashboard-root .btn-skip:hover {
+    background: #e0e0e0 !important;
+}
+
+#driver-dashboard-root .status-pending {
+    background: #fef7e0 !important;
+    color: #fbbc05 !important;
+}
+#driver-dashboard-root .status-accepted {
+    background: #e6f4ea !important;
+    color: #34a853 !important;
+}
+#driver-dashboard-root .status-delivered {
+    background: #e8f0fe !important;
+    color: #1a73e8 !important;
+}
+
+/* Print styles absolute */
+@media print {
+    #driver-dashboard-root header, #driver-dashboard-root .action-toolbar, #driver-dashboard-root .order-checkbox, #driver-dashboard-root .btn-accept, #driver-dashboard-root .btn-skip {
+        display: none !important;
+    }
+    #driver-dashboard-root .dashboard {
+        padding: 0 !important;
+    }
+    #driver-dashboard-root .orders {
+        display: block !important;
+    }
+    #driver-dashboard-root .order-card {
+        page-break-inside: avoid !important;
+        margin-bottom: 20px !important;
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+}
+
+/* ...existing code... */
+.toolbar-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 0;
+}
+
+.toolbar-tab {
+    background: var(--primary-light);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    border-radius: 4px;
+    padding: 8px 18px;
+    font-weight: 500;
+    font-size: 15px;
+    cursor: pointer;
+    transition: var(--transition);
+    outline: none;
+    box-shadow: none;
+}
+.toolbar-tab.active,
+.toolbar-tab:focus,
+.toolbar-tab:hover {
+    background: var(--primary);
+    color: var(--white);
+    border-color: var(--primary-dark);
+}
+
+/* ...existing code... */

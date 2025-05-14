@@ -9,7 +9,7 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['position'])) {
     if ($position === 'admin') {
         header('Location: ../admin/index.html');
     } elseif ($position === 'driver') {
-        header('Location: ../html/Driver-dashboard.html');
+        header('Location: ../html/Driver-dashboard.php');
     } elseif ($position === 'cashier') {
         header('Location: ../html/Cashier.php');
     } else {

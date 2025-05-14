@@ -126,9 +126,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['from_cashier'])) {
                     throw new Exception("Not enough stock for {$item_name}. Only {$available_stock} available.");
                 }
                 $total_price = $product_price * $item_quantity;
-                // Insert transaction for this product
-                $transactionStmt = $conn->prepare("INSERT INTO Transaction (CustomerID, ProductID, Price, PaymentMethod, DeliveryMethod) VALUES (?, ?, ?, ?, ?)");
-                $transactionStmt->bind_param('iidss', $customer_id, $product_id, $total_price, $payment_method, $delivery_method);
+                // Set delivery status
+                $delivery_status = ($delivery_method === 'delivery' || $delivery_method === 'Delivery') ? 'In Transit' : 'N/A';
+                // Insert transaction for this product (now with quantity)
+                $transactionStmt = $conn->prepare("INSERT INTO Transaction (CustomerID, ProductID, Price, Quantity, PaymentMethod, DeliveryMethod, DeliveryStatus) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $transactionStmt->bind_param('iidisss', $customer_id, $product_id, $total_price, $item_quantity, $payment_method, $delivery_method, $delivery_status);
                 $transactionStmt->execute();
                 $transactionStmt->close();
                 // Update stock
@@ -403,7 +405,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['from_cashier'])) {
                             <label for="delivery">Delivery Option</label>
                             <select id="delivery" required>
                                 <option value="pickup">Pick-up</option>
-                                <option value="delivery">Home Delivery</option>
+                                <option value="delivery">Delivery</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -486,7 +488,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['from_cashier'])) {
                     <p id="summary-customer-name">Name: </p>
                     <p id="summary-customer-phone">Phone: </p>
                     <p id="summary-customer-payment">Payment Method: </p>
-                    <p id="summary-customer-delivery">Delivery Method: </p>                    <p id="summary-customer-address">Address: </p>                    
+                    <p id="summary-customer-delivery">Delivery Method: </p>
+                    <p id="summary-customer-address">Address: </p>
+                    <p id="summary-customer-quantity">Quantity: </p>
                     <p id="summary-customer-cashier">
                         Cashier: <span id="cashier-name-display" data-cashier-name="true">Not logged in</span>
                     </p>

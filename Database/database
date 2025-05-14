@@ -40,13 +40,16 @@ CREATE TABLE Employee (
 CREATE TABLE Transaction (
     TransactionID INT PRIMARY KEY AUTO_INCREMENT,
     CustomerID INT,
-    TransactionDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    productID INT,
     Price DECIMAL(10, 2) NOT NULL,
+    Quantity INT NOT NULL,
     PaymentMethod VARCHAR(50),
     DeliveryStatus VARCHAR(50),
-    DeliveryMethod VARCHAR(50),  
+    DeliveryMethod VARCHAR(50),
+    TransactionDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
+
 
 
 CREATE TABLE Reports (
