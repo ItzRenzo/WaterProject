@@ -94,3 +94,20 @@ CREATE TABLE Reports (
     FOREIGN KEY (ExpensesID) 
         REFERENCES LoggedExpenses(ExpensesID)
 );
+
+-- Inserts
+-- Populate Containers
+INSERT INTO Containers (ContainerID, ContainerType, ContainerCapacity_L, ContainerStatus, Stocks) VALUES
+  (1, '5 Gallon', 20.00, 'Available', 20),
+  (2, 'Plastic',  0.50, 'Available', 50);
+
+-- Populate Products
+INSERT INTO Products (ProductID, ProductName,          ProductPrice, ProductDescription,               ProductStatus, Stocks, ContainerID) VALUES
+  (1, 'Mineral Water',           35.00, 'Natural minerals and electrolytes', 'Available',  7, 1),
+  (2, 'Purified Water',          25.00, 'Clean and pure drinking water',       'Available',  9, 1),
+  (3, 'Alkaline Water',          45.00, 'Higher pH for balanced health',       'Available', 20, 1),
+  (4, 'Distilled Water',         30.00, 'Pure H2O with no minerals',           'Available', 19, 1),
+  (5, 'Mineral Water Bottle',    15.00, 'Natural minerals and electrolytes', 'Available', 48, 2),
+  (6, 'Purified Water Bottle',   12.00, 'Clean and pure drinking water',       'Available', 50, 2),
+  (7, 'Alkaline Water Bottle',   18.00, 'Higher pH for balanced health',       'Available', 49, 2),
+  (8, 'Distilled Water Bottle',  14.00, 'Pure H2O with no minerals',           'Available', 50, 2);
