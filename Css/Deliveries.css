@@ -218,15 +218,16 @@ body {
 }
 
 .stat-icon.in-transit {
-    background: var(--info);
+    display: none;
 }
 
 .stat-icon.delivered {
     background: var(--success);
 }
 
-.stat-icon.canceled {
+.stat-icon.cancelled {
     background: var(--danger);
+    color: #fff;
 }
 
 .stat-info h3 {
@@ -433,9 +434,9 @@ body {
     color: var(--success);
 }
 
-.status-badge.canceled {
-    background: rgba(231, 76, 60, 0.1);
-    color: var(--danger);
+.status-badge.cancelled {
+    background: var(--danger);
+    color: #fff;
 }
 
 /* Action Buttons */
@@ -629,7 +630,7 @@ body {
     color: var(--success);
 }
 
-.detail-item .status.canceled {
+.detail-item .status.cancelled {
     color: var(--danger);
 }
 
@@ -720,7 +721,7 @@ body {
     border: 1px solid var(--success);
 }
 
-.status-btn.canceled {
+.status-btn.cancelled {
     background: rgba(231, 76, 60, 0.1);
     color: var(--danger);
     border: 1px solid var(--danger);

@@ -1,3 +1,26 @@
+<?php
+require_once '../../Database/db_config.php';
+// Fetch deliveries from Transaction table, join with Customer and Employee (Driver) if needed
+$sql = "SELECT t.TransactionID, t.DeliveryStatus, t.DeliveryMethod, t.TransactionDate, t.Price, t.Quantity, c.CustomerName, c.CustomerAddress, c.CustomerNumber
+FROM Transaction t
+JOIN Customer c ON t.CustomerID = c.CustomerID
+WHERE t.DeliveryMethod = 'delivery' OR t.DeliveryMethod = 'Delivery'
+ORDER BY t.TransactionDate DESC";
+$result = $conn->query($sql);
+$deliveries = [];
+$pendingCount = 0;
+$deliveredCount = 0;
+$cancelledCount = 0;
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $deliveries[] = $row;
+        $status = strtolower($row['DeliveryStatus']);
+        if ($status === 'pending') $pendingCount++;
+        if ($status === 'delivered') $deliveredCount++;
+        if ($status === 'cancelled') $cancelledCount++;
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -37,17 +60,7 @@
                 </div>
                 <div class="stat-info">
                     <h3>Pending</h3>
-                    <p>12</p>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon in-transit">
-                    <i class="fas fa-truck"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>In Transit</h3>
-                    <p>8</p>
+                    <p><?php echo $pendingCount; ?></p>
                 </div>
             </div>
 
@@ -56,23 +69,21 @@
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>Delivered Today</h3>
-                    <p>15</p>
+                    <h3>Delivered</h3>
+                    <p><?php echo $deliveredCount; ?></p>
                 </div>
             </div>
 
             <div class="stat-card">
-                <div class="stat-icon canceled">
+                <div class="stat-icon cancelled">
                     <i class="fas fa-times-circle"></i>
                 </div>
                 <div class="stat-info">
                     <h3>Cancelled</h3>
-                    <p>2</p>
+                    <p><?php echo $cancelledCount; ?></p>
                 </div>
             </div>
         </div>
-
-
 
         <!-- Deliveries Table -->
         <div class="deliveries-table-container">
@@ -89,7 +100,7 @@
                             <option value="assigned">Assigned</option>
                             <option value="in-transit">In Transit</option>
                             <option value="delivered">Delivered</option>
-                            <option value="canceled">Cancelled</option>
+                            <option value="cancelled">Cancelled</option>
                         </select>
                         <select class="date-filter">
                             <option value="today">Today</option>
@@ -109,55 +120,26 @@
                             <th>Order ID</th>
                             <th>Customer</th>
                             <th>Address</th>
-                            <th>Driver</th>
                             <th>Status</th>
-                            <th>Scheduled For</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Sample delivery rows -->
+                        <?php foreach ($deliveries as $delivery): ?>
                         <tr>
-                            <td>#DEL001</td>
-                            <td>#ORD237</td>
-                            <td>John Doe</td>
-                            <td>123 Main St, Manila</td>
-                            <td>Juan Dela Cruz</td>
-                            <td><span class="status-badge in-transit">In Transit</span></td>
-                            <td>Today, 2:30 PM</td>
-                            <td class="action-buttons">
-                                <button class="view-btn" title="View Details"><i class="fas fa-eye"></i></button>
-                                <button class="update-btn" title="Update Status"><i
-                                        class="fas fa-sync-alt"></i></button>
+                            <td>#DEL<?= htmlspecialchars($delivery['TransactionID']) ?></td>
+                            <td>#ORD<?= htmlspecialchars($delivery['TransactionID']) ?></td>
+                            <td><?= htmlspecialchars($delivery['CustomerName']) ?></td>
+                            <td><?= htmlspecialchars($delivery['CustomerAddress']) ?></td>
+                            <td><span class="status-badge <?= strtolower(str_replace(' ', '-', $delivery['DeliveryStatus'])) ?>"><?= htmlspecialchars($delivery['DeliveryStatus']) ?></span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="edit-btn" title="Edit" data-id="<?= htmlspecialchars($delivery['TransactionID']) ?>"><i class="fas fa-edit"></i></button>
+                                    <button class="delete-btn" title="Delete" data-id="<?= htmlspecialchars($delivery['TransactionID']) ?>"><i class="fas fa-trash"></i></button>
+                                </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td>#DEL002</td>
-                            <td>#ORD238</td>
-                            <td>Maria Santos</td>
-                            <td>456 Oak Ave, Quezon City</td>
-                            <td>Pedro Santos</td>
-                            <td><span class="status-badge pending">Pending</span></td>
-                            <td>Today, 4:00 PM</td>
-                            <td class="action-buttons">
-                                <button class="view-btn" title="View Details"><i class="fas fa-eye"></i></button>
-                                <button class="update-btn" title="Update Status"><i
-                                        class="fas fa-sync-alt"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#DEL003</td>
-                            <td>#ORD235</td>
-                            <td>Robert Lee</td>
-                            <td>789 Pine St, Makati</td>
-                            <td>Juan Dela Cruz</td>
-                            <td><span class="status-badge delivered">Delivered</span></td>
-                            <td>Today, 10:15 AM</td>
-                            <td class="action-buttons">
-                                <button class="view-btn" title="View Details"><i class="fas fa-eye"></i></button>
-                            </td>
-                        </tr>
-                        <!-- Add more delivery rows as needed -->
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
@@ -317,7 +299,7 @@
                     <button class="status-btn pending">Mark as Pending</button>
                     <button class="status-btn in-transit">Mark as In Transit</button>
                     <button class="status-btn delivered">Mark as Delivered</button>
-                    <button class="status-btn canceled">Mark as Cancelled</button>
+                    <button class="status-btn cancelled">Mark as Cancelled</button>
                 </div>
             </div>
         </div>
@@ -417,11 +399,11 @@
                 <td>${customerName}</td>
                 <td>Customer address here</td>
                 <td>${driverName}</td>
-                <td><span class="status-badge pending">Pending</span></td>
-                <td>${formattedTime}</td>
-                <td class="action-buttons">
-                    <button class="view-btn" title="View Details"><i class="fas fa-eye"></i></button>
-                    <button class="update-btn" title="Update Status"><i class="fas fa-sync-alt"></i></button>
+                <td>
+                    <div class="action-buttons">
+                        <button class="edit-btn" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="delete-btn" title="Delete"><i class="fas fa-trash"></i></button>
+                    </div>
                 </td>
             `;
 
@@ -438,6 +420,8 @@
             // Add event listeners to new buttons
             const newViewBtn = newRow.querySelector('.view-btn');
             const newUpdateBtn = newRow.querySelector('.update-btn');
+            const newEditBtn = newRow.querySelector('.edit-btn');
+            const newDeleteBtn = newRow.querySelector('.delete-btn');
 
             newViewBtn.addEventListener('click', function () {
                 deliveryDetailModal.classList.add('show');
@@ -447,8 +431,36 @@
                 deliveryDetailModal.classList.add('show');
             });
 
+            newEditBtn.addEventListener('click', function () {
+                const id = newEditBtn.dataset.id;
+                alert('Edit delivery ' + id);
+            });
+
+            newDeleteBtn.addEventListener('click', function () {
+                const id = newDeleteBtn.dataset.id;
+                if (confirm('Are you sure you want to delete this delivery?')) {
+                    alert('Delete delivery ' + id);
+                }
+            });
+
             // Show success message
             showNotification('Delivery assigned successfully!');
+        });
+
+        // Delivery Edit and Delete actions
+        // Delegated event listener for edit and delete buttons
+
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.edit-btn')) {
+                const id = e.target.closest('.edit-btn').dataset.id;
+                alert('Edit delivery ' + id);
+            }
+            if (e.target.closest('.delete-btn')) {
+                const id = e.target.closest('.delete-btn').dataset.id;
+                if (confirm('Are you sure you want to delete this delivery?')) {
+                    alert('Delete delivery ' + id);
+                }
+            }
         });
 
         // Notification function
