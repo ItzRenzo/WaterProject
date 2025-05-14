@@ -652,6 +652,41 @@ body {
     font-weight: 500;
 }
 
+/* Pagination Styles */
+.pagination {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+    margin-bottom: 8px;
+}
+
+.pagination button {
+    background: var(--gray-light);
+    color: var(--primary);
+    border: none;
+    border-radius: 6px;
+    padding: 7px 16px;
+    font-size: 15px;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 3px rgba(2,136,209,0.04);
+}
+
+.pagination button.active {
+    background: var(--primary);
+    color: var(--white);
+    box-shadow: 0 2px 8px rgba(2,136,209,0.10);
+}
+
+.pagination button:hover:not(.active) {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+}
+
 /* Animation */
 @keyframes modalSlide {
     from {

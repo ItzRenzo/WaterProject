@@ -1,3 +1,8 @@
+<?php
+session_start();
+include_once '../../Database/db_config.php';
+include_once '../../Database/db_check.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -40,7 +45,7 @@
                     <i class="fas fa-money-bill-wave"></i>
                 </div>
                 <div class="stat-details">
-                    <h3>₱12,500</h3>
+                    <h3 id="totalExpenses">₱12,500</h3>
                     <p>Total Expenses (This Month)</p>
                 </div>
             </div>
@@ -50,8 +55,8 @@
                     <i class="fas fa-calendar-day"></i>
                 </div>
                 <div class="stat-details">
-                    <h3>₱416.67</h3>
-                    <p>Daily Average</p>
+                    <h3 id="dailyAverage">₱416.67</h3>
+                    <p>Monthly Average</p>
                 </div>
             </div>
 
@@ -60,7 +65,7 @@
                     <i class="fas fa-tags"></i>
                 </div>
                 <div class="stat-details">
-                    <h3>Utilities</h3>
+                    <h3 id="highestCategory">Utilities</h3>
                     <p>Highest Expense Category</p>
                 </div>
             </div>
@@ -91,7 +96,7 @@
                 <h3>Expense Entries</h3>
                 <div class="expense-filters">
                     <div class="search-bar">
-                        <input type="text" placeholder="Search expenses...">
+                        <input type="text" id="expenseSearchInput" placeholder="Search expenses...">
                         <i class="fas fa-search"></i>
                     </div>
                     <div class="date-filter">
@@ -99,7 +104,7 @@
                         <input type="date" id="fromDate">
                         <label>To</label>
                         <input type="date" id="toDate">
-                        <button class="filter-btn">Apply</button>
+                        <button class="filter-btn" id="applyDateFilter">Apply</button>
                     </div>
                 </div>
             </div>
@@ -112,42 +117,16 @@
                                 <th>Category</th>
                                 <th>Amount</th>
                                 <th>Date</th>
+                                <th>Description</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>Electricity Bill</td>
-                                <td>Utilities</td>
-                                <td>₱3,250.00</td>
-                                <td>May 5, 2025</td>
-                                <td class="actions">
-                                    <button class="edit-btn" data-id="1"><i class="fas fa-edit"></i></button>
-                                    <button class="delete-btn" data-id="1"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Water Bill</td>
-                                <td>Utilities</td>
-                                <td>₱1,800.00</td>
-                                <td>May 3, 2025</td>
-                                <td class="actions">
-                                    <button class="edit-btn" data-id="2"><i class="fas fa-edit"></i></button>
-                                    <button class="delete-btn" data-id="2"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Vehicle Maintenance</td>
-                                <td>Maintenance</td>
-                                <td>₱2,500.00</td>
-                                <td>Apr 28, 2025</td>
-                                <td class="actions">
-                                    <button class="edit-btn" data-id="4"><i class="fas fa-edit"></i></button>
-                                    <button class="delete-btn" data-id="4"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
+                        <tbody id="expenseTableBody">
+                            <!-- Data will be populated here by JS -->
                         </tbody>
                     </table>
+                    <div id="pagination" class="pagination"></div>
+                    <div id="expenseCount" class="expense-count" style="margin-top:10px;color:var(--text-light);font-size:15px;"></div>
                 </div>
             </div>
         </div>
@@ -259,8 +238,7 @@
                             <label for="editExpenseAmount">Amount</label>
                             <div class="amount-input">
                                 <span class="currency">₱</span>
-                                <input type="number" id="editExpenseAmount" placeholder="0.00" step="0.01" min="0"
-                                    required>
+                                <input type="number" id="editExpenseAmount" placeholder="0.00" step="0.01" min="0" required>
                             </div>
                         </div>
                     </div>
@@ -274,9 +252,7 @@
                             <label for="editPaymentMethod">Payment Method</label>
                             <select id="editPaymentMethod">
                                 <option value="cash">Cash</option>
-                                <option value="bank_transfer">Bank Transfer</option>
-                                <option value="credit_card">Credit Card</option>
-                                <option value="other">Other</option>
+                                <option value="Gcash">Gcash</option>
                             </select>
                         </div>
                     </div>
@@ -694,6 +670,177 @@
                 expenseChart.options.plugins.title.text = titleText;
                 expenseChart.data.datasets[0].data = newData;
                 expenseChart.update();
+            });
+        });
+
+        function updateExpenseStats() {
+            // Get current month and year
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            // Filter expenses for current month
+            const thisMonthExpenses = allExpenses.filter(exp => {
+                const d = new Date(exp.ExpenseDate);
+                return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+            });
+            // Total
+            const total = thisMonthExpenses.reduce((sum, exp) => sum + parseFloat(exp.Amount), 0);
+            document.getElementById('totalExpenses').textContent = `₱${total.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+            // Monthly Average (divide by number of days in month)
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const avg = total / daysInMonth;
+            document.getElementById('dailyAverage').textContent = `₱${avg.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+            // Highest Expense Category
+            const categoryTotals = {};
+            thisMonthExpenses.forEach(exp => {
+                const cat = exp.Category;
+                categoryTotals[cat] = (categoryTotals[cat] || 0) + parseFloat(exp.Amount);
+            });
+            let highestCat = 'N/A';
+            let highestVal = 0;
+            for (const cat in categoryTotals) {
+                if (categoryTotals[cat] > highestVal) {
+                    highestVal = categoryTotals[cat];
+                    highestCat = cat.charAt(0).toUpperCase() + cat.slice(1);
+                }
+            }
+            document.getElementById('highestCategory').textContent = highestCat;
+        }
+
+        let allExpenses = [];
+        let currentPage = 1;
+        const rowsPerPage = 10;
+
+        function renderTablePage(page) {
+            const tbody = document.getElementById('expenseTableBody');
+            tbody.innerHTML = '';
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const pageData = allExpenses.slice(start, end);
+            pageData.forEach(exp => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${exp.TypeName}</td>
+                    <td>${capitalizeFirst(exp.Category)}</td>
+                    <td>₱${parseFloat(exp.Amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td>${formatDate(exp.ExpenseDate)}</td>
+                    <td>${exp.Description ? exp.Description : ''}</td>
+                    <td class="actions">
+                        <button class="edit-btn" data-id="${exp.ExpensesID}"><i class="fas fa-edit"></i></button>
+                        <button class="delete-btn" data-id="${exp.ExpensesID}"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            attachExpenseRowEvents();
+            renderPagination();
+            // Show count below table
+            const countDiv = document.getElementById('expenseCount');
+            countDiv.textContent = `Expense${allExpenses.length === 1 ? '' : 's'} ${allExpenses.length} found`;
+            // Update stats
+            updateExpenseStats();
+        }
+
+        function renderPagination() {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+            const totalPages = Math.ceil(allExpenses.length / rowsPerPage);
+            if (totalPages <= 1) return;
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.className = (i === currentPage) ? 'active' : '';
+                btn.addEventListener('click', function () {
+                    currentPage = i;
+                    renderTablePage(currentPage);
+                });
+                pagination.appendChild(btn);
+            }
+        }
+
+        function fetchExpenses(filters = {}) {
+            let url = 'get_expenses.php';
+            const params = [];
+            if (filters.from) params.push('from=' + encodeURIComponent(filters.from));
+            if (filters.to) params.push('to=' + encodeURIComponent(filters.to));
+            if (filters.search) params.push('search=' + encodeURIComponent(filters.search));
+            if (params.length) url += '?' + params.join('&');
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    allExpenses = data;
+                    currentPage = 1;
+                    renderTablePage(currentPage);
+                    // updateExpenseStats(); // Already called in renderTablePage
+                });
+        }
+
+        function capitalizeFirst(str) {
+            if (!str) return '';
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function formatDate(dateStr) {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function attachExpenseRowEvents() {
+            // Re-attach edit/delete events for new rows
+            document.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    // Use the same logic as for existing edit buttons
+                    const expenseId = this.getAttribute('data-id');
+                    const row = this.closest('tr');
+                    const name = row.cells[0].textContent;
+                    const category = row.cells[1].textContent.toLowerCase();
+                    const amount = row.cells[2].textContent.replace('₱', '').replace(',', '');
+                    const date = row.cells[3].textContent;
+
+                    document.getElementById('editExpenseId').value = expenseId;
+                    document.getElementById('editExpenseName').value = name;
+                    document.getElementById('editExpenseCategory').value =
+                        category === 'utilities' ? 'utilities' :
+                            category === 'supplies' ? 'supplies' :
+                                category === 'maintenance' ? 'maintenance' : 'other';
+                    document.getElementById('editExpenseAmount').value = parseFloat(amount);
+
+                    const dateParts = date.split(', ');
+                    const monthDay = dateParts[0].split(' ');
+                    const month = new Date(Date.parse(monthDay[0] + " 1, 2000")).getMonth() + 1;
+                    const day = parseInt(monthDay[1]);
+                    const year = parseInt(dateParts[1]);
+                    document.getElementById('editExpenseDate').value =
+                        `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+
+                    editExpenseModal.classList.add('show');
+                });
+            });
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const expenseId = this.getAttribute('data-id');
+                    const row = this.closest('tr');
+                    const name = row.cells[0].textContent;
+                    const amount = row.cells[2].textContent;
+
+                    document.getElementById('deleteExpenseName').textContent = name;
+                    document.getElementById('deleteExpenseAmount').textContent = amount;
+                    confirmDeleteBtn.setAttribute('data-id', expenseId);
+
+                    deleteConfirmModal.classList.add('show');
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchExpenses();
+            document.getElementById('applyDateFilter').addEventListener('click', function() {
+                const from = document.getElementById('fromDate').value;
+                const to = document.getElementById('toDate').value;
+                fetchExpenses({from, to});
+            });
+            document.getElementById('expenseSearchInput').addEventListener('input', function() {
+                fetchExpenses({search: this.value});
             });
         });
     </script>
