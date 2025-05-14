@@ -47,7 +47,8 @@ CREATE TABLE Transaction (
     DeliveryStatus VARCHAR(50),
     DeliveryMethod VARCHAR(50),
     TransactionDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
-    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+     Status VARCHAR(50) DEFAULT active;
 );
 
 

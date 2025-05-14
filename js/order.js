@@ -1007,3 +1007,41 @@ function submitOrder() {
         }
     }
 }
+
+// --- Bulk select and delete for admin orders table ---
+document.addEventListener('DOMContentLoaded', function() {
+    // Select all checkboxes
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.id === 'select-all-orders') {
+            document.querySelectorAll('.order-checkbox').forEach(cb => cb.checked = true);
+            document.getElementById('select-all-checkbox').checked = true;
+        }
+        if (e.target && e.target.id === 'select-all-checkbox') {
+            const checked = e.target.checked;
+            document.querySelectorAll('.order-checkbox').forEach(cb => cb.checked = checked);
+        }
+        if (e.target && e.target.id === 'selected-delete') {
+            const selected = Array.from(document.querySelectorAll('.order-checkbox:checked')).map(cb => cb.value);
+            if (selected.length === 0) {
+                alert('No orders selected.');
+                return;
+            }
+            if (!confirm('Are you sure you want to delete the selected orders?')) return;
+            fetch('admin/bulk_delete_orders.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: selected })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload table (simulate filter/search state)
+                    const params = new URLSearchParams(window.location.search);
+                    if (typeof loadOrdersTable === 'function') loadOrdersTable(params, false);
+                } else {
+                    alert('Failed to delete selected orders.');
+                }
+            });
+        }
+    });
+});
