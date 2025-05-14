@@ -1,3 +1,27 @@
+<?php
+require_once '../../Database/db_config.php';
+$customers = [];
+$sql = "SELECT * FROM Customer ORDER BY CustomerID DESC";
+$result = $conn->query($sql);
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $customers[] = [
+            'id' => $row['CustomerID'],
+            'name' => $row['CustomerName'],
+            'phone' => $row['CustomerNumber'],
+            'address' => $row['CustomerAddress'],
+            'orders' => 0, // Placeholder, update if you have order data
+            'lastOrder' => '-' // Placeholder, update if you have order data
+        ];
+    }
+}
+
+if (isset($_GET['fetch'])) {
+    header('Content-Type: application/json');
+    echo json_encode($customers);
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,9 +51,9 @@
 
         <!-- Client Management Header -->
         <div class="dashboard-header">
-            <h2>Client Management</h2>
+            <h2>Customer Management</h2>
             <button class="primary-btn" id="newClientBtn">
-                <i class="fas fa-plus"></i> New Client
+                <i class="fas fa-plus"></i> New Customer
             </button>
         </div>
 
@@ -38,8 +62,6 @@
             <div class="filter-options">
                 <select class="filter-select">
                     <option>All Clients</option>
-                    <option>Active</option>
-                    <option>Inactive</option>
                 </select>
             </div>
             <div class="view-options">
@@ -61,7 +83,6 @@
                         <th>Name</th>
                         <th>Contact</th>
                         <th>Address</th>
-                        <th>Status</th>
                         <th>Orders</th>
                         <th>Last Order</th>
                         <th>Actions</th>
@@ -115,45 +136,8 @@
     </div>
 
     <script>
-        // Sample client data
-        const clients = [
-            {
-                id: 1,
-                name: "John Doe",
-                phone: "+63 912 345 6789",
-                address: "123 Main St, City",
-                status: "active",
-                orders: 15,
-                lastOrder: "2d ago"
-            },
-            {
-                id: 2,
-                name: "Jane Smith",
-                phone: "+63 923 456 7890",
-                address: "456 Oak Ave, City",
-                status: "active",
-                orders: 8,
-                lastOrder: "5d ago"
-            },
-            {
-                id: 3,
-                name: "Michael Johnson",
-                phone: "+63 934 567 8901",
-                address: "789 Pine Blvd, City",
-                status: "inactive",
-                orders: 3,
-                lastOrder: "2w ago"
-            },
-            {
-                id: 4,
-                name: "Sarah Williams",
-                phone: "+63 945 678 9012",
-                address: "321 Cedar St, City",
-                status: "active",
-                orders: 12,
-                lastOrder: "1d ago"
-            }
-        ];
+        // Load customers from PHP
+        let clients = <?php echo json_encode($customers); ?>;
 
         // DOM Elements
         const gridView = document.getElementById('gridView');
@@ -181,13 +165,12 @@
                 const card = document.createElement('div');
                 card.className = 'client-card';
 
-                const statusClass = client.status === 'active' ? 'status-active' : 'status-inactive';
+                const statusClass = '';
                 const firstLetter = client.name.charAt(0);
 
                 card.innerHTML = `
             <div class="client-card-header">
                 <div class="client-avatar"><span>${firstLetter}</span></div>
-                <div class="client-status ${statusClass}">${client.status.charAt(0).toUpperCase() + client.status.slice(1)}</div>
             </div>
             <div class="client-card-body">
                 <h3>${client.name}</h3>
@@ -223,13 +206,12 @@
 
             clients.forEach(client => {
                 const row = document.createElement('tr');
-                const statusClass = client.status === 'active' ? 'status-active' : 'status-inactive';
+                const statusClass = '';
 
                 row.innerHTML = `
             <td>${client.name}</td>
             <td>${client.phone}</td>
             <td>${client.address}</td>
-            <td><span class="client-status ${statusClass}">${client.status.charAt(0).toUpperCase() + client.status.slice(1)}</span></td>
             <td>${client.orders}</td>
             <td>${client.lastOrder}</td>
             <td>
@@ -291,27 +273,25 @@
 
                 try {
                     if (validateClientData(formData)) {
-                        // Add new client
-                        clients.push({
-                            id: clients.length + 1,
-                            ...formData,
-                            status: 'active',
-                            orders: 0,
-                            lastOrder: 'New'
-                        });
-
-                        // Update views
-                        renderGridView();
-                        renderListView();
-
-                        // Show success message
-                        showNotification('Customer added successfully!');
-
-                        // Close modal
-                        closeModal();
-
-                        // Reset form
-                        newClientForm.reset();
+                        // AJAX request to add customer
+                        fetch('../Controllers/add_customer.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(formData)
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Reload customers
+                                fetchCustomers();
+                                showNotification('Customer added successfully!');
+                                closeModal();
+                                newClientForm.reset();
+                            } else {
+                                showNotification(data.message || 'Failed to add customer', 'error');
+                            }
+                        })
+                        .catch(() => showNotification('Server error', 'error'));
                     }
                 } catch (error) {
                     showNotification(error.message, 'error');
@@ -319,16 +299,28 @@
             });
         }
 
+        // Fetch customers from server
+        function fetchCustomers() {
+            fetch('customers.php?fetch=1')
+                .then(response => response.json())
+                .then(data => {
+                    clients = data;
+                    renderGridView();
+                    renderListView();
+                });
+        }
+
         // Add this function before the form submission handler
         function validateClientData(data) {
-            const phoneRegex = /^\+?63\s?[0-9]{3}\s?[0-9]{3}\s?[0-9]{4}$/;
+            // Accepts only 09XXXXXXXXX (11 digits)
+            const phoneRegex = /^09\d{9}$/;
 
             if (data.name.length < 2) {
                 throw new Error('Name must be at least 2 characters long');
             }
 
             if (!phoneRegex.test(data.phone)) {
-                throw new Error('Phone number must be in +63 format');
+                throw new Error('Phone number must start with 09 and be 11 digits');
             }
 
             if (data.address.length < 5) {
