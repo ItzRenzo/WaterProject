@@ -7,6 +7,7 @@ $dateFilter = isset($_GET['date']) ? $_GET['date'] : 'all';
 
 $where = [];
 $where[] = "(t.DeliveryMethod = 'delivery' OR t.DeliveryMethod = 'Delivery')";
+$where[] = "LOWER(t.DeliveryStatus) != 'deleted'";
 
 // Handle status filter with proper case matching
 if ($statusFilter !== 'all') {
@@ -230,6 +231,39 @@ if ($result && $result->num_rows > 0) {
         </div>
     </div>
 
+    <!-- Edit Delivery Modal -->
+    <div class="modal" id="editDeliveryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Delivery</h3>
+                <button class="close-btn" id="closeEditModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editDeliveryForm">
+                    <input type="hidden" id="editTransactionID">
+                    <div class="form-group">
+                        <label for="editCustomerAddress">Customer Address</label>
+                        <input type="text" id="editCustomerAddress" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDeliveryStatus">Delivery Status</label>
+                        <select id="editDeliveryStatus">
+                            <option value="pending">Pending</option>
+                            <option value="assigned">Assigned</option>
+                            <option value="in transit">In Transit</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" id="cancelEditModal">Cancel</button>
+                        <button type="submit" class="submit-btn">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Delivery Detail Modal -->
     <div class="modal" id="deliveryDetailModal">
         <div class="modal-content">
@@ -341,10 +375,15 @@ if ($result && $result->num_rows > 0) {
         const assignDeliveryBtn = document.querySelector('.assign-delivery-btn');
         const assignDeliveryModal = document.getElementById('assignDeliveryModal');
         const deliveryDetailModal = document.getElementById('deliveryDetailModal');
+        const editModal = document.getElementById('editDeliveryModal');
+        const editForm = document.getElementById('editDeliveryForm');
+        const closeEditModalBtn = document.getElementById('closeEditModal');
+        const cancelEditModalBtn = document.getElementById('cancelEditModal');
         const closeButtons = document.querySelectorAll('.close-btn');
         const cancelButtons = document.querySelectorAll('.cancel-btn');
         const viewButtons = document.querySelectorAll('.view-btn');
         const updateButtons = document.querySelectorAll('.update-btn');
+        let currentEditRow = null;
 
         // Open Assign Delivery Modal
         if (assignDeliveryBtn && assignDeliveryModal) {
@@ -377,6 +416,7 @@ if ($result && $result->num_rows > 0) {
                 button.addEventListener('click', function () {
                     if (assignDeliveryModal) assignDeliveryModal.classList.remove('show');
                     if (deliveryDetailModal) deliveryDetailModal.classList.remove('show');
+                    if (editModal) editModal.classList.remove('show');
                 });
             });
         }
@@ -386,6 +426,7 @@ if ($result && $result->num_rows > 0) {
                 button.addEventListener('click', function () {
                     if (assignDeliveryModal) assignDeliveryModal.classList.remove('show');
                     if (deliveryDetailModal) deliveryDetailModal.classList.remove('show');
+                    if (editModal) editModal.classList.remove('show');
                 });
             });
         }
@@ -397,6 +438,9 @@ if ($result && $result->num_rows > 0) {
             }
             if (e.target === deliveryDetailModal) {
                 deliveryDetailModal.classList.remove('show');
+            }
+            if (e.target === editModal) {
+                editModal.classList.remove('show');
             }
         });
 
@@ -488,19 +532,82 @@ if ($result && $result->num_rows > 0) {
         });
 
         // Delivery Edit and Delete actions
-        // Delegated event listener for edit and delete buttons
-
         document.addEventListener('click', function(e) {
+            // Edit button
             if (e.target.closest('.edit-btn')) {
-                const id = e.target.closest('.edit-btn').dataset.id;
-                alert('Edit delivery ' + id);
+                const btn = e.target.closest('.edit-btn');
+                const row = btn.closest('tr');
+                currentEditRow = row;
+                // Get data from row
+                const transactionId = btn.dataset.id;
+                const address = row.children[3].textContent.trim();
+                const status = row.querySelector('.status-badge').textContent.trim().toLowerCase();
+                // Populate modal
+                document.getElementById('editTransactionID').value = transactionId;
+                document.getElementById('editCustomerAddress').value = address;
+                document.getElementById('editDeliveryStatus').value = status;
+                // Show modal
+                editModal.classList.add('show');
             }
+            // Delete button
             if (e.target.closest('.delete-btn')) {
-                const id = e.target.closest('.delete-btn').dataset.id;
+                const btn = e.target.closest('.delete-btn');
+                const row = btn.closest('tr');
+                const transactionId = btn.dataset.id;
                 if (confirm('Are you sure you want to delete this delivery?')) {
-                    alert('Delete delivery ' + id);
+                    fetch('../Controllers/update_order_status.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ transaction_id: transactionId, status: 'deleted' })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            row.style.display = 'none';
+                            showNotification('Delivery deleted successfully!');
+                        } else {
+                            alert('Failed to delete delivery.');
+                        }
+                    });
                 }
             }
+        });
+
+        // Close edit modal
+        closeEditModalBtn.addEventListener('click', function() {
+            editModal.classList.remove('show');
+        });
+        cancelEditModalBtn.addEventListener('click', function() {
+            editModal.classList.remove('show');
+        });
+
+        // Save edit changes
+        editForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const transactionId = document.getElementById('editTransactionID').value;
+            const address = document.getElementById('editCustomerAddress').value;
+            const status = document.getElementById('editDeliveryStatus').value;
+            fetch('../Controllers/update_order_status.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ transaction_id: transactionId, status: status, address: address })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Update row in table
+                    if (currentEditRow) {
+                        currentEditRow.children[3].textContent = address;
+                        currentEditRow.querySelector('.status-badge').textContent = status.charAt(0).toUpperCase() + status.slice(1);
+                        // Hide if status is deleted
+                        if (status === 'deleted') currentEditRow.style.display = 'none';
+                    }
+                    editModal.classList.remove('show');
+                    showNotification('Delivery updated successfully!');
+                } else {
+                    alert('Failed to update delivery.');
+                }
+            });
         });
 
         // Notification function
@@ -534,27 +641,39 @@ if ($result && $result->num_rows > 0) {
             });
         }
 
-        // Filter logic for status and date
+        // Filter logic for status, date, and search
         document.addEventListener('DOMContentLoaded', function() {
             const statusFilter = document.getElementById('statusFilter');
             const dateFilter = document.getElementById('dateFilter');
             const tableBody = document.getElementById('deliveriesTableBody');
+            const searchInput = document.querySelector('.search-bar input');
             function filterTable() {
                 const status = statusFilter.value;
                 const date = dateFilter.value;
+                const search = searchInput.value.trim().toLowerCase();
                 const rows = tableBody.querySelectorAll('tr');
                 rows.forEach(row => {
                     const statusBadge = row.querySelector('.status-badge');
                     const statusText = statusBadge ? statusBadge.textContent.trim().toLowerCase() : '';
+                    const customer = row.children[2]?.textContent.trim().toLowerCase() || '';
+                    const address = row.children[3]?.textContent.trim().toLowerCase() || '';
+                    const orderId = row.children[1]?.textContent.trim().toLowerCase() || '';
                     let show = true;
                     if (status !== 'all' && statusText !== status.toLowerCase()) {
                         show = false;
+                    }
+                    // Simple search: match in customer, address, orderId, or status
+                    if (show && search) {
+                        if (!customer.includes(search) && !address.includes(search) && !orderId.includes(search) && !statusText.includes(search)) {
+                            show = false;
+                        }
                     }
                     row.style.display = show ? '' : 'none';
                 });
             }
             statusFilter.addEventListener('change', filterTable);
             dateFilter.addEventListener('change', filterTable);
+            if (searchInput) searchInput.addEventListener('input', filterTable);
             filterTable();
         });
     </script>

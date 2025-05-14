@@ -25,7 +25,6 @@
 
     <div class="main-content">
 
-
         <div class="dashboard-header">
             <h2>Dashboard Overview</h2>
             <p class="date">Today: <span id="current-date">March 31, 2025</span></p>
@@ -40,9 +39,6 @@
                     <h3>46</h3>
                     <p>Gallons Sold</p>
                 </div>
-                <div class="stat-progress">
-                    <div class="progress-bar" style="width: 46%;"></div>
-                </div>
             </div>
 
             <div class="stat-card">
@@ -52,9 +48,6 @@
                 <div class="stat-details">
                     <h3>5</h3>
                     <p>Water Bottles Sold</p>
-                </div>
-                <div class="stat-progress">
-                    <div class="progress-bar" style="width: 60%;"></div>
                 </div>
             </div>
 
@@ -66,9 +59,6 @@
                     <h3>2</h3>
                     <p>Pending Orders</p>
                 </div>
-                <div class="stat-progress">
-                    <div class="progress-bar" style="width: 25%;"></div>
-                </div>
             </div>
 
             <div class="stat-card">
@@ -78,9 +68,6 @@
                 <div class="stat-details">
                     <h3>$240</h3>
                     <p>Today's Revenue</p>
-                </div>
-                <div class="stat-progress">
-                    <div class="progress-bar" style="width: 70%;"></div>
                 </div>
             </div>
         </div>
@@ -171,6 +158,68 @@
                 </div>
             </div>
         </div>
+
+        <br>
+        <div class="sales-overview-card card">
+            <div class="card-header">
+                <h3><i class="fas fa-chart-bar"></i> Sales Overview</h3>
+                <div class="card-actions">
+                    <select id="sales-filter">
+                        <option value="day">Day</option>
+                        <option value="week">Week</option>
+                        <option value="month">Month</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="salesChart" height="100"></canvas>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            let chart;
+            function renderChart(type) {
+                const dataSets = {
+                    day: [12, 19, 3, 5, 2, 3],
+                    week: [50, 60, 70, 80, 90, 100, 110],
+                    month: [200, 180, 220, 210, 250, 230, 240, 260, 270, 280, 290, 300]
+                };
+                const labelsSets = {
+                    day: ['Mineral', 'Purified', 'Alkaline', 'Distilled', 'Other'],
+                    week: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                };
+                if (chart) chart.destroy();
+                chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labelsSets[type],
+                        datasets: [{
+                            label: 'Sales',
+                            data: dataSets[type],
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+            }
+            const filter = document.getElementById('sales-filter');
+            filter.addEventListener('change', function() {
+                renderChart(this.value);
+            });
+            renderChart('day');
+        });
+        </script>
     </div>
 
     <script>
@@ -227,3 +276,6 @@
             }
         }
     </script>
+</body>
+
+</html>
