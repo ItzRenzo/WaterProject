@@ -123,16 +123,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_employee'])) {
                     <p>5</p>
                 </div>
             </div>
-
-            <div class="stat-card">
-                <div class="stat-icon production">
-                    <i class="fas fa-industry"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>Production Staff</h3>
-                    <p>4</p>
-                </div>
-            </div>
         </div>
 
         <!-- Employee Tabs -->
@@ -160,172 +150,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_employee'])) {
         <!-- Employee List -->
         <div class="employee-list tab-content active" id="all">
             <div class="employee-grid">
-                <!-- Employee Card -->
-                <div class="employee-card">
-                    <div class="employee-header">
-                        <div class="employee-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <span class="status-badge active">Active</span>
-                    </div>
-                    <div class="employee-details">
-                        <h4>Juan Dela Cruz</h4>
-                        <p class="employee-position">Senior Driver</p>
-                        <div class="detail-item">
-                            <i class="fas fa-phone"></i>
-                            <span>+63 917 123 4567</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-envelope"></i>
-                            <span>juan.delacruz@email.com</span>
-                        </div>
-                    </div>
-                    <div class="employee-actions">
-                        <button class="view-btn" title="View Details"><i class="fas fa-eye"></i></button>
-                        <button class="delete-btn" title="Remove Employee"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>
+                <!-- Employee cards will be loaded dynamically -->
+            </div>
+        </div>
 
+        <!-- Driver Tab Content -->
+        <div class="employee-list tab-content" id="drivers">
+            <div class="employee-grid">
+                <!-- Driver cards will be loaded dynamically -->
+            </div>
+        </div>
 
+        <!-- Cashier Tab Content -->
+        <div class="employee-list tab-content" id="Cashier">
+            <div class="employee-grid">
+                <!-- Cashier cards will be loaded dynamically -->
+            </div>
+        </div>
 
-                <!-- Driver Tab Content -->
-                <div class="employee-list tab-content" id="drivers">
-                    <div class="employee-grid">
-                        <!-- Only driver cards would appear here -->
-                        <div class="employee-card">
-                            <div class="employee-header">
-                                <div class="employee-avatar">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <span class="status-badge active">Active</span>
-                            </div>
-                            <div class="employee-details">
-                                <h4>Juan Dela Cruz</h4>
-                                <p class="employee-position">Senior Driver</p>
-                                <div class="detail-item">
-                                    <i class="fas fa-phone"></i>
-                                    <span>+63 917 123 4567</span>
-                                </div>
-                                <div class="detail-item">
-                                    <i class="fas fa-truck"></i>
-                                    <span>Vehicle: Truck #001</span>
-                                </div>
-                            </div>
-                            <div class="employee-actions">
-                                <button class="view-btn" title="View Details"><i class="fas fa-eye"></i></button>
-                                <button class="edit-btn" title="Edit Employee"><i class="fas fa-edit"></i></button>
-                                <button class="schedule-btn" title="View Schedule"><i
-                                        class="fas fa-calendar"></i></button>
-                            </div>
-                        </div>
-
-                        <div class="employee-card">
-                            <div class="employee-header">
-                                <div class="employee-avatar">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <span class="status-badge inactive">Inactive</span>
-                            </div>
-                            <div class="employee-details">
-                                <h4>Robert Lee</h4>
-                                <p class="employee-position">Driver</p>
-                                <div class="detail-item">
-                                    <i class="fas fa-phone"></i>
-                                    <span>+63 919 876 5432</span>
-                                </div>
-                                <div class="detail-item">
-                                    <i class="fas fa-truck"></i>
-                                    <span>Vehicle: Truck #002</span>
-                                </div>
-                            </div>
-                            <div class="employee-actions">
-                                <button class="view-btn" title="View Details"><i class="fas fa-eye"></i></button>
-                                <button class="edit-btn" title="Edit Employee"><i class="fas fa-edit"></i></button>
-                                <button class="schedule-btn" title="View Schedule"><i
-                                        class="fas fa-calendar"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Attendance Tab Content -->
-                <div class="employee-list tab-content" id="attendance">
-                    <div class="attendance-header">
-                        <h3>Today's Attendance</h3>
-                        <div class="date-picker">
-                            <input type="date" id="attendanceDate">
-                        </div>
-                    </div>
-                    <div class="attendance-table-container">
-                        <table class="attendance-table">
-                            <thead>
-                                <tr>
-                                    <th>Employee</th>
-                                    <th>Position</th>
-                                    <th>Time In</th>
-                                    <th>Time Out</th>
-                                    <th>Hours</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="employee-name">
-                                            <div class="mini-avatar"><i class="fas fa-user"></i></div>
-                                            <span>Juan Dela Cruz</span>
-                                        </div>
-                                    </td>
-                                    <td>Senior Driver</td>
-                                    <td>08:00 AM</td>
-                                    <td>05:30 PM</td>
-                                    <td>9.5</td>
-                                    <td><span class="status-badge active">Present</span></td>
-                                    <td>
-                                        <button class="edit-btn" title="Edit Record"><i
-                                                class="fas fa-edit"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="employee-name">
-                                            <div class="mini-avatar"><i class="fas fa-user"></i></div>
-                                            <span>Maria Santos</span>
-                                        </div>
-                                    </td>
-                                    <td>Production Supervisor</td>
-                                    <td>07:45 AM</td>
-                                    <td>05:00 PM</td>
-                                    <td>9.25</td>
-                                    <td><span class="status-badge active">Present</span></td>
-                                    <td>
-                                        <button class="edit-btn" title="Edit Record"><i
-                                                class="fas fa-edit"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="employee-name">
-                                            <div class="mini-avatar"><i class="fas fa-user"></i></div>
-                                            <span>Robert Lee</span>
-                                        </div>
-                                    </td>
-                                    <td>Driver</td>
-                                    <td>--</td>
-                                    <td>--</td>
-                                    <td>0</td>
-                                    <td><span class="status-badge inactive">Absent</span></td>
-                                    <td>
-                                        <button class="edit-btn" title="Edit Record"><i
-                                                class="fas fa-edit"></i></button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+        <!-- Attendance Tab Content -->
+        <div class="employee-list tab-content" id="attendance">
+            <div class="attendance-header">
+                <h3>Today's Attendance</h3>
+                <div class="date-picker">
+                    <input type="date" id="attendanceDate">
                 </div>
             </div>
+            <div class="attendance-table-container">
+                <table class="attendance-table">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Position</th>
+                            <th>Time In</th>
+                            <th>Time Out</th>
+                            <th>Hours</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Attendance data will be loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
             <!-- Add Employee Modal -->
             <div class="modal" id="addEmployeeModal">
@@ -373,11 +242,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_employee'])) {
                                 <h4><i class="fas fa-briefcase"></i> Employment Details</h4>
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label for="position">Position</label>
-                                        <select id="position" name="position" required>
+                                        <label for="position">Position</label>                                        <select id="position" name="position" required>
                                             <option value="">Select Position</option>
                                             <option value="driver">Driver</option>
-                                            <option value="senior_driver">Cashier</option>
+                                            <option value="cashier">Cashier</option>
                                         </select>
                                     </div>
                                 </div>                                <div class="form-row">
@@ -555,27 +423,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_employee'])) {
                     if (e.target === viewEmployeeModal) {
                         viewEmployeeModal.classList.remove('show');
                     }
-                });
-
-                // Tab functionality
-                tabButtons.forEach(button => {
-                    button.addEventListener('click', function () {
-                        // Remove active class from all buttons
-                        tabButtons.forEach(btn => btn.classList.remove('active'));
-
-                        // Add active class to clicked button
-                        this.classList.add('active');
-
-                        // Get the tab to show
-                        const tabId = this.getAttribute('data-tab');
-
-                        // Hide all tab contents
-                        tabContents.forEach(content => content.classList.remove('active'));
-
-                        // Show the selected tab content
-                        document.getElementById(tabId).classList.add('active');
+                });                // Tab functionality
+                if (tabButtons && tabContents) {
+                    tabButtons.forEach(button => {
+                        button.addEventListener('click', function () {
+                            tabButtons.forEach(btn => btn.classList.remove('active'));
+                            tabContents.forEach(tc => tc.classList.remove('active'));
+                            this.classList.add('active');
+                            const tab = this.getAttribute('data-tab');
+                            const tabContent = document.getElementById(tab);
+                            if (tabContent) {
+                                tabContent.classList.add('active');
+                                
+                                // Get current search and filter values
+                                const searchInput = document.querySelector('.search-bar input');
+                                const statusFilter = document.querySelector('.status-filter');
+                                const searchTerm = searchInput ? searchInput.value : '';
+                                const status = statusFilter ? statusFilter.value : 'all';
+                                
+                                fetchAndRenderEmployees(tab, searchTerm, status);
+                            }
+                        });
                     });
-                });
+                    // Initial load for All Employees
+                    fetchAndRenderEmployees('all');
+                    
+                    // Update employee statistics
+                    updateEmployeeStats();
+                }
+                
+                // Function to update employee statistics
+                function updateEmployeeStats() {
+                    fetch('get_employees.php')
+                        .then(res => res.json())
+                        .then(allEmployees => {
+                            // Update total employees count
+                            const totalEmployeesCount = document.querySelector('.stat-card:nth-child(1) .stat-info p');
+                            if (totalEmployeesCount) {
+                                totalEmployeesCount.textContent = allEmployees.length;
+                            }
+                            
+                            // Count active employees
+                            const activeEmployees = allEmployees.filter(emp => emp.EmployeeStatus === 'active');
+                            const activeCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
+                            if (activeCount) {
+                                activeCount.textContent = activeEmployees.length;
+                            }                            
+                            // Count delivery staff
+                            const deliveryStaff = allEmployees.filter(emp => emp.EmployeePosition === 'driver');
+                            const deliveryCount = document.querySelector('.stat-card:nth-child(3) .stat-info p');
+                            if (deliveryCount) {
+                                deliveryCount.textContent = deliveryStaff.length;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error updating employee stats:', error);
+                        });
+                }
 
                 // Show/hide driver details based on position selection
                 positionSelect.addEventListener('change', function () {
@@ -811,12 +715,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_employee'])) {
                                         </div>
                                         <div class="form-row">
                                             <div class="form-group">
-                                                <label for="editPosition">Position</label>
-                                                <select id="editPosition" required>
+                                                <label for="editPosition">Position</label>                                                <select id="editPosition" required>
                                                     <option value="driver" ${position === 'Driver' ? 'selected' : ''}>Driver</option>
-                                                    <option value="senior_driver" ${position === 'Senior Driver' ? 'selected' : ''}>Senior Driver</option>
                                                     <option value="cashier" ${position === 'Cashier' ? 'selected' : ''}>Cashier</option>
-                                                    <option value="production" ${position === 'Production Staff' ? 'selected' : ''}>Production Staff</option>
                                                     <option value="admin" ${position === 'Administrative Staff' ? 'selected' : ''}>Administrative Staff</option>
                                                 </select>
                                             </div>
@@ -953,10 +854,155 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_employee'])) {
                             togglePasswordIcon.classList.add('fa-eye');
                         }
                     });
-                }
+                }                function renderEmployeeCard(emp) {
+                    // Format position for display (capitalize first letter)
+                    const formattedPosition = emp.EmployeePosition.charAt(0).toUpperCase() + emp.EmployeePosition.slice(1);
+                    
+                    return `
+                    <div class="employee-card">
+                        <div class="employee-header">
+                            <div class="employee-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span class="status-badge ${emp.EmployeeStatus === 'active' ? 'active' : 'inactive'}">${emp.EmployeeStatus.charAt(0).toUpperCase() + emp.EmployeeStatus.slice(1)}</span>
+                        </div>
+                        <div class="employee-details">
+                            <h4>${emp.FirstName} ${emp.LastName}</h4>
+                            <p class="employee-position">${formattedPosition}</p>
+                            <div class="detail-item">
+                                <i class="fas fa-phone"></i>
+                                <span>${emp.EmployeeNumber}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>${emp.Username || 'No username'}</span>
+                            </div>
+                        </div>
+                        <div class="employee-actions">
+                            <button class="view-btn" title="View Details" data-id="${emp.EmployeeID}"><i class="fas fa-eye"></i></button>
+                            <button class="delete-btn" title="Remove Employee" data-id="${emp.EmployeeID}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    `;
+                }                function fetchAndRenderEmployees(tab, searchTerm = '', status = 'all') {
+                    let position = '';
+                    if (tab === 'drivers') position = 'drivers';
+                    else if (tab === 'Cashier') position = 'Cashier';
+                    else position = 'all';
+                    
+                    // Build the query parameters
+                    let queryParams = [];
+                    if (position !== 'all') {
+                        queryParams.push('position=' + encodeURIComponent(position));
+                    }
+                    if (searchTerm) {
+                        queryParams.push('search=' + encodeURIComponent(searchTerm));
+                    }
+                    if (status !== 'all') {
+                        queryParams.push('status=' + encodeURIComponent(status));
+                    }
+                    
+                    const queryString = queryParams.length > 0 ? '?' + queryParams.join('&') : '';
+                    
+                    fetch('get_employees.php' + queryString)
+                        .then(res => res.json())
+                        .then(data => {
+                            const grid = document.querySelector(`#${tab} .employee-grid`);
+                            if (!grid) {
+                                console.error(`Grid not found for tab: ${tab}`);
+                                return;
+                            }
+                            
+                            grid.innerHTML = '';
+                            
+                            if (data.length === 0) {
+                                grid.innerHTML = '<div style="padding:2em;color:#888;">No employees found.</div>';
+                                return;
+                            }
+                            
+                            data.forEach(emp => {
+                                grid.innerHTML += renderEmployeeCard(emp);
+                            });
+                            
+                            // Add event listeners to the newly created buttons
+                            grid.querySelectorAll('.view-btn').forEach(btn => {
+                                btn.addEventListener('click', function() {
+                                    viewEmployeeModal.classList.add('show');
+                                });
+                            });
+                            
+                            grid.querySelectorAll('.delete-btn').forEach(btn => {
+                                btn.addEventListener('click', function() {
+                                    if (confirm('Are you sure you want to remove this employee?')) {
+                                        const employeeCard = this.closest('.employee-card');
+                                        employeeCard.remove();
+                                        showNotification('Employee removed successfully');
+                                    }
+                                });
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching employees:', error);
+                            const grid = document.querySelector(`#${tab} .employee-grid`);
+                            if (grid) {
+                                grid.innerHTML = '<div style="padding:2em;color:#888;">Error loading employees. Please try again.</div>';
+                            }
+                        });
+                }                document.addEventListener('DOMContentLoaded', function () {
+                    // Tab functionality
+                    if (tabButtons && tabContents) {
+                        tabButtons.forEach(button => {
+                            button.addEventListener('click', function () {
+                                tabButtons.forEach(btn => btn.classList.remove('active'));
+                                tabContents.forEach(tc => tc.classList.remove('active'));
+                                this.classList.add('active');
+                                const tab = this.getAttribute('data-tab');
+                                const tabContent = document.getElementById(tab);
+                                if (tabContent) {
+                                    tabContent.classList.add('active');
+                                    
+                                    // Get current search and filter values
+                                    const searchInput = document.querySelector('.search-bar input');
+                                    const statusFilter = document.querySelector('.status-filter');
+                                    const searchTerm = searchInput ? searchInput.value : '';
+                                    const status = statusFilter ? statusFilter.value : 'all';
+                                    
+                                    fetchAndRenderEmployees(tab, searchTerm, status);
+                                }
+                            });
+                        });
+                        
+                        // Set up search functionality
+                        const searchInput = document.querySelector('.search-bar input');
+                        if (searchInput) {
+                            searchInput.addEventListener('input', function() {
+                                const activeTab = document.querySelector('.tab-btn.active').getAttribute('data-tab');
+                                const statusFilter = document.querySelector('.status-filter');
+                                const status = statusFilter ? statusFilter.value : 'all';
+                                fetchAndRenderEmployees(activeTab, this.value, status);
+                            });
+                        }
+                        
+                        // Set up status filter
+                        const statusFilter = document.querySelector('.status-filter');
+                        if (statusFilter) {
+                            statusFilter.addEventListener('change', function() {
+                                const activeTab = document.querySelector('.tab-btn.active').getAttribute('data-tab');
+                                const searchInput = document.querySelector('.search-bar input');
+                                const searchTerm = searchInput ? searchInput.value : '';
+                                fetchAndRenderEmployees(activeTab, searchTerm, this.value);
+                            });
+                        }
+                        
+                        // Initial load for All Employees
+                        fetchAndRenderEmployees('all');
+                        
+                        // Update employee statistics
+                        updateEmployeeStats();
+                    }
+                });
             </script>
 </body>
 
 </html>
-<php?
 
