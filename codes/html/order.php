@@ -193,7 +193,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['from_cashier'])) {
                 <div class="tab" data-tab="customer">2. Your Details</div>
                 <div class="tab" data-tab="payment">3. Payment</div>
                 <div class="tab" data-tab="review">4. Review Order</div>
-                <div class="tab" data-tab="success">5. Order Success</div>
             </div>
 
             <!-- Tab Content -->

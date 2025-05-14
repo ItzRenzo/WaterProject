@@ -10,14 +10,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="NavBar.html">
+    <link rel="stylesheet" href="Sidebar.html">
 </head>
 
 <body>
     <div id="navbar"></div>
 
     <script>
-        fetch('navbar.html')
+        fetch('Sidebar.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('navbar').innerHTML = data;

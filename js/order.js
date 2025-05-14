@@ -343,30 +343,10 @@ document.addEventListener('DOMContentLoaded', function() {
             currentTabIndex--;
             updateTabs();
             updateNavButtons();
-        }
-    });
+        }    });
 
-    // Tab click functionality (optional - allows clicking on tabs directly)
-    tabButtons.forEach((tab, index) => {
-        tab.addEventListener('click', function() {
-            // Prevent skipping to review/success without items
-            if (index > 0 && cartItems.length === 0) {
-                alert('Please add items to your cart first.');
-                return;
-            }
-
-            currentTabIndex = index;
-            updateTabs();
-            updateNavButtons();
-
-            if (currentTabIndex === 2) {
-                updatePaymentTab();
-            }
-            if (currentTabIndex === 3) {
-                updateReviewTab();
-            }
-        });
-    });
+    // Tab functionality is now controlled only by the Next/Back buttons
+    // Click events for tabs are now disabled
 
     function updateTabs() {
         // Update the active tab

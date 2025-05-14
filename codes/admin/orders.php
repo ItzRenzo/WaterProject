@@ -1,3 +1,8 @@
+<?php
+session_start();
+include_once '../../Database/db_config.php';
+include_once '../../Database/db_check.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,14 +14,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="NavBar.html">
+    <link rel="stylesheet" href="Sidebar.html">
 </head>
 
 <body>
     <div id="navbar"></div>
 
     <script>
-        fetch('navbar.html')
+        fetch('Sidebar.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('navbar').innerHTML = data;
