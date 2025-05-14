@@ -9,6 +9,11 @@ $data = json_decode(file_get_contents('php://input'), true);
 $success = false;
 $error = '';
 
+// Convert status to lowercase for consistency
+if (isset($data['status'])) {
+    $data['status'] = strtolower($data['status']);
+}
+
 if (isset($data['transaction_ids']) && is_array($data['transaction_ids']) && isset($data['status'])) {
     // Multiple transaction IDs
     $status = $data['status'];
