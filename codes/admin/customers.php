@@ -41,12 +41,6 @@
                     <option>Active</option>
                     <option>Inactive</option>
                 </select>
-                <select class="filter-select">
-                    <option>All Locations</option>
-                    <option>City Center</option>
-                    <option>North Area</option>
-                    <option>South Area</option>
-                </select>
             </div>
             <div class="view-options">
                 <button class="view-btn active" data-view="grid"><i class="fas fa-th"></i></button>
