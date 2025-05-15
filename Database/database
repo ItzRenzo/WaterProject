@@ -13,7 +13,7 @@ CREATE TABLE Customer (
 CREATE TABLE Container (
     ContainerID INT PRIMARY KEY AUTO_INCREMENT,
     ContainerType VARCHAR(50) NOT NULL,
-    ContainerCapacity DECIMAL(10,2) NOT NULL,
+    ContainerCapacity(L) DECIMAL(10,2) NOT NULL,
     ContainerStatus VARCHAR(50) NOT NULL,
     Stocks INT NOT NULL DEFAULT 0
 );
@@ -80,20 +80,16 @@ CREATE TABLE LoggedExpenses (
 );
 
 -- 8. Reports 
-CREATE TABLE Reports (
-    ReportID INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE StockReports (
+    StockReportID INT PRIMARY KEY AUTO_INCREMENT,
     ContainerID INT,
-    ProductID   INT,
-    ExpensesID  INT,
     Stocks_Added INT NOT NULL DEFAULT 0,
-    Stocks_Added_Date DATE NOT NULL,
+    Stocks_Added_Date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (ContainerID) 
-        REFERENCES Container(ContainerID),
-    FOREIGN KEY (ProductID) 
-        REFERENCES Product(ProductID),
-    FOREIGN KEY (ExpensesID) 
-        REFERENCES LoggedExpenses(ExpensesID)
+        REFERENCES Container(ContainerID)
 );
+
+
 
 -- Inserts
 -- Populate Containers

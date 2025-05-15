@@ -1,3 +1,26 @@
+<?php
+session_start();
+include_once '../../Database/db_config.php';
+include_once '../../Database/db_check.php';
+
+// Retrieve products from database
+$productQuery = "SELECT p.*, c.ContainerType FROM Product p 
+                LEFT JOIN Container c ON p.ContainerID = c.ContainerID 
+                ORDER BY p.ProductID DESC";
+$productResult = $conn->query($productQuery);
+
+// Retrieve containers from database
+$containerQuery = "SELECT * FROM Container ORDER BY ContainerID DESC";
+$containerResult = $conn->query($containerQuery);
+
+// Count total products
+$totalProducts = $productResult->num_rows;
+
+// Count low stock items (products with stock less than 10)
+$lowStockQuery = "SELECT COUNT(*) as low_stock_count FROM Product WHERE Stocks < 10";
+$lowStockResult = $conn->query($lowStockQuery);
+$lowStockCount = $lowStockResult->fetch_assoc()['low_stock_count'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,7 +57,7 @@
             </div>
         </div>
 
-        <!-- Inventory Stats - Fixed Structure -->
+        <!-- Inventory Stats -->
         <div class="inventory-stats">
             <div class="stat-card">
                 <div class="stat-icon products">
@@ -42,7 +65,7 @@
                 </div>
                 <div class="stat-info">
                     <h3>Total Products</h3>
-                    <p>4</p>
+                    <p><?php echo $totalProducts; ?></p>
                 </div>
             </div>
 
@@ -52,7 +75,7 @@
                 </div>
                 <div class="stat-info">
                     <h3>Low Stock Items</h3>
-                    <p>2</p>
+                    <p><?php echo $lowStockCount; ?></p>
                 </div>
             </div>
         </div>
@@ -68,32 +91,53 @@
             </div>
 
             <div class="products-grid">
-                <!-- Product Card -->
+                <?php 
+                // Reset the result pointer to the beginning
+                if($productResult && $productResult->num_rows > 0) {
+                    $productResult->data_seek(0);
+                    
+                    while ($product = $productResult->fetch_assoc()) { 
+                ?>
                 <div class="product-card">
                     <div class="product-header">
-                        <div class="product-name">Mineral Water</div>
-                        <span class="stock-badge in-stock">In Stock</span>
+                        <div class="product-name"><?php echo $product['ProductName']; ?></div>
+                        <span class="stock-badge <?php echo $product['Stocks'] < 10 ? 'low-stock' : 'in-stock'; ?>">
+                            <?php echo $product['Stocks'] < 10 ? 'Low Stock' : 'In Stock'; ?>
+                        </span>
                     </div>
                     <div class="product-details">
                         <div class="detail-item">
                             <span>Price:</span>
-                            <span>₱35.00</span>
+                            <span>₱<?php echo number_format($product['ProductPrice'], 2); ?></span>
                         </div>
                         <div class="detail-item">
                             <span>Available:</span>
-                            <span>500 L</span>
+                            <span><?php echo $product['Stocks']; ?> L</span>
                         </div>
                         <div class="detail-item">
                             <span>Status:</span>
-                            <span class="status active">Active</span>
+                            <span class="status <?php echo $product['ProductStatus'] == 'Available' ? 'active' : 'inactive'; ?>">
+                                <?php echo ucfirst($product['ProductStatus']); ?>
+                            </span>
                         </div>
+                        <?php if (!empty($product['ProductDescription'])) { ?>
+                        <div class="detail-item">
+                            <span>Description:</span>
+                            <span class="description"><?php echo $product['ProductDescription']; ?></span>
+                        </div>
+                        <?php } ?>
                     </div>
                     <div class="product-actions">
                         <button class="edit-btn"><i class="fas fa-edit"></i></button>
                         <button class="delete-btn"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
-                <!-- More product cards here -->
+                <?php 
+                    }
+                } else {
+                    echo '<div class="no-products">No products found</div>';
+                }
+                ?>
             </div>
         </div>
 
@@ -109,59 +153,50 @@
             </div>
 
             <div class="containers-grid">
-                <!-- Container Card -->
+                <?php 
+                // Reset the result pointer to the beginning
+                if($containerResult && $containerResult->num_rows > 0) {
+                    $containerResult->data_seek(0);
+                    
+                    while ($container = $containerResult->fetch_assoc()) { 
+                ?>
                 <div class="product-card container-card">
                     <div class="product-header">
-                        <div class="product-name">Round Gallon</div>
-                        <span class="stock-badge in-stock">In Stock</span>
+                        <div class="product-name"><?php echo $container['ContainerType']; ?></div>
+                        <span class="stock-badge <?php echo $container['Stocks'] < 20 ? 'low-stock' : 'in-stock'; ?>">
+                            <?php echo $container['Stocks'] < 20 ? 'Low Stock' : 'In Stock'; ?>
+                        </span>
                     </div>
                     <div class="product-details">
                         <div class="detail-item">
-                            <span>Deposit Fee:</span>
-                            <span>₱50.00</span>
+                            <span>Capacity:</span>
+                            <span><?php echo $container['ContainerCapacity']; ?> L</span>
                         </div>
                         <div class="detail-item">
                             <span>Available:</span>
-                            <span class="stock-value editable-stock" data-id="container-1">120 pcs</span>
+                            <span class="stock-value editable-stock" data-id="container-<?php echo $container['ContainerID']; ?>">
+                                <?php echo $container['Stocks']; ?> pcs
+                            </span>
                         </div>
                         <div class="detail-item">
                             <span>Status:</span>
-                            <span class="status active">Active</span>
+                            <span class="status <?php echo $container['ContainerStatus'] == 'Available' ? 'active' : 'inactive'; ?>">
+                                <?php echo ucfirst($container['ContainerStatus']); ?>
+                            </span>
                         </div>
                     </div>
                     <div class="product-actions">
-                        <button class="update-stock-btn" data-id="container-1"><i class="fas fa-sync-alt"></i></button>
+                        <button class="update-stock-btn" data-id="container-<?php echo $container['ContainerID']; ?>"><i class="fas fa-sync-alt"></i></button>
                         <button class="edit-btn"><i class="fas fa-edit"></i></button>
                         <button class="delete-btn"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
-
-                <!-- Container Card -->
-                <div class="product-card container-card">
-                    <div class="product-header">
-                        <div class="product-name">Slim Gallon</div>
-                        <span class="stock-badge in-stock">In Stock</span>
-                    </div>
-                    <div class="product-details">
-                        <div class="detail-item">
-                            <span>Deposit Fee:</span>
-                            <span>₱45.00</span>
-                        </div>
-                        <div class="detail-item">
-                            <span>Available:</span>
-                            <span class="stock-value editable-stock" data-id="container-2">65 pcs</span>
-                        </div>
-                        <div class="detail-item">
-                            <span>Status:</span>
-                            <span class="status active">Active</span>
-                        </div>
-                    </div>
-                    <div class="product-actions">
-                        <button class="update-stock-btn" data-id="container-2"><i class="fas fa-sync-alt"></i></button>
-                        <button class="edit-btn"><i class="fas fa-edit"></i></button>
-                        <button class="delete-btn"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>
+                <?php 
+                    }
+                } else {
+                    echo '<div class="no-containers">No containers found</div>';
+                }
+                ?>
             </div>
         </div>
     </div>
@@ -181,7 +216,7 @@
                     </div>
                     <div class="form-group">
                         <label for="productPrice">Price</label>
-                        <input type="number" id="productPrice" required>
+                        <input type="number" id="productPrice" step="0.01" min="0" required>
                     </div>
                     <div class="form-group">
                         <label for="productDescription">Description</label>
@@ -190,8 +225,8 @@
                     <div class="form-group">
                         <label for="productStatus">Status</label>
                         <select id="productStatus">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
+                            <option value="Available">Available</option>
+                            <option value="Unavailable">Unavailable</option>
                         </select>
                     </div>
                     <div class="form-actions">
@@ -217,7 +252,7 @@
             const totalProductsCount = document.querySelector('.stat-card:first-child .stat-info p');
 
             // Counter for new products (for generating unique IDs)
-            let productCounter = 5; // Starting after the initial 4 products
+            let productCounter = <?php echo $totalProducts + 1; ?>; // Start after existing products
 
             // Open modal
             addProductBtn.addEventListener('click', function () {
@@ -286,13 +321,13 @@
 
                 // Generate random available amount for demonstration
                 const available = Math.floor(Math.random() * 900) + 100; // 100-999 L
-                const isActive = status === 'active';
+                const isActive = status === 'Available';
 
                 // Add stock badge class based on available amount
                 let stockBadgeClass = 'in-stock';
                 let stockBadgeText = 'In Stock';
 
-                if (available < 50) {
+                if (available < 10) {
                     stockBadgeClass = 'low-stock';
                     stockBadgeText = 'Low Stock';
                 }
@@ -313,7 +348,7 @@
                     </div>
                     <div class="detail-item">
                         <span>Status:</span>
-                        <span class="status ${isActive ? 'active' : 'inactive'}">${isActive ? 'Active' : 'Inactive'}</span>
+                        <span class="status ${isActive ? 'active' : 'inactive'}">${status}</span>
                     </div>
                     ${description ? `
                     <div class="detail-item">
@@ -396,7 +431,7 @@
                 // Get product details
                 const name = productCard.querySelector('.product-name').textContent;
                 const price = productCard.querySelector('.detail-item:nth-child(1) span:last-child').textContent.replace('₱', '');
-                const status = productCard.querySelector('.status').classList.contains('active') ? 'active' : 'inactive';
+                const status = productCard.querySelector('.status').classList.contains('active') ? 'Available' : 'Unavailable';
                 const description = productCard.querySelector('.description')?.textContent || '';
 
                 // Set form values
@@ -416,8 +451,8 @@
 
                     const newStatus = document.getElementById('productStatus').value;
                     const statusElement = productCard.querySelector('.status');
-                    statusElement.textContent = newStatus === 'active' ? 'Active' : 'Inactive';
-                    statusElement.className = `status ${newStatus}`;
+                    statusElement.textContent = newStatus;
+                    statusElement.className = `status ${newStatus === 'Available' ? 'active' : 'inactive'}`;
 
                     const newDescription = document.getElementById('productDescription').value;
                     let descriptionItem = productCard.querySelector('.detail-item:nth-child(4)');
@@ -478,7 +513,7 @@
             // Get DOM elements for Add Container functionality
             const addContainerBtn = document.querySelector('.add-container-btn');
             const containersGrid = document.querySelector('.containers-grid');
-            const totalContainersCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
+            const lowStockCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
 
             // Create the modal if it doesn't exist
             let containerModal = document.createElement('div');
@@ -497,10 +532,10 @@
                             <input type="text" id="containerName" placeholder="Enter container name" required>
                         </div>
                         <div class="form-group">
-                            <label for="depositFee">Deposit Fee</label>
-                            <div class="price-input">
-                                <span class="currency">₱</span>
-                                <input type="number" id="depositFee" step="0.01" min="0" placeholder="0.00" required>
+                            <label for="containerCapacity">Capacity (in L)</label>
+                            <div class="capacity-input">
+                                <input type="number" id="containerCapacity" step="0.01" min="0" placeholder="0.00" required>
+                                <span class="unit">L</span>
                             </div>
                         </div>
                         <div class="form-group">
@@ -513,13 +548,9 @@
                         <div class="form-group">
                             <label for="containerStatus">Status</label>
                             <select id="containerStatus">
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
+                                <option value="Available">Available</option>
+                                <option value="Unavailable">Unavailable</option>
                             </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="containerDescription">Description (Optional)</label>
-                            <textarea id="containerDescription" placeholder="Add details about this container"></textarea>
                         </div>
                         <div class="form-actions">
                             <button type="button" class="cancel-btn"><i class="fas fa-times"></i> Cancel</button>
@@ -532,7 +563,7 @@
             document.body.appendChild(containerModal);
 
             // Counter for new containers (for generating unique IDs)
-            let containerCounter = 3; // Starting after the initial 2 containers
+            let containerCounter = <?php echo $containerResult->num_rows + 1; ?>; // Start after existing containers
 
             // Get modal elements
             const closeBtn = containerModal.querySelector('.close-btn');
@@ -577,19 +608,17 @@
 
                 // Get form values
                 const name = document.getElementById('containerName').value;
-                const depositFee = document.getElementById('depositFee').value;
+                const capacity = document.getElementById('containerCapacity').value;
                 const availableStock = document.getElementById('availableStock').value;
                 const status = document.getElementById('containerStatus').value;
-                const description = document.getElementById('containerDescription').value;
 
                 // Create a new container card
-                const newContainer = createContainerCard(name, depositFee, availableStock, status, description);
+                const newContainer = createContainerCard(name, capacity, availableStock, status);
 
                 // Add the new container to the grid
                 containersGrid.insertBefore(newContainer, containersGrid.firstChild);
 
                 // Update low stock count if needed
-                const lowStockCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
                 if (parseInt(availableStock) < 20) {
                     lowStockCount.textContent = parseInt(lowStockCount.textContent) + 1;
                 }
@@ -601,21 +630,19 @@
                 closeContainerModal();
             });
 
-            // Updated edit container function without circulation
+            // Function to edit a container
             function editContainer(containerCard) {
                 // Get container details
                 const name = containerCard.querySelector('.product-name').textContent;
-                const depositFee = containerCard.querySelector('.detail-item:nth-child(1) span:last-child').textContent.replace('₱', '');
+                const capacity = containerCard.querySelector('.detail-item:nth-child(1) span:last-child').textContent.split(' ')[0];
                 const availableStock = containerCard.querySelector('.detail-item:nth-child(2) span:last-child').textContent.split(' ')[0];
-                const status = containerCard.querySelector('.status').classList.contains('active') ? 'active' : 'inactive';
-                const description = containerCard.querySelector('.description')?.textContent || '';
+                const status = containerCard.querySelector('.status').classList.contains('active') ? 'Available' : 'Unavailable';
 
                 // Set form values
                 document.getElementById('containerName').value = name;
-                document.getElementById('depositFee').value = parseFloat(depositFee);
+                document.getElementById('containerCapacity').value = parseFloat(capacity);
                 document.getElementById('availableStock').value = parseInt(availableStock);
                 document.getElementById('containerStatus').value = status;
-                document.getElementById('containerDescription').value = description;
 
                 // Update form submit to edit container instead of adding new one
                 const originalSubmitHandler = containerForm.onsubmit;
@@ -624,23 +651,41 @@
 
                     // Get updated values
                     const newName = document.getElementById('containerName').value;
-                    const newDepositFee = document.getElementById('depositFee').value;
+                    const newCapacity = document.getElementById('containerCapacity').value;
                     const newAvailableStock = document.getElementById('availableStock').value;
                     const newStatus = document.getElementById('containerStatus').value;
-                    const newDescription = document.getElementById('containerDescription').value;
 
-                    // Update container details (removing circulation update)
+                    // Update container details
                     containerCard.querySelector('.product-name').textContent = newName;
-                    containerCard.querySelector('.detail-item:nth-child(1) span:last-child').textContent = '₱' + parseFloat(newDepositFee).toFixed(2);
+                    containerCard.querySelector('.detail-item:nth-child(1) span:last-child').textContent = parseFloat(newCapacity).toFixed(2) + ' L';
                     containerCard.querySelector('.detail-item:nth-child(2) span:last-child').textContent = newAvailableStock + ' pcs';
 
                     const statusElement = containerCard.querySelector('.status');
-                    statusElement.textContent = newStatus === 'active' ? 'Active' : 'Inactive';
-                    statusElement.className = `status ${newStatus}`;
+                    statusElement.textContent = newStatus;
+                    statusElement.className = `status ${newStatus === 'Available' ? 'active' : 'inactive'}`;
 
-                    // Stock badge update code remains the same
+                    // Update stock badge
+                    const stockBadge = containerCard.querySelector('.stock-badge');
+                    const wasLowStock = stockBadge.classList.contains('low-stock');
+                    const isNowLowStock = parseInt(newAvailableStock) < 20;
 
-                    // Description update code remains the same
+                    if (isNowLowStock) {
+                        stockBadge.className = 'stock-badge low-stock';
+                        stockBadge.textContent = 'Low Stock';
+
+                        // Update low stock count if it wasn't low stock before
+                        if (!wasLowStock) {
+                            lowStockCount.textContent = parseInt(lowStockCount.textContent) + 1;
+                        }
+                    } else {
+                        stockBadge.className = 'stock-badge in-stock';
+                        stockBadge.textContent = 'In Stock';
+
+                        // Update low stock count if it was low stock before
+                        if (wasLowStock) {
+                            lowStockCount.textContent = Math.max(0, parseInt(lowStockCount.textContent) - 1);
+                        }
+                    }
 
                     // Show success message and close modal
                     showNotification('Container updated successfully!', 'success');
@@ -656,8 +701,8 @@
                 document.body.style.overflow = 'hidden';
             }
 
-            // Updated function to create container cards without circulation
-            function createContainerCard(name, depositFee, availableStock, status, description) {
+            // Function to create container cards
+            function createContainerCard(name, capacity, availableStock, status) {
                 const containerId = 'container-' + containerCounter++;
                 const containerCard = document.createElement('div');
                 containerCard.className = 'product-card container-card';
@@ -671,7 +716,7 @@
                     stockBadgeText = 'Low Stock';
                 }
 
-                const isActive = status === 'active';
+                const isActive = status === 'Available';
 
                 containerCard.innerHTML = `
                 <div class="product-header">
@@ -680,8 +725,8 @@
                 </div>
                 <div class="product-details">
                     <div class="detail-item">
-                        <span>Deposit Fee:</span>
-                        <span>₱${parseFloat(depositFee).toFixed(2)}</span>
+                        <span>Capacity:</span>
+                        <span>${parseFloat(capacity).toFixed(2)} L</span>
                     </div>
                     <div class="detail-item">
                         <span>Available:</span>
@@ -689,13 +734,8 @@
                     </div>
                     <div class="detail-item">
                         <span>Status:</span>
-                        <span class="status ${isActive ? 'active' : 'inactive'}">${isActive ? 'Active' : 'Inactive'}</span>
+                        <span class="status ${isActive ? 'active' : 'inactive'}">${status}</span>
                     </div>
-                    ${description ? `
-                    <div class="detail-item">
-                        <span>Description:</span>
-                        <span class="description">${description}</span>
-                    </div>` : ''}
                 </div>
                 <div class="product-actions">
                     <button class="update-stock-btn" data-id="${containerId}" title="Update Stock"><i class="fas fa-sync-alt"></i></button>
@@ -706,7 +746,22 @@
 
                 // Add event listeners to the buttons
                 setTimeout(() => {
-                    // Event listener code remains the same
+                    const deleteBtn = containerCard.querySelector('.delete-btn');
+                    const editBtn = containerCard.querySelector('.edit-btn');
+                    const updateStockBtn = containerCard.querySelector('.update-stock-btn');
+
+                    deleteBtn.addEventListener('click', function () {
+                        confirmDeleteContainer(containerCard);
+                    });
+
+                    editBtn.addEventListener('click', function () {
+                        editContainer(containerCard);
+                    });
+
+                    updateStockBtn.addEventListener('click', function () {
+                        const containerId = this.getAttribute('data-id');
+                        updateContainerStock(containerId);
+                    });
                 }, 0);
 
                 return containerCard;
@@ -724,7 +779,6 @@
                         const stockBadge = containerCard.querySelector('.stock-badge');
                         if (stockBadge.classList.contains('low-stock')) {
                             // Update low stock count
-                            const lowStockCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
                             lowStockCount.textContent = Math.max(0, parseInt(lowStockCount.textContent) - 1);
                         }
 
@@ -846,7 +900,6 @@
 
                             // Update low stock count if it wasn't low stock before
                             if (!wasLowStock) {
-                                const lowStockCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
                                 lowStockCount.textContent = parseInt(lowStockCount.textContent) + 1;
                             }
                         } else {
@@ -855,7 +908,6 @@
 
                             // Update low stock count if it was low stock before
                             if (wasLowStock) {
-                                const lowStockCount = document.querySelector('.stat-card:nth-child(2) .stat-info p');
                                 lowStockCount.textContent = Math.max(0, parseInt(lowStockCount.textContent) - 1);
                             }
                         }
@@ -917,17 +969,46 @@
             });
         });
 
-        // Add CSS for price and stock inputs
+        // Function to show notification (global)
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+            <div class="notification-icon">
+                <i class="fas ${type === 'success' ? 'fa-check-circle' :
+                    type === 'error' ? 'fa-exclamation-circle' :
+                        'fa-info-circle'}"></i>
+            </div>
+            <div class="notification-message">${message}</div>
+        `;
+
+            document.body.appendChild(notification);
+
+            // Show notification
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+
+            // Hide and remove notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Add CSS for inputs
         const style = document.createElement('style');
         style.textContent = `
-        /* Add Container Modal Styles */
-        .price-input, .stock-input {
+        /* Input Styles */
+        .price-input, .stock-input, .capacity-input {
             position: relative;
             display: flex;
             align-items: center;
         }
         
-        .price-input .currency, .stock-input .unit {
+        .price-input .currency, .stock-input .unit, .capacity-input .unit {
             position: absolute;
             color: var(--text-light);
         }
@@ -940,11 +1021,11 @@
             padding-left: 25px;
         }
         
-        .stock-input .unit {
+        .stock-input .unit, .capacity-input .unit {
             right: 12px;
         }
         
-        .stock-input input {
+        .stock-input input, .capacity-input input {
             padding-right: 40px;
         }
         
@@ -979,6 +1060,17 @@
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
             margin-top: 20px;
+        }
+
+        /* Empty state messages */
+        .no-products, .no-containers {
+            grid-column: 1 / -1;
+            padding: 20px;
+            text-align: center;
+            background: var(--white);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-style: italic;
         }
     `;
         document.head.appendChild(style);

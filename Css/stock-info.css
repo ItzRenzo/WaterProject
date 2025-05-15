@@ -1,0 +1,14 @@
+/* Stock info styles */
+.stock-info {
+    margin-top: 5px;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.stock-info.low {
+    color: var(--danger);
+}
+
+.stock-info.good {
+    color: var(--success);
+}
