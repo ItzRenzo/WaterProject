@@ -89,7 +89,16 @@ CREATE TABLE StockReports (
         REFERENCES Container(ContainerID)
 );
 
+CREATE TABLE IF NOT EXISTS WaterTankLog (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    tank_level DECIMAL(10,2) NOT NULL,
+    last_refill DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
+-- Initialize with a full tank if empty
+INSERT INTO WaterTankLog (tank_level, last_refill)
+SELECT 500, NOW()
+WHERE NOT EXISTS (SELECT 1 FROM WaterTankLog);
 
 -- Inserts
 -- Populate Containers

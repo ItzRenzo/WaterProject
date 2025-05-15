@@ -143,6 +143,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['from_cashier'])) {
                 $updateStockStmt->bind_param('ii', $item_quantity, $product_id);
                 $updateStockStmt->execute();
                 $updateStockStmt->close();
+                // --- Update Water Tank Level in DB ---
+                $liters_used = 0;
+                if ($product_id >= 1 && $product_id <= 4) {
+                    $liters_used = 9 * $item_quantity;
+                } elseif ($product_id >= 5 && $product_id <= 8) {
+                    $liters_used = 0.5 * $item_quantity;
+                }
+                if ($liters_used > 0) {
+                    $conn->query("UPDATE WaterTankLog SET tank_level = GREATEST(0, tank_level - $liters_used) ORDER BY last_refill DESC, id DESC LIMIT 1");
+                }
+                // --- End Water Tank Update ---
             } else {
                 throw new Exception("Product {$item_name} not found.");
             }

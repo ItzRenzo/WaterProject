@@ -1,3 +1,21 @@
+<?php
+require_once '../../Database/db_config.php';
+
+$tank_level = 500;
+$res = $conn->query("SELECT tank_level FROM WaterTankLog ORDER BY last_refill DESC, id DESC LIMIT 1");
+if ($res && $row = $res->fetch_assoc()) {
+    $tank_level = $row['tank_level'];
+}
+$water_percent = round(($tank_level / 500) * 100);
+
+// Handle refill action
+if (isset($_GET['refill']) && $_GET['refill'] === '1') {
+    $conn->query("INSERT INTO WaterTankLog (tank_level, last_refill) VALUES (500, NOW())");
+    header('Location: index.php');
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -84,7 +102,7 @@
                 <div class="card-body">
                     <div class="water-level-container">
                         <div class="water-level">
-                            <div class="water" id="water-fill" style="height: 70%;"></div>
+                            <div class="water" id="water-fill" style="height: <?php echo $water_percent; ?>%;"></div>
                             <div class="level-indicators">
                                 <div class="level critical"></div>
                                 <div class="level warning"></div>
@@ -92,19 +110,26 @@
                             </div>
                         </div>
                         <div class="water-info">
-                            <div class="water-percentage" id="water-percentage">70%</div>
-                            <div class="water-status good" id="water-status">
-                                <i class="fas fa-check-circle"></i> Good Level
+                            <div class="water-percentage" id="water-percentage"><?php echo $water_percent; ?>%</div>
+                            <small style="display:block;color:#555;margin-top:2px;font-size:0.9em;">(<?php echo $tank_level; ?>L left)</small>
+                            <div class="water-status <?php
+                                if ($water_percent < 20) echo 'critical';
+                                else if ($water_percent < 40) echo 'low';
+                                else echo 'good';
+                            ?>" id="water-status">
+                                <?php if ($water_percent < 20): ?>
+                                    <i class="fas fa-exclamation-triangle"></i> Critical Level
+                                <?php elseif ($water_percent < 40): ?>
+                                    <i class="fas fa-exclamation-circle"></i> Low Level
+                                <?php else: ?>
+                                    <i class="fas fa-check-circle"></i> Good Level
+                                <?php endif; ?>
                             </div>
-                            <button class="refill-btn" id="refill-tank">Refill Tank</button>
+                            <button class="refill-btn" id="refill-tank" onclick="location.href='index.php?refill=1'">Refill Tank</button>
                         </div>
                     </div>
                 </div>
             </div>
-
-
-
-
 
             <!-- Sales summary card -->
             <div class="card">
@@ -229,52 +254,6 @@
             month: 'long',
             day: 'numeric'
         });
-
-        // JavaScript functionality
-        function placeOrder() {
-            // Get form values
-            const clientName = document.getElementById('client-name').value;
-            const waterType = document.getElementById('water-type').value;
-            const quantity = document.getElementById('quantity').value;
-            const deliveryDate = document.getElementById('delivery-date').value;
-
-            if (!clientName || !quantity || !deliveryDate) {
-                alert('Please fill in all fields');
-                return;
-            }
-
-            // In a real application, you would send this data to a server
-            alert(`Order placed successfully!\nClient: ${clientName}\nWater Type: ${waterType}\nQuantity: ${quantity} gallons\nDelivery Date: ${deliveryDate}`);
-
-            // Clear form
-            document.getElementById('client-name').value = '';
-            document.getElementById('quantity').value = '1';
-            document.getElementById('delivery-date').value = '';
-
-            // Update water level (simulated)
-            updateWaterLevel(Math.max(0, parseInt(document.getElementById('water-fill').style.height) - 5));
-        }
-
-        function updateWaterLevel(percentage) {
-            document.getElementById('water-fill').style.height = percentage + '%';
-            document.querySelector('.water-percentage').textContent = percentage + '%';
-
-            // Update water status based on percentage
-            const waterStatus = document.querySelector('.water-status');
-            if (percentage < 20) {
-                waterStatus.textContent = '';
-                waterStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Critical Level';
-                waterStatus.className = 'water-status critical';
-            } else if (percentage < 40) {
-                waterStatus.textContent = '';
-                waterStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> Low Level';
-                waterStatus.className = 'water-status low';
-            } else {
-                waterStatus.textContent = '';
-                waterStatus.innerHTML = '<i class="fas fa-check-circle"></i> Good Level';
-                waterStatus.className = 'water-status good';
-            }
-        }
     </script>
 </body>
 
