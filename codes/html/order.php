@@ -7,7 +7,7 @@ include_once '../../Database/db_check.php';
 $Cashier = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';
 if (isset($_SESSION['user_id'])) {
     error_log('User ID found: ' . $_SESSION['user_id']);
-    
+
     // If we already have the username in the session, use it
     if (isset($_SESSION['username'])) {
         $cashier_name = htmlspecialchars($_SESSION['username']);
@@ -18,7 +18,7 @@ if (isset($_SESSION['user_id'])) {
         $stmt->bind_param('i', $_SESSION['user_id']);
         $stmt->execute();
         $result = $stmt->get_result();
-        
+
         if ($result && $row = $result->fetch_assoc()) {
             $cashier_name = htmlspecialchars($row['FullName']);
             error_log('Got username from database: ' . $cashier_name);
@@ -61,9 +61,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['from_cashier'])) {
     $cashier_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
     if (!$cashier_id) {
-        $response = [ 'success' => false, 'message' => 'Session expired or not logged in. Please log in again.' ];
+        $response = ['success' => false, 'message' => 'Session expired or not logged in. Please log in again.'];
         header('Content-Type: application/json');
-        echo json_encode($response); exit();
+        echo json_encode($response);
+        exit();
     }
     $customer_name = isset($_POST['name']) ? trim($_POST['name']) : '';
     $customer_phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
@@ -75,12 +76,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['from_cashier'])) {
     $cart_items = isset($_POST['cart_items']) ? json_decode($_POST['cart_items'], true) : [];
     if ($delivery_method === 'pickup') $address = 'N/A';
     if (empty($customer_name) || empty($customer_phone) || empty($cart_items)) {
-        $response = [ 'success' => false, 'message' => 'Missing required order information.' ];
-        header('Content-Type: application/json'); echo json_encode($response); exit();
+        $response = ['success' => false, 'message' => 'Missing required order information.'];
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit();
     }
     if ($payment_amount < $cart_total) {
-        $response = [ 'success' => false, 'message' => 'Insufficient payment amount.' ];
-        header('Content-Type: application/json'); echo json_encode($response); exit();
+        $response = ['success' => false, 'message' => 'Insufficient payment amount.'];
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit();
     }
     try {
         $conn->begin_transaction();
@@ -150,10 +155,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['from_cashier'])) {
         ];
     } catch (Exception $e) {
         $conn->rollback();
-        $response = [ 'success' => false, 'message' => 'Database error: ' . $e->getMessage() ];
+        $response = ['success' => false, 'message' => 'Database error: ' . $e->getMessage()];
     }
     header('Content-Type: application/json');
-    echo json_encode($response); exit();
+    echo json_encode($response);
+    exit();
 } elseif (isset($_POST['from_cashier'])) {
     // If it's coming from Cashier.php, just display the page - no AJAX response needed
 }
@@ -171,15 +177,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['from_cashier'])) {
 
 <body>
     <div class="kiosk-container">
-        <!-- Header with back button -->        <header class="kiosk-header">
-            <a href="../html/index.html" class="back-button">
+        <!-- Header with back button -->
+        <header class="kiosk-header">
+            <a href="Cashier.php" class="back-button">
                 <i class="fas fa-arrow-left"></i>
             </a>
-            <h1>Order Water</h1>
-            <!-- Cashier name display -->
+            <h1>Order Water</h1> <!-- Cashier name display -->
             <div class="cashier-info">
-                <span>Cashier: <span id="header-cashier-name"><?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Not logged in'; ?></span></span>
+                <span>Cashier: <span id="header-cashier-name"><?php echo htmlspecialchars($Cashier); ?></span></span>
             </div>
+
             <!-- Added logout link -->
             <a href="../Controllers/Logout.php" class="logout-link">
                 <i class="fas fa-sign-out-alt"></i> Logout
@@ -501,20 +508,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['from_cashier'])) {
                 <div class="success-content">
                     <div class="success-icon">
                         <i class="fas fa-check-circle"></i>
-                    </div>                    <h2>Order Placed Successfully!</h2>
+                    </div>
+                    <h2>Order Placed Successfully!</h2>
                     <p>Thank you for your order. Your water will be ready for pickup/delivery shortly.</p>
                     <a href="Reciept.php?latest=true" class="Receipt-link">
                         <i class="fas fa-receipt"></i> Receipt
                     </a>
                 </div>
             </div>
-        </main>        <!-- Navigation Buttons -->
+        </main> <!-- Navigation Buttons -->
         <div class="nav-buttons">
             <button class="btn btn-secondary" id="prev-btn">Back</button>
             <button class="btn btn-primary" id="next-btn">Continue</button>
             <!-- Order data will be saved to database when clicking 'Place Order' on review tab -->
         </div>
-    </div>    <!-- PHP code for server-side cart processing will be added separately -->
+    </div> <!-- PHP code for server-side cart processing will be added separately -->
     <!-- Add this script tag just before the closing </body> tag -->
     <script src="../../js/order.js"></script>
 </body>
