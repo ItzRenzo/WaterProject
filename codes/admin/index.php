@@ -15,6 +15,64 @@ if (isset($_GET['refill']) && $_GET['refill'] === '1') {
     exit;
 }
 
+// --- AJAX endpoint for Sales Overview chart data ---
+if (isset($_GET['ajax']) && $_GET['ajax'] === 'sales_overview') {
+    $filter = isset($_GET['sales_filter']) ? $_GET['sales_filter'] : 'day';
+    $overviewChartLabels = [];
+    $overviewChartData = [];
+    $productNames = ['Mineral Water', 'Purified Water', 'Alkaline Water', 'Distilled Water', 'Mineral Water Bottle', 'Purified Water Bottle', 'Alkaline Water Bottle', 'Distilled Water Bottle'];
+    if ($filter === 'month') {
+        $months = [
+            1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April', 5 => 'May', 6 => 'June',
+            7 => 'July', 8 => 'August', 9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'
+        ];
+        $overviewChartLabels = array_values($months);
+        $productData = [];
+        foreach (range(1, 8) as $pid) {
+            $productData[$pid] = array_fill(0, 12, 0);
+        }
+        $res = $conn->query("SELECT ProductID, MONTH(TransactionDate) as month, SUM(Quantity) as qty FROM Transaction WHERE YEAR(TransactionDate) = YEAR(CURDATE()) GROUP BY ProductID, month");
+        if ($res) {
+            while ($row = $res->fetch_assoc()) {
+                $pid = (int)$row['ProductID'];
+                $m = (int)$row['month'];
+                if ($pid >= 1 && $pid <= 8 && $m >= 1 && $m <= 12) {
+                    $productData[$pid][$m-1] = (int)$row['qty'];
+                }
+            }
+        }
+        $overviewChartData = [];
+        foreach (range(1, 8) as $pid) {
+            $overviewChartData[] = $productData[$pid];
+        }
+    } else {
+        if ($filter === 'week') {
+            $overviewDateCondition = "YEARWEEK(TransactionDate, 1) = YEARWEEK(CURDATE(), 1)";
+        } else {
+            $overviewDateCondition = "DATE(TransactionDate) = CURDATE()";
+        }
+        $overviewChartLabels = $productNames;
+        $overviewChartData = [0,0,0,0,0,0,0,0];
+        $res = $conn->query("SELECT ProductID, SUM(Quantity) as qty FROM Transaction WHERE $overviewDateCondition GROUP BY ProductID");
+        if ($res) {
+            while ($row = $res->fetch_assoc()) {
+                $pid = (int)$row['ProductID'];
+                if ($pid >= 1 && $pid <= 8) {
+                    $overviewChartData[$pid-1] = (int)$row['qty'];
+                }
+            }
+        }
+    }
+    header('Content-Type: application/json');
+    echo json_encode([
+        'labels' => $overviewChartLabels,
+        'data' => $overviewChartData,
+        'filter' => $filter,
+        'productNames' => $productNames
+    ]);
+    exit;
+}
+
 // --- Dashboard Stats Queries ---
 $today = date('Y-m-d');
 
@@ -83,22 +141,32 @@ $salesOverviewFilter = isset($_GET['sales_filter']) ? $_GET['sales_filter'] : 'd
 $overviewChartLabels = [];
 $overviewChartData = [];
 if ($salesOverviewFilter === 'month') {
-    // Show sales per month for the current year
+    // Show per-product breakdown for each month in the current year
     $months = [
         1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April', 5 => 'May', 6 => 'June',
         7 => 'July', 8 => 'August', 9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'
     ];
     $overviewChartLabels = array_values($months);
-    $overviewChartData = array_fill(0, 12, 0);
-    $res = $conn->query("SELECT MONTH(TransactionDate) as month, SUM(Quantity) as qty FROM Transaction WHERE YEAR(TransactionDate) = YEAR(CURDATE()) GROUP BY month");
+    $productNames = ['Mineral Water', 'Purified Water', 'Alkaline Water', 'Distilled Water', 'Mineral Water Bottle', 'Purified Water Bottle', 'Alkaline Water Bottle', 'Distilled Water Bottle'];
+    $productData = [];
+    foreach (range(1, 8) as $pid) {
+        $productData[$pid] = array_fill(0, 12, 0);
+    }
+    $res = $conn->query("SELECT ProductID, MONTH(TransactionDate) as month, SUM(Quantity) as qty FROM Transaction WHERE YEAR(TransactionDate) = YEAR(CURDATE()) GROUP BY ProductID, month");
     if ($res) {
         while ($row = $res->fetch_assoc()) {
+            $pid = (int)$row['ProductID'];
             $m = (int)$row['month'];
-            $overviewChartData[$m-1] = (int)$row['qty'];
+            if ($pid >= 1 && $pid <= 8 && $m >= 1 && $m <= 12) {
+                $productData[$pid][$m-1] = (int)$row['qty'];
+            }
         }
     }
+    $overviewChartData = [];
+    foreach (range(1, 8) as $pid) {
+        $overviewChartData[] = $productData[$pid];
+    }
 } else {
-    // Day or week: show per product
     $overviewChartLabels = ['Mineral Water', 'Purified Water', 'Alkaline Water', 'Distilled Water', 'Mineral Water Bottle', 'Purified Water Bottle', 'Alkaline Water Bottle', 'Distilled Water Bottle'];
     $overviewChartData = [0,0,0,0,0,0,0,0];
     $res = $conn->query("SELECT ProductID, SUM(Quantity) as qty FROM Transaction WHERE $dateCondition GROUP BY ProductID");
@@ -290,44 +358,75 @@ if ($salesOverviewFilter === 'month') {
         </div>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
-
-        const overviewChartLabels = <?php echo json_encode($overviewChartLabels); ?>;
-        const overviewChartData = <?php echo json_encode($overviewChartData); ?>;
-
+        const productNames = ['Mineral Water', 'Purified Water', 'Alkaline Water', 'Distilled Water', 'Mineral Water Bottle', 'Purified Water Bottle', 'Alkaline Water Bottle', 'Distilled Water Bottle'];
+        const productColors = [
+            'rgba(54, 162, 235, 0.7)',
+            'rgba(255, 206, 86, 0.7)',
+            'rgba(75, 192, 192, 0.7)',
+            'rgba(255, 99, 132, 0.7)',
+            'rgba(153, 102, 255, 0.7)',
+            'rgba(255, 159, 64, 0.7)',
+            'rgba(99, 255, 132, 0.7)',
+            'rgba(199, 199, 199, 0.7)'
+        ];
         const ctx = document.getElementById('salesChart').getContext('2d');
         let chart;
-        function renderChart() {
+        function renderChart(labels, data, filter) {
             if (chart) chart.destroy();
-            chart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: overviewChartLabels,
-                    datasets: [{
-                        label: <?php echo $salesOverviewFilter === 'month' ? "'Units Sold (All Products)'" : "'Units Sold'"; ?>,
-                        data: overviewChartData,
-                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: { beginAtZero: true }
+            let chartConfig;
+            if (filter === 'month') {
+                chartConfig = {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: productNames.map((name, i) => ({
+                            label: name,
+                            data: data[i],
+                            backgroundColor: productColors[i],
+                            borderColor: productColors[i].replace('0.7', '1'),
+                            borderWidth: 1
+                        }))
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
                     }
-                }
-            });
+                };
+            } else {
+                chartConfig = {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Units Sold',
+                            data: data,
+                            backgroundColor: productColors,
+                            borderColor: productColors.map(c => c.replace('0.7', '1')),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                };
+            }
+            chart = new Chart(ctx, chartConfig);
         }
-
-        renderChart();
-
+        // Initial render with PHP data
+        renderChart(<?php echo json_encode($overviewChartLabels); ?>, <?php echo json_encode($overviewChartData); ?>, <?php echo json_encode($salesOverviewFilter); ?>);
         document.getElementById('sales-filter').addEventListener('change', function() {
             const val = this.value;
-            const url = new URL(window.location.href);
-            url.searchParams.set('sales_filter', val);
-            window.location.href = url.toString();
+            fetch('index.php?ajax=sales_overview&sales_filter=' + val)
+                .then(res => res.json())
+                .then(data => {
+                    renderChart(data.labels, data.data, data.filter);
+                });
         });
-
         // Set current date
         document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
             year: 'numeric',
