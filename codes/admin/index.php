@@ -14,6 +14,103 @@ if (isset($_GET['refill']) && $_GET['refill'] === '1') {
     header('Location: index.php');
     exit;
 }
+
+// --- Dashboard Stats Queries ---
+$today = date('Y-m-d');
+
+// Gallons Sold (Products 1-4, sum Quantity for today)
+$gallonsSold = 0;
+$res = $conn->query("SELECT SUM(Quantity) as total FROM Transaction WHERE ProductID BETWEEN 1 AND 4 AND DATE(TransactionDate) = '$today'");
+if ($res && $row = $res->fetch_assoc()) $gallonsSold = (int)$row['total'];
+
+// Water Bottles Sold (Products 5-8, sum Quantity for today)
+$bottlesSold = 0;
+$res = $conn->query("SELECT SUM(Quantity) as total FROM Transaction WHERE ProductID BETWEEN 5 AND 8 AND DATE(TransactionDate) = '$today'");
+if ($res && $row = $res->fetch_assoc()) $bottlesSold = (int)$row['total'];
+
+// Pending Orders (DeliveryStatus = 'pending' for today)
+$pendingOrders = 0;
+$res = $conn->query("SELECT COUNT(*) as total FROM Transaction WHERE DeliveryStatus = 'pending' AND DATE(TransactionDate) = '$today'");
+if ($res && $row = $res->fetch_assoc()) $pendingOrders = (int)$row['total'];
+
+// Today's Revenue (sum Price for today)
+$revenue = 0;
+$res = $conn->query("SELECT SUM(Price) as total FROM Transaction WHERE DATE(TransactionDate) = '$today'");
+if ($res && $row = $res->fetch_assoc()) $revenue = (float)$row['total'];
+
+// --- Sales Filter (Day/Week/Month) ---
+$salesFilter = isset($_GET['sales_filter']) ? $_GET['sales_filter'] : 'day';
+
+if ($salesFilter === 'week') {
+    $dateCondition = "YEARWEEK(TransactionDate, 1) = YEARWEEK(CURDATE(), 1)";
+} elseif ($salesFilter === 'month') {
+    $dateCondition = "YEAR(TransactionDate) = YEAR(CURDATE()) AND MONTH(TransactionDate) = MONTH(CURDATE())";
+} else {
+    $dateCondition = "DATE(TransactionDate) = CURDATE()";
+}
+
+// --- Dynamic Sales Summary (by ProductID and filter) ---
+$salesSummary = [
+    1 => 0, // Mineral Water
+    2 => 0, // Purified Water
+    3 => 0, // Alkaline Water
+    4 => 0, // Distilled Water
+    5 => 0, // Mineral Water Bottle
+    6 => 0, // Purified Water Bottle
+    7 => 0, // Alkaline Water Bottle
+    8 => 0  // Distilled Water Bottle
+];
+$res = $conn->query("SELECT ProductID, SUM(Quantity) as qty FROM Transaction WHERE $dateCondition GROUP BY ProductID");
+if ($res) {
+    while ($row = $res->fetch_assoc()) {
+        $pid = (int)$row['ProductID'];
+        if (isset($salesSummary[$pid])) {
+            $salesSummary[$pid] = (int)$row['qty'];
+        }
+    }
+}
+
+// --- Prepare Chart Data for Sales Chart ---
+$chartLabels = ['Mineral Water', 'Purified Water', 'Alkaline Water', 'Distilled Water', 'Mineral Water Bottle', 'Purified Water Bottle', 'Alkaline Water Bottle', 'Distilled Water Bottle'];
+$chartData = [];
+foreach ([1,2,3,4,5,6,7,8] as $pid) {
+    $chartData[] = $salesSummary[$pid];
+}
+
+// --- Sales Overview Filter (Day/Week/Month) ---
+$salesOverviewFilter = isset($_GET['sales_filter']) ? $_GET['sales_filter'] : 'day';
+
+$overviewChartLabels = [];
+$overviewChartData = [];
+if ($salesOverviewFilter === 'month') {
+    // Show sales per month for the current year
+    $months = [
+        1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April', 5 => 'May', 6 => 'June',
+        7 => 'July', 8 => 'August', 9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'
+    ];
+    $overviewChartLabels = array_values($months);
+    $overviewChartData = array_fill(0, 12, 0);
+    $res = $conn->query("SELECT MONTH(TransactionDate) as month, SUM(Quantity) as qty FROM Transaction WHERE YEAR(TransactionDate) = YEAR(CURDATE()) GROUP BY month");
+    if ($res) {
+        while ($row = $res->fetch_assoc()) {
+            $m = (int)$row['month'];
+            $overviewChartData[$m-1] = (int)$row['qty'];
+        }
+    }
+} else {
+    // Day or week: show per product
+    $overviewChartLabels = ['Mineral Water', 'Purified Water', 'Alkaline Water', 'Distilled Water', 'Mineral Water Bottle', 'Purified Water Bottle', 'Alkaline Water Bottle', 'Distilled Water Bottle'];
+    $overviewChartData = [0,0,0,0,0,0,0,0];
+    $res = $conn->query("SELECT ProductID, SUM(Quantity) as qty FROM Transaction WHERE $dateCondition GROUP BY ProductID");
+    if ($res) {
+        while ($row = $res->fetch_assoc()) {
+            $pid = (int)$row['ProductID'];
+            if ($pid >= 1 && $pid <= 8) {
+                $overviewChartData[$pid-1] = (int)$row['qty'];
+            }
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -54,7 +151,7 @@ if (isset($_GET['refill']) && $_GET['refill'] === '1') {
                     <i class="fas fa-droplet"></i>
                 </div>
                 <div class="stat-details">
-                    <h3>46</h3>
+                    <h3><?php echo $gallonsSold; ?></h3>
                     <p>Gallons Sold</p>
                 </div>
             </div>
@@ -64,7 +161,7 @@ if (isset($_GET['refill']) && $_GET['refill'] === '1') {
                     <i class="fas fa-droplet"></i>
                 </div>
                 <div class="stat-details">
-                    <h3>5</h3>
+                    <h3><?php echo $bottlesSold; ?></h3>
                     <p>Water Bottles Sold</p>
                 </div>
             </div>
@@ -74,7 +171,7 @@ if (isset($_GET['refill']) && $_GET['refill'] === '1') {
                     <i class="fas fa-list-check"></i>
                 </div>
                 <div class="stat-details">
-                    <h3>2</h3>
+                    <h3><?php echo $pendingOrders; ?></h3>
                     <p>Pending Orders</p>
                 </div>
             </div>
@@ -84,7 +181,7 @@ if (isset($_GET['refill']) && $_GET['refill'] === '1') {
                     <i class="fas fa-coins"></i>
                 </div>
                 <div class="stat-details">
-                    <h3>$240</h3>
+                    <h3>₱<?php echo number_format($revenue, 2); ?></h3>
                     <p>Today's Revenue</p>
                 </div>
             </div>
@@ -135,49 +232,40 @@ if (isset($_GET['refill']) && $_GET['refill'] === '1') {
             <div class="card">
                 <div class="card-header">
                     <h3><i class="fas fa-chart-bar"></i> Today's Sales</h3>
-                    <div class="card-actions">
-                        <div class="date-selector">
-                            <button class="date-btn active">Day</button>
-                            <button class="date-btn">Week</button>
-                            <button class="date-btn">Month</button>
-                        </div>
-                    </div>
                 </div>
                 <div class="card-body">
-                    <div class="sales-chart">
-                        <div class="chart-bar" style="height: 30%;">
-                            <div class="bar-label">Mineral</div>
-                        </div>
-                        <div class="chart-bar" style="height: 50%;">
-                            <div class="bar-label">Purified</div>
-                        </div>
-                        <div class="chart-bar" style="height: 15%;">
-                            <div class="bar-label">Alkaline</div>
-                        </div>
-                        <div class="chart-bar" style="height: 15%;">
-                            <div class="bar-label">Kanjen</div>
-                        </div>
-                    </div>
                     <div class="sales-summary">
                         <div class="sales-item">
                             <div class="sales-label">Mineral Water</div>
-                            <div class="sales-value">15 gallons</div>
+                            <div class="sales-value"><?php echo $salesSummary[1]; ?></div>
                         </div>
                         <div class="sales-item">
                             <div class="sales-label">Purified Water</div>
-                            <div class="sales-value">23 gallons</div>
+                            <div class="sales-value"><?php echo $salesSummary[2]; ?></div>
                         </div>
                         <div class="sales-item">
                             <div class="sales-label">Alkaline Water</div>
-                            <div class="sales-value">8 gallons</div>
+                            <div class="sales-value"><?php echo $salesSummary[3]; ?></div>
                         </div>
                         <div class="sales-item">
-                            <div class="sales-label">Kanjen Water</div>
-                            <div class="sales-value">8 gallons</div>
+                            <div class="sales-label">Distilled Water</div>
+                            <div class="sales-value"><?php echo $salesSummary[4]; ?></div>
                         </div>
-                        <div class="sales-item total">
-                            <div class="sales-label">Total</div>
-                            <div class="sales-value">46 gallons</div>
+                        <div class="sales-item">
+                            <div class="sales-label">Mineral Water Bottle</div>
+                            <div class="sales-value"><?php echo $salesSummary[5]; ?></div>
+                        </div>
+                        <div class="sales-item">
+                            <div class="sales-label">Purified Water Bottle</div>
+                            <div class="sales-value"><?php echo $salesSummary[6]; ?></div>
+                        </div>
+                        <div class="sales-item">
+                            <div class="sales-label">Alkaline Water Bottle</div>
+                            <div class="sales-value"><?php echo $salesSummary[7]; ?></div>
+                        </div>
+                        <div class="sales-item">
+                            <div class="sales-label">Distilled Water Bottle</div>
+                            <div class="sales-value"><?php echo $salesSummary[8]; ?></div>
                         </div>
                     </div>
                 </div>
@@ -190,9 +278,9 @@ if (isset($_GET['refill']) && $_GET['refill'] === '1') {
                 <h3><i class="fas fa-chart-bar"></i> Sales Overview</h3>
                 <div class="card-actions">
                     <select id="sales-filter">
-                        <option value="day">Day</option>
-                        <option value="week">Week</option>
-                        <option value="month">Month</option>
+                        <option value="day" <?php if($salesOverviewFilter==='day') echo 'selected'; ?>>Day</option>
+                        <option value="week" <?php if($salesOverviewFilter==='week') echo 'selected'; ?>>Week</option>
+                        <option value="month" <?php if($salesOverviewFilter==='month') echo 'selected'; ?>>Month</option>
                     </select>
                 </div>
             </div>
@@ -203,58 +291,51 @@ if (isset($_GET['refill']) && $_GET['refill'] === '1') {
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const ctx = document.getElementById('salesChart').getContext('2d');
-            let chart;
-            function renderChart(type) {
-                const dataSets = {
-                    day: [12, 19, 3, 5, 2, 3],
-                    week: [50, 60, 70, 80, 90, 100, 110],
-                    month: [200, 180, 220, 210, 250, 230, 240, 260, 270, 280, 290, 300]
-                };
-                const labelsSets = {
-                    day: ['Mineral', 'Purified', 'Alkaline', 'Distilled', 'Other'],
-                    week: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-                };
-                if (chart) chart.destroy();
-                chart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labelsSets[type],
-                        datasets: [{
-                            label: 'Sales',
-                            data: dataSets[type],
-                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: { beginAtZero: true }
-                        }
-                    }
-                });
-            }
-            const filter = document.getElementById('sales-filter');
-            filter.addEventListener('change', function() {
-                renderChart(this.value);
-            });
-            renderChart('day');
-        });
-        </script>
-    </div>
+        const overviewChartLabels = <?php echo json_encode($overviewChartLabels); ?>;
+        const overviewChartData = <?php echo json_encode($overviewChartData); ?>;
 
-    <script>
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        let chart;
+        function renderChart() {
+            if (chart) chart.destroy();
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: overviewChartLabels,
+                    datasets: [{
+                        label: <?php echo $salesOverviewFilter === 'month' ? "'Units Sold (All Products)'" : "'Units Sold'"; ?>,
+                        data: overviewChartData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        renderChart();
+
+        document.getElementById('sales-filter').addEventListener('change', function() {
+            const val = this.value;
+            const url = new URL(window.location.href);
+            url.searchParams.set('sales_filter', val);
+            window.location.href = url.toString();
+        });
+
         // Set current date
         document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
         });
-    </script>
+        </script>
+    </div>
 </body>
 
 </html>
