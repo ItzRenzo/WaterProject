@@ -1,3 +1,42 @@
+<?php
+require_once '../../Database/db_config.php';
+
+// Date range filter
+$startDate = isset($_GET['startDate']) ? $_GET['startDate'] : date('Y-m-01');
+$endDate = isset($_GET['endDate']) ? $_GET['endDate'] : date('Y-m-d');
+
+$where = "WHERE DATE(TransactionDate) >= '$startDate' AND DATE(TransactionDate) <= '$endDate'";
+$where_exp = "WHERE ExpenseDate >= '$startDate' AND ExpenseDate <= '$endDate'";
+
+// Total Sales (only Delivered and Completed)
+$totalSales = 0;
+$res = $conn->query("SELECT SUM(Price) as total FROM Transaction $where AND (DeliveryStatus = 'Delivered' OR DeliveryStatus = 'Completed')");
+if ($res && $row = $res->fetch_assoc()) $totalSales = (float)$row['total'];
+
+// Orders
+$totalOrders = 0;
+$res = $conn->query("SELECT COUNT(*) as total FROM Transaction $where");
+if ($res && $row = $res->fetch_assoc()) $totalOrders = (int)$row['total'];
+
+// Customers
+$totalCustomers = 0;
+$res = $conn->query("SELECT COUNT(DISTINCT CustomerID) as total FROM Transaction $where");
+if ($res && $row = $res->fetch_assoc()) $totalCustomers = (int)$row['total'];
+
+// Expenses
+$totalExpenses = 0;
+$res = $conn->query("SELECT SUM(Amount) as total FROM LoggedExpenses $where_exp");
+if ($res && $row = $res->fetch_assoc()) $totalExpenses = (float)$row['total'];
+
+// Recent Transactions
+$recentTransactions = [];
+$res = $conn->query("SELECT t.TransactionID, t.TransactionDate, c.CustomerName, t.Quantity, t.Price, t.DeliveryStatus FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID $where ORDER BY t.TransactionDate DESC LIMIT 10");
+if ($res) {
+    while ($row = $res->fetch_assoc()) {
+        $recentTransactions[] = $row;
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -32,11 +71,11 @@
                 <div class="date-range">
                     <div class="date-input">
                         <label for="startDate">From:</label>
-                        <input type="date" id="startDate">
+                        <input type="date" id="startDate" value="<?php echo $startDate; ?>">
                     </div>
                     <div class="date-input">
                         <label for="endDate">To:</label>
-                        <input type="date" id="endDate">
+                        <input type="date" id="endDate" value="<?php echo $endDate; ?>">
                     </div>
                 </div>
                 <button class="export-btn">
@@ -53,41 +92,34 @@
                 </div>
                 <div class="report-card-info">
                     <h3>Total Sales</h3>
-                    <p class="amount">₱152,450.00</p>
-                    <p class="trend positive"><i class="fas fa-arrow-up"></i> 12.5%</p>
+                    <p class="amount">₱<?php echo number_format($totalSales, 2); ?></p>
                 </div>
             </div>
-
             <div class="report-card">
                 <div class="report-card-icon orders">
                     <i class="fas fa-shopping-cart"></i>
                 </div>
                 <div class="report-card-info">
                     <h3>Orders</h3>
-                    <p class="amount">385</p>
-                    <p class="trend positive"><i class="fas fa-arrow-up"></i> 8.2%</p>
+                    <p class="amount"><?php echo $totalOrders; ?></p>
                 </div>
             </div>
-
             <div class="report-card">
                 <div class="report-card-icon customers">
                     <i class="fas fa-users"></i>
                 </div>
                 <div class="report-card-info">
                     <h3>Customers</h3>
-                    <p class="amount">42</p>
-                    <p class="trend positive"><i class="fas fa-arrow-up"></i> 15.3%</p>
+                    <p class="amount"><?php echo $totalCustomers; ?></p>
                 </div>
             </div>
-
             <div class="report-card">
                 <div class="report-card-icon expenses">
                     <i class="fas fa-file-invoice-dollar"></i>
                 </div>
                 <div class="report-card-info">
                     <h3>Expenses</h3>
-                    <p class="amount">₱62,780.00</p>
-                    <p class="trend negative"><i class="fas fa-arrow-up"></i> 5.8%</p>
+                    <p class="amount">₱<?php echo number_format($totalExpenses, 2); ?></p>
                 </div>
             </div>
         </div>
@@ -116,46 +148,16 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <?php foreach ($recentTransactions as $tx): ?>
                         <tr>
-                            <td>#ORD256</td>
-                            <td>Apr 07, 2025</td>
-                            <td>John Doe</td>
-                            <td>3 items</td>
-                            <td>₱425.00</td>
-                            <td><span class="status-badge complete">Completed</span></td>
+                            <td>#ORD<?php echo $tx['TransactionID']; ?></td>
+                            <td><?php echo date('M d, Y', strtotime($tx['TransactionDate'])); ?></td>
+                            <td><?php echo htmlspecialchars($tx['CustomerName']); ?></td>
+                            <td><?php echo $tx['Quantity']; ?> item<?php echo $tx['Quantity'] > 1 ? 's' : ''; ?></td>
+                            <td>₱<?php echo number_format($tx['Price'], 2); ?></td>
+                            <td><span class="status-badge <?php echo strtolower($tx['DeliveryStatus']) === 'pending' ? 'pending' : 'complete'; ?>"><?php echo ucfirst($tx['DeliveryStatus']); ?></span></td>
                         </tr>
-                        <tr>
-                            <td>#ORD255</td>
-                            <td>Apr 07, 2025</td>
-                            <td>Maria Santos</td>
-                            <td>2 items</td>
-                            <td>₱350.00</td>
-                            <td><span class="status-badge complete">Completed</span></td>
-                        </tr>
-                        <tr>
-                            <td>#ORD254</td>
-                            <td>Apr 06, 2025</td>
-                            <td>Robert Lee</td>
-                            <td>5 items</td>
-                            <td>₱680.00</td>
-                            <td><span class="status-badge complete">Completed</span></td>
-                        </tr>
-                        <tr>
-                            <td>#ORD253</td>
-                            <td>Apr 06, 2025</td>
-                            <td>Anna Garcia</td>
-                            <td>1 item</td>
-                            <td>₱175.00</td>
-                            <td><span class="status-badge complete">Completed</span></td>
-                        </tr>
-                        <tr>
-                            <td>#ORD252</td>
-                            <td>Apr 05, 2025</td>
-                            <td>Michael Wilson</td>
-                            <td>4 items</td>
-                            <td>₱520.00</td>
-                            <td><span class="status-badge pending">Processing</span></td>
-                        </tr>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>

@@ -91,9 +91,9 @@ $pendingOrders = 0;
 $res = $conn->query("SELECT COUNT(*) as total FROM Transaction WHERE DeliveryStatus = 'pending' AND DATE(TransactionDate) = '$today'");
 if ($res && $row = $res->fetch_assoc()) $pendingOrders = (int)$row['total'];
 
-// Today's Revenue (sum Price for today)
+// Today's Revenue (sum Price for today, only Delivered and Completed)
 $revenue = 0;
-$res = $conn->query("SELECT SUM(Price) as total FROM Transaction WHERE DATE(TransactionDate) = '$today'");
+$res = $conn->query("SELECT SUM(Price) as total FROM Transaction WHERE DATE(TransactionDate) = '$today' AND (DeliveryStatus = 'Delivered' OR DeliveryStatus = 'Completed')");
 if ($res && $row = $res->fetch_assoc()) $revenue = (float)$row['total'];
 
 // --- Sales Filter (Day/Week/Month) ---
@@ -240,7 +240,7 @@ if ($salesOverviewFilter === 'month') {
                 </div>
                 <div class="stat-details">
                     <h3><?php echo $pendingOrders; ?></h3>
-                    <p>Pending Orders</p>
+                    <p>Pending Delivery</p>
                 </div>
             </div>
 
