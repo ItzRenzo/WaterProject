@@ -1,6 +1,44 @@
 <?php
 require_once '../../Database/db_config.php';
 
+// Handle export
+if (isset($_GET['export']) && in_array($_GET['export'], ['csv', 'excel', 'pdf'])) {
+    $startDate = isset($_GET['startDate']) ? $_GET['startDate'] : date('Y-m-01');
+    $endDate = isset($_GET['endDate']) ? $_GET['endDate'] : date('Y-m-d');
+    $where = "WHERE DATE(TransactionDate) >= '$startDate' AND DATE(TransactionDate) <= '$endDate' AND (DeliveryStatus = 'Delivered' OR DeliveryStatus = 'Completed')";
+    $res = $conn->query("SELECT t.TransactionID, t.TransactionDate, c.CustomerName, t.Quantity, t.Price, t.DeliveryStatus FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID $where ORDER BY t.TransactionDate DESC");
+    $rows = [];
+    if ($res) {
+        while ($row = $res->fetch_assoc()) {
+            $rows[] = $row;
+        }
+    }
+    if ($_GET['export'] === 'csv' || $_GET['export'] === 'excel') {
+        $filename = 'sales_report_' . $startDate . '_to_' . $endDate . '.' . ($_GET['export'] === 'csv' ? 'csv' : 'xls');
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        $out = fopen('php://output', 'w');
+        fputcsv($out, ['Order ID', 'Date', 'Customer', 'Quantity', 'Amount', 'Status']);
+        foreach ($rows as $row) {
+            fputcsv($out, [
+                '#ORD' . $row['TransactionID'],
+                date('Y-m-d H:i', strtotime($row['TransactionDate'])),
+                $row['CustomerName'],
+                $row['Quantity'],
+                $row['Price'],
+                $row['DeliveryStatus']
+            ]);
+        }
+        fclose($out);
+        exit;
+    } elseif ($_GET['export'] === 'pdf') {
+        // Placeholder: PDF export not implemented
+        header('Content-Type: text/plain');
+        echo "PDF export is not implemented in this demo.";
+        exit;
+    }
+}
+
 // Date range filter
 $startDate = isset($_GET['startDate']) ? $_GET['startDate'] : date('Y-m-01');
 $endDate = isset($_GET['endDate']) ? $_GET['endDate'] : date('Y-m-d');
@@ -28,9 +66,25 @@ $totalExpenses = 0;
 $res = $conn->query("SELECT SUM(Amount) as total FROM LoggedExpenses $where_exp");
 if ($res && $row = $res->fetch_assoc()) $totalExpenses = (float)$row['total'];
 
-// Recent Transactions
+// Pagination setup
+$perPage = 10;
+$page = isset($_GET['page']) && (is_numeric($_GET['page']) && $_GET['page'] > 0) ? (int)$_GET['page'] : 1;
+$showAll = isset($_GET['page']) && $_GET['page'] === 'all';
+$offset = ($page - 1) * $perPage;
+
+// Count total filtered transactions
+$countRes = $conn->query("SELECT COUNT(*) as total FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID $where");
+$totalRows = 0;
+if ($countRes && $row = $countRes->fetch_assoc()) $totalRows = (int)$row['total'];
+$totalPages = max(1, ceil($totalRows / $perPage));
+
+// Recent Transactions (paginated or all)
 $recentTransactions = [];
-$res = $conn->query("SELECT t.TransactionID, t.TransactionDate, c.CustomerName, t.Quantity, t.Price, t.DeliveryStatus FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID $where ORDER BY t.TransactionDate DESC LIMIT 10");
+if ($showAll) {
+    $res = $conn->query("SELECT t.TransactionID, t.TransactionDate, c.CustomerName, t.Quantity, t.Price, t.DeliveryStatus FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID $where ORDER BY t.TransactionDate DESC");
+} else {
+    $res = $conn->query("SELECT t.TransactionID, t.TransactionDate, c.CustomerName, t.Quantity, t.Price, t.DeliveryStatus FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID $where ORDER BY t.TransactionDate DESC LIMIT $perPage OFFSET $offset");
+}
 if ($res) {
     while ($row = $res->fetch_assoc()) {
         $recentTransactions[] = $row;
@@ -50,6 +104,9 @@ if ($res) {
         rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="Sidebar.html">
+    <style>
+    /* Removed all @media print CSS as requested */
+    </style>
 </head>
 
 <body>
@@ -67,21 +124,23 @@ if ($res) {
         <!-- Header Section -->
         <div class="reports-header">
             <h2>Reports</h2>
-            <div class="report-actions">
-                <div class="date-range">
-                    <div class="date-input">
-                        <label for="startDate">From:</label>
-                        <input type="date" id="startDate" value="<?php echo $startDate; ?>">
+            <form id="date-filter-form" method="get" style="display:inline;">
+                <div class="report-actions">
+                    <div class="date-range">
+                        <div class="date-input">
+                            <label for="startDate">From:</label>
+                            <input type="date" id="startDate" name="startDate" value="<?php echo $startDate; ?>">
+                        </div>
+                        <div class="date-input">
+                            <label for="endDate">To:</label>
+                            <input type="date" id="endDate" name="endDate" value="<?php echo $endDate; ?>">
+                        </div>
                     </div>
-                    <div class="date-input">
-                        <label for="endDate">To:</label>
-                        <input type="date" id="endDate" value="<?php echo $endDate; ?>">
-                    </div>
+                    <button type="button" class="export-btn" id="export-btn">
+                        <i class="fas fa-file-export"></i> Export
+                    </button>
                 </div>
-                <button class="export-btn">
-                    <i class="fas fa-file-export"></i> Export
-                </button>
-            </div>
+            </form>
         </div>
 
         <!-- Report Overview Cards -->
@@ -162,11 +221,21 @@ if ($res) {
                 </table>
             </div>
             <div class="pagination">
-                <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
-                <button class="page-btn active">1</button>
-                <button class="page-btn">2</button>
-                <button class="page-btn">3</button>
-                <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+                <?php if (!$showAll): ?>
+                    <?php if ($page > 1): ?>
+                    <a class="page-btn" href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page-1])); ?>"><i class="fas fa-chevron-left"></i></a>
+                    <?php endif; ?>
+                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                    <a class="page-btn<?php if ($i == $page) echo ' active'; ?>" href="?<?php echo http_build_query(array_merge($_GET, ['page' => $i])); ?>"><?php echo $i; ?></a>
+                    <?php endfor; ?>
+                    <?php if ($page < $totalPages): ?>
+                    <a class="page-btn" href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page+1])); ?>"><i class="fas fa-chevron-right"></i></a>
+                    <?php endif; ?>
+                    <a class="page-btn" href="?<?php echo http_build_query(array_merge($_GET, ['page' => 'all'])); ?>">All</a>
+                <?php else: ?>
+                    <a class="page-btn active" href="#">All</a>
+                    <a class="page-btn" href="?<?php echo http_build_query(array_merge($_GET, ['page' => 1])); ?>">Paginate</a>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -205,28 +274,45 @@ if ($res) {
         document.getElementById('startDate').valueAsDate = firstDay;
         document.getElementById('endDate').valueAsDate = today;
 
+        // Date filter auto-submit
+        document.getElementById('startDate').addEventListener('change', function() {
+            document.getElementById('date-filter-form').submit();
+        });
+        document.getElementById('endDate').addEventListener('change', function() {
+            document.getElementById('date-filter-form').submit();
+        });
+
         // Export modal functionality
-        const exportBtn = document.querySelector('.export-btn');
-        const exportModal = document.getElementById('exportModal');
+        const exportBtn = document.getElementById('export-btn');
+        exportBtn.addEventListener('click', function () {
+            const format = prompt('Export as: csv, excel, or pdf? (Type one)');
+            if (!format) return;
+            if (!['csv','excel','pdf'].includes(format)) { alert('Invalid format.'); return; }
+            if (format === 'pdf') {
+                window.print();
+                return;
+            }
+            const form = document.getElementById('date-filter-form');
+            const params = new URLSearchParams(new FormData(form));
+            params.set('export', format);
+            window.location = 'reports.php?' + params.toString();
+        });
+
         const closeBtn = document.querySelector('.close-btn');
         const cancelBtn = document.querySelector('.cancel-btn');
 
-        exportBtn.addEventListener('click', function () {
-            exportModal.classList.add('show');
-        });
-
         closeBtn.addEventListener('click', function () {
-            exportModal.classList.remove('show');
+            document.getElementById('exportModal').classList.remove('show');
         });
 
         cancelBtn.addEventListener('click', function () {
-            exportModal.classList.remove('show');
+            document.getElementById('exportModal').classList.remove('show');
         });
 
         // Close modal on outside click
         window.addEventListener('click', function (e) {
-            if (e.target === exportModal) {
-                exportModal.classList.remove('show');
+            if (e.target === document.getElementById('exportModal')) {
+                document.getElementById('exportModal').classList.remove('show');
             }
         });
     </script>
