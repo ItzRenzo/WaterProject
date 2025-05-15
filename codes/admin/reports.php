@@ -1,5 +1,7 @@
 <?php
 require_once '../../Database/db_config.php';
+require_once __DIR__ . '/../../vendor/dompdf/autoload.inc.php';
+use Dompdf\Dompdf;
 
 // Handle export
 if (isset($_GET['export']) && in_array($_GET['export'], ['csv', 'excel', 'pdf'])) {
@@ -8,9 +10,15 @@ if (isset($_GET['export']) && in_array($_GET['export'], ['csv', 'excel', 'pdf'])
     $where = "WHERE DATE(TransactionDate) >= '$startDate' AND DATE(TransactionDate) <= '$endDate' AND (DeliveryStatus = 'Delivered' OR DeliveryStatus = 'Completed')";
     $res = $conn->query("SELECT t.TransactionID, t.TransactionDate, c.CustomerName, t.Quantity, t.Price, t.DeliveryStatus FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID $where ORDER BY t.TransactionDate DESC");
     $rows = [];
+    $totalSales = 0;
+    $totalOrders = 0;
+    $totalItems = 0;
     if ($res) {
         while ($row = $res->fetch_assoc()) {
             $rows[] = $row;
+            $totalSales += (float)$row['Price'];
+            $totalOrders++;
+            $totalItems += (int)$row['Quantity'];
         }
     }
     if ($_GET['export'] === 'csv' || $_GET['export'] === 'excel') {
@@ -32,9 +40,31 @@ if (isset($_GET['export']) && in_array($_GET['export'], ['csv', 'excel', 'pdf'])
         fclose($out);
         exit;
     } elseif ($_GET['export'] === 'pdf') {
-        // Placeholder: PDF export not implemented
-        header('Content-Type: text/plain');
-        echo "PDF export is not implemented in this demo.";
+        $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Sales Report</title>';
+        $html .= '<style>body{font-family:sans-serif;font-size:12px;}h2{margin-bottom:0;}table{border-collapse:collapse;width:100%;margin-top:10px;}th,td{border:1px solid #333;padding:4px 6px;text-align:left;}th{background:#eee;}tfoot td{font-weight:bold;}</style>';
+        $html .= '</head><body>';
+        $html .= '<h2>Sales Report</h2>';
+        $html .= '<div>Date Range: <b>' . htmlspecialchars($startDate) . '</b> to <b>' . htmlspecialchars($endDate) . '</b></div>';
+        $html .= '<div>Total Orders: <b>' . $totalOrders . '</b> | Total Items: <b>' . $totalItems . '</b> | Total Sales: <b>₱' . number_format($totalSales,2) . '</b></div>';
+        $html .= '<table><thead><tr><th>Order ID</th><th>Date</th><th>Customer</th><th>Items</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
+        foreach ($rows as $row) {
+            $html .= '<tr>';
+            $html .= '<td>#ORD' . $row['TransactionID'] . '</td>';
+            $html .= '<td>' . date('Y-m-d H:i', strtotime($row['TransactionDate'])) . '</td>';
+            $html .= '<td>' . htmlspecialchars($row['CustomerName']) . '</td>';
+            $html .= '<td>' . $row['Quantity'] . '</td>';
+            $html .= '<td>₱' . number_format($row['Price'],2) . '</td>';
+            $html .= '<td>' . htmlspecialchars($row['DeliveryStatus']) . '</td>';
+            $html .= '</tr>';
+        }
+        $html .= '</tbody></table>';
+        $html .= '</body></html>';
+
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
+        $dompdf->stream('sales_report.pdf', ['Attachment' => false]);
         exit;
     }
 }
@@ -288,10 +318,6 @@ if ($res) {
             const format = prompt('Export as: csv, excel, or pdf? (Type one)');
             if (!format) return;
             if (!['csv','excel','pdf'].includes(format)) { alert('Invalid format.'); return; }
-            if (format === 'pdf') {
-                window.print();
-                return;
-            }
             const form = document.getElementById('date-filter-form');
             const params = new URLSearchParams(new FormData(form));
             params.set('export', format);
