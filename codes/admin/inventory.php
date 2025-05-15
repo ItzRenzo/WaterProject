@@ -6,11 +6,12 @@ include_once '../../Database/db_check.php';
 // Retrieve products from database
 $productQuery = "SELECT p.*, c.ContainerType FROM Product p 
                 LEFT JOIN Container c ON p.ContainerID = c.ContainerID 
+                WHERE p.ProductStatus != 'deleted'
                 ORDER BY p.ProductID DESC";
 $productResult = $conn->query($productQuery);
 
 // Retrieve containers from database
-$containerQuery = "SELECT * FROM Container ORDER BY ContainerID DESC";
+$containerQuery = "SELECT * FROM Container WHERE ContainerStatus != 'deleted' ORDER BY ContainerID DESC";
 $containerResult = $conn->query($containerQuery);
 
 // Count total products
@@ -92,7 +93,7 @@ $lowStockCount = $lowStockResult->fetch_assoc()['low_stock_count'];
 
             <div class="products-grid">
                 <?php while ($product = $productResult->fetch_assoc()) { ?>
-                <div class="product-card">
+                <div class="product-card" data-id="<?php echo $product['ProductID']; ?>">
                     <div class="product-header">
                         <div class="product-name"><?php echo $product['ProductName']; ?></div>
                         <span class="stock-badge <?php echo $product['Stocks'] < 10 ? 'low-stock' : 'in-stock'; ?>">
@@ -147,7 +148,7 @@ $lowStockCount = $lowStockResult->fetch_assoc()['low_stock_count'];
 
             <div class="containers-grid">
                 <?php while ($container = $containerResult->fetch_assoc()) { ?>
-                <div class="product-card container-card">
+                <div class="product-card container-card" data-id="<?php echo $container['ContainerID']; ?>">
                     <div class="product-header">
                         <div class="product-name"><?php echo $container['ContainerType']; ?></div>
                         <span class="stock-badge <?php echo $container['Stocks'] < 20 ? 'low-stock' : 'in-stock'; ?>">
@@ -588,6 +589,60 @@ $lowStockCount = $lowStockResult->fetch_assoc()['low_stock_count'];
                 }
             });
             addStocksInput.addEventListener('input', validateStockInput);
+
+            // Add event listeners to all product delete buttons
+            document.querySelectorAll('.product-card:not(.container-card) .delete-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    if (!confirm('Are you sure you want to delete this product?')) return;
+                    const productCard = this.closest('.product-card');
+                    // Get product name (assuming it's unique)
+                    const productName = productCard.querySelector('.product-name').textContent;
+                    // Find product ID by matching name in PHP (or add data-id in HTML for robustness)
+                    // For now, let's add a data-id attribute in the PHP loop for each product card
+                    const productId = productCard.getAttribute('data-id');
+                    const formData = new FormData();
+                    formData.append('productId', productId);
+                    fetch('../../codes/Controllers/delete_product.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.text())
+                    .then(result => {
+                        if (result.trim() === 'success') {
+                            showNotification('Product deleted successfully!', 'success');
+                            productCard.remove();
+                        } else {
+                            showNotification('Failed to delete product.', 'error');
+                        }
+                    })
+                    .catch(() => showNotification('Server error.', 'error'));
+                });
+            });
+
+            // Add event listeners to all container delete buttons
+            document.querySelectorAll('.container-card .delete-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    if (!confirm('Are you sure you want to delete this container?')) return;
+                    const containerCard = this.closest('.container-card');
+                    const containerId = containerCard.getAttribute('data-id');
+                    const formData = new FormData();
+                    formData.append('containerId', containerId);
+                    fetch('../../codes/Controllers/delete_container.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.text())
+                    .then(result => {
+                        if (result.trim() === 'success') {
+                            showNotification('Container deleted successfully!', 'success');
+                            containerCard.remove();
+                        } else {
+                            showNotification('Failed to delete container.', 'error');
+                        }
+                    })
+                    .catch(() => showNotification('Server error.', 'error'));
+                });
+            });
         });
 
         // Add Container Modal Functionality
