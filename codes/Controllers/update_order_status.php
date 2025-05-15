@@ -22,12 +22,12 @@ if (isset($data['transaction_ids']) && is_array($data['transaction_ids']) && iss
     $params = $data['transaction_ids'];
     $query = "UPDATE Transaction SET DeliveryStatus = ? WHERE TransactionID IN ($placeholders)";
     $stmt = $conn->prepare($query);
-    $bind_names[] = $status;
-    foreach ($params as $k => $param) {
-        $bind_names[] = &$params[$k];
-    }
     $bind_types = 's' . $types;
-    call_user_func_array([$stmt, 'bind_param'], array_merge([$bind_types], $bind_names));
+    $bind_values = [$bind_types, &$status];
+    foreach ($params as $k => &$param) {
+        $bind_values[] = &$param;
+    }
+    call_user_func_array([$stmt, 'bind_param'], $bind_values);
     $success = $stmt->execute();
     $stmt->close();
 } elseif (isset($data['transaction_id']) && isset($data['status'])) {

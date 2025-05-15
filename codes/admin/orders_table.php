@@ -5,7 +5,8 @@ include_once '../../Database/db_check.php';
 
 // Pagination logic
 $orders_per_page = 10;
-$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$page = isset($_GET['page']) && is_numeric($_GET['page']) && $_GET['page'] > 0 ? (int)$_GET['page'] : 1;
+$showAll = isset($_GET['page']) && $_GET['page'] === 'all';
 $offset = ($page - 1) * $orders_per_page;
 
 // Date filter logic
@@ -31,7 +32,7 @@ if ($search !== '') {
 }
 
 // Get total count for pagination with date filter and search
-$count_sql = "SELECT COUNT(*) as total FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID JOIN Product p ON t.ProductID = p.ProductID WHERE t.Status = 'active' $date_sql $search_sql";
+$count_sql = "SELECT COUNT(*) as total FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID JOIN Product p ON t.ProductID = p.ProductID WHERE 1=1 $date_sql $search_sql";
 $count_stmt = $conn->prepare($count_sql);
 if ($search !== '') {
     $count_stmt->bind_param(str_repeat('s', count($search_params)), ...$search_params);
@@ -42,18 +43,27 @@ $total_orders = 0;
 if ($count_result && $row = $count_result->fetch_assoc()) {
     $total_orders = $row['total'];
 }
-$total_pages = ceil($total_orders / $orders_per_page);
+$total_pages = $orders_per_page > 0 ? ceil($total_orders / $orders_per_page) : 1;
 
-// Retrieve paginated active transactions with date filter and search
+// Retrieve paginated transactions with date filter and search
 $orders = [];
-$sql = "SELECT t.TransactionID, c.CustomerName, p.ProductName, t.Price, t.Quantity, t.PaymentMethod, t.TransactionDate, t.Status FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID JOIN Product p ON t.ProductID = p.ProductID WHERE t.Status = 'active' $date_sql $search_sql ORDER BY t.TransactionDate DESC LIMIT ? OFFSET ?";
-$stmt = $conn->prepare($sql);
-if ($search !== '') {
-    $types = str_repeat('s', count($search_params)) . 'ii';
-    $params = array_merge($search_params, [$orders_per_page, $offset]);
-    $stmt->bind_param($types, ...$params);
+if ($showAll) {
+    $sql = "SELECT t.TransactionID, c.CustomerName, p.ProductName, t.Price, t.Quantity, t.PaymentMethod, t.TransactionDate FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID JOIN Product p ON t.ProductID = p.ProductID WHERE 1=1 $date_sql $search_sql ORDER BY t.TransactionDate DESC";
+    $stmt = $conn->prepare($sql);
+    if ($search !== '') {
+        $types = str_repeat('s', count($search_params));
+        $stmt->bind_param($types, ...$search_params);
+    }
 } else {
-    $stmt->bind_param('ii', $orders_per_page, $offset);
+    $sql = "SELECT t.TransactionID, c.CustomerName, p.ProductName, t.Price, t.Quantity, t.PaymentMethod, t.TransactionDate FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID JOIN Product p ON t.ProductID = p.ProductID WHERE 1=1 $date_sql $search_sql ORDER BY t.TransactionDate DESC LIMIT ? OFFSET ?";
+    $stmt = $conn->prepare($sql);
+    if ($search !== '') {
+        $types = str_repeat('s', count($search_params)) . 'ii';
+        $params = array_merge($search_params, [$orders_per_page, $offset]);
+        $stmt->bind_param($types, ...$params);
+    } else {
+        $stmt->bind_param('ii', $orders_per_page, $offset);
+    }
 }
 $stmt->execute();
 $result = $stmt->get_result();
@@ -127,13 +137,18 @@ if ($result && $result->num_rows > 0) {
 <!-- Show number of queries retrieved -->
 <div class="orders-count" style="margin-top:10px; color:#555; font-size:15px;">
     Showing <?php echo count($orders); ?> order<?php echo count($orders) === 1 ? '' : 's'; ?> on this page.<br>
-    Total for filter '<?php echo htmlspecialchars(ucfirst($date_filter)); ?>': <b><?php echo $total_orders; ?></b> order<?php echo $total_orders === 1 ? '' : 's'; ?> found.
 </div>
 <!-- Pagination Controls -->
 <div class="pagination">
     <?php if ($total_pages > 1): ?>
+        <?php if ($page > 1): ?>
+            <a href="#" class="pagination-btn" data-page="<?php echo $page - 1; ?>">&laquo;</a>
+        <?php endif; ?>
         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
             <a href="#" class="pagination-btn<?php if ($i == $page) echo ' active'; ?>" data-page="<?php echo $i; ?>"><?php echo $i; ?></a>
         <?php endfor; ?>
+        <?php if ($page < $total_pages): ?>
+            <a href="#" class="pagination-btn" data-page="<?php echo $page + 1; ?>">&raquo;</a>
+        <?php endif; ?>
     <?php endif; ?>
 </div>

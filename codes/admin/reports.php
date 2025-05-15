@@ -7,8 +7,21 @@ use Dompdf\Dompdf;
 if (isset($_GET['export']) && in_array($_GET['export'], ['csv', 'excel', 'pdf'])) {
     $startDate = isset($_GET['startDate']) ? $_GET['startDate'] : date('Y-m-01');
     $endDate = isset($_GET['endDate']) ? $_GET['endDate'] : date('Y-m-d');
-    $where = "WHERE DATE(TransactionDate) >= '$startDate' AND DATE(TransactionDate) <= '$endDate' AND (DeliveryStatus = 'Delivered' OR DeliveryStatus = 'Completed')";
-    $res = $conn->query("SELECT t.TransactionID, t.TransactionDate, c.CustomerName, t.Quantity, t.Price, t.DeliveryStatus FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID $where ORDER BY t.TransactionDate DESC");
+    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+    $search_sql = '';
+    $search_params = [];
+    if ($search !== '') {
+        $search_sql = " AND (t.TransactionID LIKE ? OR c.CustomerName LIKE ? OR t.DeliveryStatus LIKE ?)";
+        $search_params = ["%$search%", "%$search%", "%$search%"];
+    }
+    $where = "WHERE DATE(TransactionDate) >= '$startDate' AND DATE(TransactionDate) <= '$endDate' AND (DeliveryStatus = 'Delivered' OR DeliveryStatus = 'Completed')" . $search_sql;
+    $query = "SELECT t.TransactionID, t.TransactionDate, c.CustomerName, t.Quantity, t.Price, t.DeliveryStatus FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID $where ORDER BY t.TransactionDate DESC";
+    $stmt = $conn->prepare($query);
+    if ($search !== '') {
+        $stmt->bind_param(str_repeat('s', count($search_params)), ...$search_params);
+    }
+    $stmt->execute();
+    $res = $stmt->get_result();
     $rows = [];
     $totalSales = 0;
     $totalOrders = 0;
@@ -72,7 +85,13 @@ if (isset($_GET['export']) && in_array($_GET['export'], ['csv', 'excel', 'pdf'])
 // Date range filter
 $startDate = isset($_GET['startDate']) ? $_GET['startDate'] : date('Y-m-01');
 $endDate = isset($_GET['endDate']) ? $_GET['endDate'] : date('Y-m-d');
-
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$search_sql = '';
+$search_params = [];
+if ($search !== '') {
+    $search_sql = " AND (t.TransactionID LIKE ? OR c.CustomerName LIKE ? OR t.DeliveryStatus LIKE ?)";
+    $search_params = ["%$search%", "%$search%", "%$search%"];
+}
 $where = "WHERE DATE(TransactionDate) >= '$startDate' AND DATE(TransactionDate) <= '$endDate'";
 $where_exp = "WHERE ExpenseDate >= '$startDate' AND ExpenseDate <= '$endDate'";
 
@@ -103,7 +122,15 @@ $showAll = isset($_GET['page']) && $_GET['page'] === 'all';
 $offset = ($page - 1) * $perPage;
 
 // Count total filtered transactions
-$countRes = $conn->query("SELECT COUNT(*) as total FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID $where");
+if ($search !== '') {
+    $countQuery = "SELECT COUNT(*) as total FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID $where $search_sql";
+    $countStmt = $conn->prepare($countQuery);
+    $countStmt->bind_param(str_repeat('s', count($search_params)), ...$search_params);
+    $countStmt->execute();
+    $countRes = $countStmt->get_result();
+} else {
+    $countRes = $conn->query("SELECT COUNT(*) as total FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID $where");
+}
 $totalRows = 0;
 if ($countRes && $row = $countRes->fetch_assoc()) $totalRows = (int)$row['total'];
 $totalPages = max(1, ceil($totalRows / $perPage));
@@ -111,9 +138,25 @@ $totalPages = max(1, ceil($totalRows / $perPage));
 // Recent Transactions (paginated or all)
 $recentTransactions = [];
 if ($showAll) {
-    $res = $conn->query("SELECT t.TransactionID, t.TransactionDate, c.CustomerName, t.Quantity, t.Price, t.DeliveryStatus FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID $where ORDER BY t.TransactionDate DESC");
+    $query = "SELECT t.TransactionID, t.TransactionDate, c.CustomerName, t.Quantity, t.Price, t.DeliveryStatus FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID $where $search_sql ORDER BY t.TransactionDate DESC";
+    $stmt = $conn->prepare($query);
+    if ($search !== '') {
+        $stmt->bind_param(str_repeat('s', count($search_params)), ...$search_params);
+    }
+    $stmt->execute();
+    $res = $stmt->get_result();
 } else {
-    $res = $conn->query("SELECT t.TransactionID, t.TransactionDate, c.CustomerName, t.Quantity, t.Price, t.DeliveryStatus FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID $where ORDER BY t.TransactionDate DESC LIMIT $perPage OFFSET $offset");
+    $query = "SELECT t.TransactionID, t.TransactionDate, c.CustomerName, t.Quantity, t.Price, t.DeliveryStatus FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID $where $search_sql ORDER BY t.TransactionDate DESC LIMIT ? OFFSET ?";
+    $stmt = $conn->prepare($query);
+    if ($search !== '') {
+        $types = str_repeat('s', count($search_params)) . 'ii';
+        $params = array_merge($search_params, [$perPage, $offset]);
+        $stmt->bind_param($types, ...$params);
+    } else {
+        $stmt->bind_param('ii', $perPage, $offset);
+    }
+    $stmt->execute();
+    $res = $stmt->get_result();
 }
 if ($res) {
     while ($row = $res->fetch_assoc()) {
@@ -220,7 +263,11 @@ if ($res) {
                 <div class="section-actions">
                     <div class="search-bar">
                         <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Search...">
+                        <form method="get" id="search-form" style="display:inline;">
+                            <input type="hidden" name="startDate" value="<?php echo htmlspecialchars($startDate); ?>">
+                            <input type="hidden" name="endDate" value="<?php echo htmlspecialchars($endDate); ?>">
+                            <input type="text" name="search" id="search-input" placeholder="Search orders..." value="<?php echo htmlspecialchars($search); ?>">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -341,6 +388,17 @@ if ($res) {
                 document.getElementById('exportModal').classList.remove('show');
             }
         });
+
+        // Submit search on enter
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('search-form').submit();
+                }
+            });
+        }
     </script>
 </body>
 

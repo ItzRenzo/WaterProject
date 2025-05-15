@@ -392,13 +392,22 @@ while ($row = $result->fetch_assoc()) {
                 });
                 
                 // AJAX call to update all selected orders to 'assigned'
-                fetch('../controllers/update_order_status.php', {
+                fetch('../Controllers/update_order_status.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ transaction_ids: transactionIds, status: 'Assigned' })
                 })
-                .then(response => response.json())
-                .then(data => {
+                .then(response => response.text())
+                .then(text => {
+                    let data;
+                    try {
+                        data = JSON.parse(text);
+                    } catch (e) {
+                        console.error('Invalid JSON from server:', text);
+                        alert('Server returned invalid JSON. Check console for details.');
+                        return;
+                    }
+                    console.log('Server response:', data);
                     if (data.success) {
                         alert(`${orderCardsToRemove.length} order(s) have been accepted for delivery.`);
                         
@@ -491,11 +500,11 @@ while ($row = $result->fetch_assoc()) {
                             availableOrders.innerHTML = '<div class="no-orders"><i class="fas fa-info-circle"></i><p>No delivery orders available at this time.</p></div>';
                         }
                     } else {
-                        alert('Failed to update order status.');
+                        alert('Failed to update order status. ' + (data.error || ''));
                     }
                 })
-                .catch(() => {
-                    alert('Failed to update order status.');
+                .catch((err) => {
+                    alert('Network or server error: ' + err);
                 });
             });
             
@@ -524,13 +533,22 @@ while ($row = $result->fetch_assoc()) {
                         el.style.display = '';
                     });
                     // Update status in DB via AJAX
-                    fetch('../controllers/update_order_status.php', {
+                    fetch('../Controllers/update_order_status.php', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ transaction_id: transactionId, status: 'Assigned' })
                     })
-                    .then(res => res.json())
-                    .then(data => {
+                    .then(res => res.text())
+                    .then(text => {
+                        let data;
+                        try {
+                            data = JSON.parse(text);
+                        } catch (e) {
+                            console.error('Invalid JSON from server:', text);
+                            alert('Server returned invalid JSON. Check console for details.');
+                            return;
+                        }
+                        console.log('Server response:', data);
                         if (data.success) {
                             alert(`Order ${orderId} has been accepted for delivery.`);
                             
@@ -611,11 +629,11 @@ while ($row = $result->fetch_assoc()) {
                                 }
                             });
                         } else {
-                            alert('Failed to update order status.');
+                            alert('Failed to update order status. ' + (data.error || ''));
                         }
                     })
-                    .catch(() => {
-                        alert('Failed to update order status.');
+                    .catch((err) => {
+                        alert('Network or server error: ' + err);
                     });
                 });
             });
@@ -754,13 +772,22 @@ while ($row = $result->fetch_assoc()) {
                     return;
                 }
                 const transactionIds = selectedCards.map(card => card.getAttribute('data-order-id').replace('RJ-', ''));
-                fetch('../controllers/update_order_status.php', {
+                fetch('../Controllers/update_order_status.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ transaction_ids: transactionIds, status: 'Delivered' })
                 })
-                .then(res => res.json())
-                .then(data => {
+                .then(res => res.text())
+                .then(text => {
+                    let data;
+                    try {
+                        data = JSON.parse(text);
+                    } catch (e) {
+                        console.error('Invalid JSON from server:', text);
+                        alert('Server returned invalid JSON. Check console for details.');
+                        return;
+                    }
+                    console.log('Server response:', data);
                     if (data.success) {
                         alert(`${selectedCards.length} order(s) marked as Delivered.`);
                         // Remove the cards from the UI
@@ -773,11 +800,11 @@ while ($row = $result->fetch_assoc()) {
                             acceptedOrders.innerHTML = '<div class="no-orders"><i class="fas fa-info-circle"></i><p>No accepted delivery orders at this time.</p></div>';
                         }
                     } else {
-                        alert('Failed to update order status.');
+                        alert('Failed to update order status. ' + (data.error || ''));
                     }
                 })
-                .catch(() => {
-                    alert('Failed to update order status.');
+                .catch((err) => {
+                    alert('Network or server error: ' + err);
                 });
             });
             
@@ -803,8 +830,17 @@ while ($row = $result->fetch_assoc()) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ transaction_id: transactionId, status: 'Delivered' })
                 })
-                .then(res => res.json())
-                .then(data => {
+                .then(res => res.text())
+                .then(text => {
+                    let data;
+                    try {
+                        data = JSON.parse(text);
+                    } catch (e) {
+                        console.error('Invalid JSON from server:', text);
+                        alert('Server returned invalid JSON. Check console for details.');
+                        return;
+                    }
+                    console.log('Server response:', data);
                     if (data.success) {
                         alert(`Order ${orderId} has been marked as Delivered.`);
                         orderCard.remove();
@@ -814,11 +850,11 @@ while ($row = $result->fetch_assoc()) {
                             acceptedOrders.innerHTML = '<div class="no-orders"><i class="fas fa-info-circle"></i><p>No accepted delivery orders at this time.</p></div>';
                         }
                     } else {
-                        alert('Failed to update order status.');
+                        alert('Failed to update order status. ' + (data.error || ''));
                     }
                 })
-                .catch(() => {
-                    alert('Failed to update order status.');
+                .catch((err) => {
+                    alert('Network or server error: ' + err);
                 });
             }
             
@@ -833,8 +869,17 @@ while ($row = $result->fetch_assoc()) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ transaction_id: transactionId, status: 'Cancelled' })
                 })
-                .then(res => res.json())
-                .then(data => {
+                .then(res => res.text())
+                .then(text => {
+                    let data;
+                    try {
+                        data = JSON.parse(text);
+                    } catch (e) {
+                        console.error('Invalid JSON from server:', text);
+                        alert('Server returned invalid JSON. Check console for details.');
+                        return;
+                    }
+                    console.log('Server response:', data);
                     if (data.success) {
                         alert(`Order ${orderId} has been moved back to Available.`);
                         
@@ -918,11 +963,11 @@ while ($row = $result->fetch_assoc()) {
                             }
                         });
                     } else {
-                        alert('Failed to update order status.');
+                        alert('Failed to update order status. ' + (data.error || ''));
                     }
                 })
-                .catch(() => {
-                    alert('Failed to update order status.');
+                .catch((err) => {
+                    alert('Network or server error: ' + err);
                 });
             }
         });

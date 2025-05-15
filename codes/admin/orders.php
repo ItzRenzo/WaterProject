@@ -31,7 +31,7 @@ if ($search !== '') {
 }
 
 // Get total count for pagination with date filter and search
-$count_sql = "SELECT COUNT(*) as total FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID JOIN Product p ON t.ProductID = p.ProductID WHERE t.Status = 'active' $date_sql $search_sql";
+$count_sql = "SELECT COUNT(*) as total FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID JOIN Product p ON t.ProductID = p.ProductID WHERE 1=1 $date_sql $search_sql";
 $count_stmt = $conn->prepare($count_sql);
 if ($search !== '') {
     $count_stmt->bind_param(str_repeat('s', count($search_params)), ...$search_params);
@@ -46,7 +46,7 @@ $total_pages = ceil($total_orders / $orders_per_page);
 
 // Retrieve paginated active transactions with date filter and search
 $orders = [];
-$sql = "SELECT t.TransactionID, c.CustomerName, p.ProductName, t.Price, t.Quantity, t.PaymentMethod, t.TransactionDate, t.Status FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID JOIN Product p ON t.ProductID = p.ProductID WHERE t.Status = 'active' $date_sql $search_sql ORDER BY t.TransactionDate DESC LIMIT ? OFFSET ?";
+$sql = "SELECT t.TransactionID, c.CustomerName, p.ProductName, t.Price, t.Quantity, t.PaymentMethod, t.TransactionDate FROM Transaction t JOIN Customer c ON t.CustomerID = c.CustomerID JOIN Product p ON t.ProductID = p.ProductID WHERE 1=1 $date_sql $search_sql ORDER BY t.TransactionDate DESC LIMIT ? OFFSET ?";
 $stmt = $conn->prepare($sql);
 if ($search !== '') {
     $types = str_repeat('s', count($search_params)) . 'ii';
@@ -181,8 +181,9 @@ if ($result && $result->num_rows > 0) {
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('pagination-btn')) {
                 e.preventDefault();
-                const url = new URL(e.target.href);
-                const params = new URLSearchParams(url.search);
+                const page = e.target.getAttribute('data-page');
+                const params = new URLSearchParams(window.location.search);
+                params.set('page', page);
                 loadOrdersTable(params);
             }
         });
